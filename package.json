@@ -6,7 +6,8 @@
     "lint": "eslint src/**",
     "watch": "webpack --mode=development --progress --hide-modules --watch",
     "dev": "webpack --mode=development --progress --hide-modules",
-    "build": "webpack --mode=production --progress --hide-modules"
+    "build": "webpack --mode=production --progress --hide-modules",
+    "start": "webpack-dev-server"
   },
   "author": "Massachusetts Institute of Technology",
   "license": "BSD-3-Clause",
@@ -36,6 +37,7 @@
   "dependencies": {
     "intl": "^1.0.1",
     "intl-messageformat": "^1.2.0",
-    "snapsvg": "^0.3.0"
+    "snapsvg": "^0.3.0",
+    "webpack-dev-server": "^3.11.2"
   }
 }
