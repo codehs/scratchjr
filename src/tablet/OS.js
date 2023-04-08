@@ -167,11 +167,7 @@ export default class OS {
     }
 
     // Record state
-    static askpermission() {
-        if (isiOS) {
-            iOS.askpermission();
-        }
-    }
+    static askpermission() {}
 
     // camera functions
 
@@ -196,9 +192,6 @@ export default class OS {
     }
 
     static hidesplash(fcn) {
-        if (isiOS) {
-            iOS.hidesplash();
-        }
         if (fcn) {
             fcn();
         }

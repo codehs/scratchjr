@@ -49,7 +49,7 @@ let dragginLayer = 7000;
 let currentProject = undefined;
 let editmode;
 
-let isDebugging = true;
+let isDebugging = false;
 let time;
 let userStart = false;
 let onHold = false;
