@@ -1,4 +1,4 @@
-import { isiOS, isAndroid, gn } from "../utils/lib";
+import { isiOS, isAndroid, isWeb, gn } from "../utils/lib";
 import IO from "./IO";
 import iOS from "./iOS";
 import Android from "./Android";
@@ -46,8 +46,9 @@ export default class OS {
             return;
         }
         if (
-            (isAndroid && typeof AndroidInterface === "undefined") ||
-            (isiOS && typeof window.tablet !== "object")
+            (!isWeb) &&
+            ((isAndroid && typeof AndroidInterface === "undefined") ||
+            (isiOS && typeof window.tablet !== "object"))
         ) {
             // interface not loaded - come back in 100ms
             setTimeout(function () {

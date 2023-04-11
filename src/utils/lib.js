@@ -11,6 +11,7 @@ export const fullscreenScaleMultiplier = 136;
 /* eslint-disable no-console */
 console.log('setting OS flags');
 /* eslint-enable no-console */
+export const isWeb = !('ontouchstart' in document.documentElement);
 export const isiOS = (typeof AndroidInterface == 'undefined');
 export const isAndroid = (typeof AndroidInterface != 'undefined');
 
