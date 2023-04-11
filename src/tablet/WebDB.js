@@ -6,6 +6,35 @@ import initSqlJs from "sql.js";
 
 let db = null;
 
+// converts binary data (a Uint8Array, the data format sql.js exports to) to a UTF-16 string
+// see https://github.com/sql-js/sql.js/wiki/Persisting-a-Modified-Database
+function binaryDataToUTF16String(binaryData) {
+    // We iterate over the binary data in chunks, since there is a maximum stack size.
+    // For each chunk, we convert all the data to a string, and then join all the
+    // strings together at the end.
+    const chunkSize = 0xffff;
+    const stringChunks = [];
+    for (let i = 0; i < binaryData.length; i += chunkSize) {
+        stringChunks.push(
+            String.fromCharCode.apply(
+                null,
+                binaryData.subarray(i, i + chunkSize)
+            )
+        );
+    }
+    return stringChunks.join("");
+}
+
+// converts a UTF-16 string to binary data (a Uint8Array, the data format sql.js expects)
+// see https://github.com/sql-js/sql.js/wiki/Persisting-a-Modified-Database
+function UTF16StringToBinaryData(string) {
+    const binaryData = new Uint8Array(string.length);
+    for (let i = 0; i < string.length; i++) {
+        binaryData[i] = string.charCodeAt(i);
+    }
+    return binaryData;
+}
+
 // see https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L674
 function initTables() {
     // TODO: maybe handle errors manually?
@@ -33,6 +62,20 @@ function runMigrations() {
     }
 }
 
+// this event will fire whenever the user closes the tab or navigates away from the page
+// see https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event#usage_notes
+window.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden") saveDB();
+});
+
+function saveDB() {
+    if (db === null) return;
+
+    const binaryData = db.export();
+    const stringData = binaryDataToUTF16String(binaryData);
+    localStorage.setItem("scratchjr-sqlite", stringData);
+}
+
 export async function initDB() {
     const SQL = await initSqlJs({
         locateFile: () => sqlWasm,
@@ -41,10 +84,19 @@ export async function initDB() {
     // early return in case of multiple calls
     if (db !== null) return;
 
-    db = new SQL.Database();
+    // get saved data from localStorage, then initialize the database with it if it exists.
+    // otherwise, create a new database and initialize the tables and run migrations.
+    const savedData = localStorage.getItem("scratchjr-sqlite");
+    if (savedData) {
+        const binaryData = UTF16StringToBinaryData(savedData);
+        db = new SQL.Database(binaryData);
+    } else {
+        db = new SQL.Database();
+        initTables();
+        runMigrations();
+    }
+
     window.db = db;
-    initTables();
-    runMigrations();
 }
 
 export async function executeQueryFromJSON(json) {
