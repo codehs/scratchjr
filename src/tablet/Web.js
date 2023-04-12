@@ -33,7 +33,7 @@ export default class Web {
         // }
         (async () => {
             const result = await db.executeQueryFromJSON(json);
-            console.log("query", json, result);
+            // console.log("query", json, result);
             if (fcn) fcn(result);
         })();
     }
@@ -52,8 +52,11 @@ export default class Web {
 
     static getmedia(file, fcn) {
         console.log("getmedia");
-        if (fcn) fcn();
-    }
+        (async () => {
+            var content = await db.readProjectFile(file);
+            // if (fcn) fcn(content);
+        })();
+    } 
 
     static getmediadata(key, offset, len, fcn) {
         console.log("getmediadata");

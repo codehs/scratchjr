@@ -146,3 +146,25 @@ export async function getMD5(data) {
       return hashHex;
     });
 }
+
+export async function readProjectFile(fileMD5) {
+    const json = {};
+    json.cond = 'MD5 = ?';
+    json.items = ['CONTENTS'];
+    json.values = [fileMD5];
+    const table = 'PROJECTFILES';
+
+
+    json.stmt = `select ${json.items} from ${table
+            } where ${json.cond}${json.order ? ` order by ${json.order}` : ''}`;
+
+
+    // const rows = this.query(json);
+    var rows = await executeQueryFromJSON(json);
+    rows = JSON.parse(rows);
+    if (rows.length > 0) {
+      return rows[0]['values'][0][0];
+    //   return rows[0].CONTENTS;
+    }
+    return null;
+}

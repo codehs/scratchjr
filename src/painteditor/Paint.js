@@ -187,6 +187,7 @@ export default class Paint {
         Paint.clearWorkspace();
         frame.style.display = 'none';
         paintFrame.className = 'paintframe appear';
+        // currentMd5 = 'ae1a76b96a6e210977fa96ee64d64d07402652d6171a529745ddc8f66c302588.svg';
         currentMd5 = md5;
         isBkg = bkg;
         spriteId = sname;
