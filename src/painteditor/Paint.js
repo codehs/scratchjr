@@ -1320,6 +1320,7 @@ export default class Paint {
     static saveSprite (fcn) {
         var cname = document.forms.spriteform.name.value;
         var worthsaving = (gn('layer1').childElementCount > 0) && (PaintUndo.index > 0);
+        // Paint.close();
         if (worthsaving) {
             saving = true;
             if (fcn) {
@@ -1330,6 +1331,7 @@ export default class Paint {
             IO.setMedia(svgdata, 'svg', function (str) {
                 Paint.addOrModifySprite(str, fcn);
             });
+            // Paint.close();
         } else {
             var type = Paint.getLoadType(spriteId, cname);
             if ((cname != currentName) && (type == 'modify')) {
@@ -1342,6 +1344,7 @@ export default class Paint {
     }
 
     static addOrModifySprite (str, fcn) {
+        console.log('addOrModifySprite');
         saveMD5 = str;
         var mobj = {};
         mobj.cond = 'md5 = ? AND version = ?';
@@ -1379,6 +1382,7 @@ export default class Paint {
     */
 
     static addToLib (fcn) {
+        console.log('addToLib');
         var scale = '0.5'; // always saves with 1/2 the size
         var cname = document.forms.spriteform.name.value;
         cname = ((unescape(cname)).replace(/[0-9]/g, '')).replace(/\s*/g, '');
