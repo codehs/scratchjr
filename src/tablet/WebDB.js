@@ -119,3 +119,30 @@ export async function executeStatementFromJSON(json) {
     const lastRowId = result[0].values[0][0];
     return lastRowId;
 }
+
+// https://github.com/jfo8000/ScratchJr-Desktop/blob/919482d724904a560d6c77dab06240341584c502/src/main.js#L842
+export async function saveToProjectFiles(fileMD5, content) {
+    const json = {};
+    const keylist = ['md5', 'contents'];
+    const values = '?,?';
+    json.values = [fileMD5, content];
+    json.stmt = `insert into projectfiles (${keylist.toString()}) values (${values})`;
+    var insertSQLResult = executeStatementFromJSON(json);
+    
+    // this.save(); // flush the database to disk.
+    saveDB();
+    
+    return (insertSQLResult >= 0);
+}
+// actually a SHA-256
+export async function getMD5(data) {
+    // return crypto.createHash('md5').update(data).digest('hex');
+    const utf8 = new TextEncoder().encode(data);
+    return crypto.subtle.digest('SHA-256', utf8).then((hashBuffer) => {
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray
+        .map((bytes) => bytes.toString(16).padStart(2, '0'))
+        .join('');
+      return hashHex;
+    });
+}
