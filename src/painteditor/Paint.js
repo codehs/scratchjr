@@ -161,6 +161,7 @@ export default class Paint {
     }
 
     static open (bkg, md5, sname, cname, cscale, sw, sh) {
+        console.log('open (function)');
         let action = '';
         let label = '';
         // Analytics:
@@ -187,7 +188,6 @@ export default class Paint {
         Paint.clearWorkspace();
         frame.style.display = 'none';
         paintFrame.className = 'paintframe appear';
-        // currentMd5 = 'ae1a76b96a6e210977fa96ee64d64d07402652d6171a529745ddc8f66c302588.svg';
         currentMd5 = md5;
         isBkg = bkg;
         spriteId = sname;
@@ -396,6 +396,7 @@ export default class Paint {
     }
 
     static backToProject (e) {
+        console.log('back to project');
         e.preventDefault();
         e.stopPropagation();
         if (saving) {
@@ -1179,6 +1180,7 @@ export default class Paint {
     }
 
     static initSprite (ow, oh) {
+        // console.log('initSprite');
         nativeJr = true;
         document.forms.spriteform.style.visibility = 'visible';
         document.forms.spriteform.name.value = gn(currentName) ? gn(currentName).owner.name : currentName;
@@ -1205,6 +1207,7 @@ export default class Paint {
     }
 
     static loadCharacter (md5) {
+        // console.log('loadCharacter');
         if (md5.indexOf('samples/') >= 0) {
             // Load sample asset
             Paint.loadChar(md5);
@@ -1216,6 +1219,7 @@ export default class Paint {
             Paint.loadChar(MediaLib.path + md5);
         }
         function nextStep (base64) {
+            // console.log('nextStep');
             var str = atob(base64);
             IO.getImagesInSVG(str, function () {
                 Paint.loadSprite(str);
@@ -1228,6 +1232,7 @@ export default class Paint {
     }
 
     static loadChar (url) {
+        // console.log('loadChar');
         var xmlrequest = new XMLHttpRequest();
         xmlrequest.onreadystatechange = function () {
             if (xmlrequest.readyState == 4) {
@@ -1319,6 +1324,7 @@ export default class Paint {
     }
 
     static saveSprite (fcn) {
+        // console.log('saveSprite');
         var cname = document.forms.spriteform.name.value;
         var worthsaving = (gn('layer1').childElementCount > 0) && (PaintUndo.index > 0);
         // Paint.close();
@@ -1345,7 +1351,7 @@ export default class Paint {
     }
 
     static addOrModifySprite (str, fcn) {
-        console.log('addOrModifySprite');
+        // console.log('addOrModifySprite');
         saveMD5 = str;
         var mobj = {};
         mobj.cond = 'md5 = ? AND version = ?';
@@ -1357,6 +1363,7 @@ export default class Paint {
     }
 
     static checkDuplicate (str, fcn) {
+        // console.log('checkDuplicate');
         var list = JSON.parse(str);
         if (list.length > 0) {
             if (fcn) {
@@ -1405,6 +1412,7 @@ export default class Paint {
     }
 
     static changePageSprite () {
+        // console.log('changePageSprite (where the Paint closes)');
         Paint.close();
         var cname = document.forms.spriteform.name.value;
         var type = Paint.getLoadType(spriteId, cname);

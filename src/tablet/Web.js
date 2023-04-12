@@ -54,7 +54,7 @@ export default class Web {
         console.log("getmedia");
         (async () => {
             var content = await db.readProjectFile(file);
-            // if (fcn) fcn(content);
+            if (fcn) fcn(content);
         })();
     } 
 
@@ -86,7 +86,7 @@ export default class Web {
             var name = await db.getMD5(str);
             const filename = `${name}.${ext}`;
             await db.saveToProjectFiles(filename, str, { encoding: 'base64' });
-            if (fcn) fcn(str);
+            if (fcn) fcn(filename);
         })();
     }
 
