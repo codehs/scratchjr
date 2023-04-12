@@ -33,7 +33,7 @@ export default class Web {
         // }
         (async () => {
             const result = await db.executeQueryFromJSON(json);
-            console.log("query", json, result);
+            // console.log("query", json, result);
             if (fcn) fcn(result);
         })();
     }
@@ -52,8 +52,11 @@ export default class Web {
 
     static getmedia(file, fcn) {
         console.log("getmedia");
-        if (fcn) fcn();
-    }
+        (async () => {
+            var content = await db.readProjectFile(file);
+            if (fcn) fcn(content);
+        })();
+    } 
 
     static getmediadata(key, offset, len, fcn) {
         console.log("getmediadata");
@@ -77,7 +80,14 @@ export default class Web {
 
     static setmedia(str, ext, fcn) {
         console.log("setmedia");
-        if (fcn) fcn();
+        // console.log(str, ext,);
+        // db.exec("select last_insert_rowid();");
+        (async () => {
+            var name = await db.getMD5(str);
+            const filename = `${name}.${ext}`;
+            await db.saveToProjectFiles(filename, str, { encoding: 'base64' });
+            if (fcn) fcn(filename);
+        })();
     }
 
     static setmedianame(str, name, ext, fcn) {
