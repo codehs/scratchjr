@@ -7,7 +7,7 @@
     "watch": "webpack --mode=development --progress --hide-modules --watch",
     "dev": "webpack --mode=development --progress --hide-modules",
     "build": "webpack --mode=production --progress --hide-modules",
-    "start": "webpack-dev-server"
+    "start": "npm run build && webpack-dev-server"
   },
   "author": "Massachusetts Institute of Technology",
   "license": "BSD-3-Clause",

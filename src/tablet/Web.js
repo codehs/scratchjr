@@ -78,14 +78,12 @@ export default class Web {
         if (fcn) fcn();
     }
 
-    static setmedia(str, ext, fcn) {
+    static setmedia(content, ext, fcn) {
         console.log("setmedia");
-        // console.log(str, ext,);
-        // db.exec("select last_insert_rowid();");
         (async () => {
-            var name = await db.getMD5(str);
+            var name = await db.getMD5(content);
             const filename = `${name}.${ext}`;
-            await db.saveToProjectFiles(filename, str, { encoding: 'base64' });
+            await db.saveToProjectFiles(filename, content, { encoding: 'base64' });
             if (fcn) fcn(filename);
         })();
     }

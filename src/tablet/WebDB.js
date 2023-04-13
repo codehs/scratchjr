@@ -120,8 +120,20 @@ export async function executeStatementFromJSON(json) {
     return lastRowId;
 }
 
-// https://github.com/jfo8000/ScratchJr-Desktop/blob/919482d724904a560d6c77dab06240341584c502/src/main.js#L842
+// https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L842
 export async function saveToProjectFiles(fileMD5, content) {
+    /**
+     * Function to save project content to local storage
+     * Local storage format-
+     * [
+     *      {
+     *          'columns': ['MD5', 'CONTENTS']
+     *          'values': [ ..., [fileMD5, content] ]
+     *      }
+     * ]
+     * @param {string} fileMD5
+     * @param {string} content
+     */
     const json = {};
     const keylist = ['md5', 'contents'];
     const values = '?,?';
@@ -134,7 +146,8 @@ export async function saveToProjectFiles(fileMD5, content) {
     
     return (insertSQLResult >= 0);
 }
-// actually a SHA-256
+
+// actually returns SHA-256
 export async function getMD5(data) {
     // return crypto.createHash('md5').update(data).digest('hex');
     const utf8 = new TextEncoder().encode(data);
@@ -147,6 +160,7 @@ export async function getMD5(data) {
     });
 }
 
+// see https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L822
 export async function readProjectFile(fileMD5) {
     const json = {};
     json.cond = 'MD5 = ?';
@@ -154,17 +168,13 @@ export async function readProjectFile(fileMD5) {
     json.values = [fileMD5];
     const table = 'PROJECTFILES';
 
-
     json.stmt = `select ${json.items} from ${table
             } where ${json.cond}${json.order ? ` order by ${json.order}` : ''}`;
 
-
-    // const rows = this.query(json);
     var rows = await executeQueryFromJSON(json);
     rows = JSON.parse(rows);
     if (rows.length > 0) {
-      return rows[0]['values'][0][0];
-    //   return rows[0].CONTENTS;
+        return rows[0]['values'][0][0];
     }
     return null;
 }
