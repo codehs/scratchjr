@@ -74,7 +74,7 @@ function saveDB() {
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
     saveToFirebase("test", stringData);
-    localStorage.setItem("scratchjr-sqlite", stringData);
+    // localStorage.setItem("scratchjr-sqlite", stringData);
 }
 
 export async function initDB() {
@@ -87,11 +87,10 @@ export async function initDB() {
 
     // get saved data from localStorage, then initialize the database with it if it exists.
     // otherwise, create a new database and initialize the tables and run migrations.
-    const savedData2 = await getFromFirebase("test");
-    console.log("savedData2", savedData2);
-    const savedData = localStorage.getItem("scratchjr-sqlite");
-    if (savedData2) {
-        const binaryData = UTF16StringToBinaryData(savedData2);
+    // const savedData = localStorage.getItem("scratchjr-sqlite");
+    const savedData = await getFromFirebase("test");
+    if (savedData) {
+        const binaryData = UTF16StringToBinaryData(savedData);
         db = new SQL.Database(binaryData);
     } else {
         db = new SQL.Database();
