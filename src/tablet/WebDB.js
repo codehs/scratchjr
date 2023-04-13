@@ -1,6 +1,7 @@
 // Required to let webpack 4 know it needs to copy the wasm file to our assets
 import sqlWasm from "!!file-loader?name=sql-wasm-[contenthash].wasm!sql.js/dist/sql-wasm.wasm";
 import initSqlJs from "sql.js";
+import { saveToFirebase, getFromFirebase } from "./Firebase";
 
 // see https://github.com/sql-js/sql.js/#usage
 
@@ -70,9 +71,9 @@ window.addEventListener("visibilitychange", function () {
 
 function saveDB() {
     if (db === null) return;
-
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
+    saveToFirebase("test", stringData);
     localStorage.setItem("scratchjr-sqlite", stringData);
 }
 
@@ -86,9 +87,11 @@ export async function initDB() {
 
     // get saved data from localStorage, then initialize the database with it if it exists.
     // otherwise, create a new database and initialize the tables and run migrations.
+    const savedData2 = await getFromFirebase("test");
+    console.log("savedData2", savedData2);
     const savedData = localStorage.getItem("scratchjr-sqlite");
-    if (savedData) {
-        const binaryData = UTF16StringToBinaryData(savedData);
+    if (savedData2) {
+        const binaryData = UTF16StringToBinaryData(savedData2);
         db = new SQL.Database(binaryData);
     } else {
         db = new SQL.Database();
@@ -135,46 +138,47 @@ export async function saveToProjectFiles(fileMD5, content) {
      * @param {string} content
      */
     const json = {};
-    const keylist = ['md5', 'contents'];
-    const values = '?,?';
+    const keylist = ["md5", "contents"];
+    const values = "?,?";
     json.values = [fileMD5, content];
     json.stmt = `insert into projectfiles (${keylist.toString()}) values (${values})`;
     var insertSQLResult = executeStatementFromJSON(json);
-    
+
     // this.save(); // flush the database to disk.
     saveDB();
-    
-    return (insertSQLResult >= 0);
+
+    return insertSQLResult >= 0;
 }
 
 // actually returns SHA-256
 export async function getMD5(data) {
     // return crypto.createHash('md5').update(data).digest('hex');
     const utf8 = new TextEncoder().encode(data);
-    return crypto.subtle.digest('SHA-256', utf8).then((hashBuffer) => {
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray
-        .map((bytes) => bytes.toString(16).padStart(2, '0'))
-        .join('');
-      return hashHex;
+    return crypto.subtle.digest("SHA-256", utf8).then((hashBuffer) => {
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+            .map((bytes) => bytes.toString(16).padStart(2, "0"))
+            .join("");
+        return hashHex;
     });
 }
 
 // see https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L822
 export async function readProjectFile(fileMD5) {
     const json = {};
-    json.cond = 'MD5 = ?';
-    json.items = ['CONTENTS'];
+    json.cond = "MD5 = ?";
+    json.items = ["CONTENTS"];
     json.values = [fileMD5];
-    const table = 'PROJECTFILES';
+    const table = "PROJECTFILES";
 
-    json.stmt = `select ${json.items} from ${table
-            } where ${json.cond}${json.order ? ` order by ${json.order}` : ''}`;
+    json.stmt = `select ${json.items} from ${table} where ${json.cond}${
+        json.order ? ` order by ${json.order}` : ""
+    }`;
 
     var rows = await executeQueryFromJSON(json);
     rows = JSON.parse(rows);
     if (rows.length > 0) {
-        return rows[0]['values'][0][0];
+        return rows[0]["values"][0][0];
     }
     return null;
 }
