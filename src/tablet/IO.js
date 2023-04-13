@@ -255,6 +255,7 @@ export default class IO {
     }
 
     static saveProject (obj, fcn) {
+        console.log('saveProject');
         var json = {};
         var keylist = ['version = ?', 'deleted = ?', 'name = ?', 'json = ?', 'thumbnail = ?', 'mtime = ?'];
         json.values = [obj.version, obj.deleted, obj.name, JSON.stringify(obj.json),
@@ -289,6 +290,10 @@ export default class IO {
         var res = new Object();
         for (var key in data) {
             res[key.toLowerCase()] = data[key];
+        }
+
+        for (var i = 0; i < data['columns'].length; i++) {
+            res[data['columns'][i].toLowerCase()] = data['values'][0][i];
         }
         return res;
     }

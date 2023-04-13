@@ -90,12 +90,17 @@ export default class Web {
 
     static setmedianame(str, name, ext, fcn) {
         console.log("setmedianame");
-        if (fcn) fcn();
+        const filename = `${name}.${ext}`;
+        db.saveToProjectFiles(filename, str, { encoding: 'base64' });
+        if (fcn) fcn(filename);
     }
 
     static getmd5(str, fcn) {
         console.log("getmd5");
-        if (fcn) fcn();
+        (async () => {
+            var name = await db.getMD5(str);
+            if (fcn) fcn(name);
+        })();
     }
 
     static remove(str, fcn) {
