@@ -83,6 +83,7 @@ export default class Web {
         (async () => {
             var name = await db.getMD5(content);
             const filename = `${name}.${ext}`;
+            console.log('setmedia filename', filename);
             await db.saveToProjectFiles(filename, content, { encoding: 'base64' });
             if (fcn) fcn(filename);
         })();
@@ -91,6 +92,7 @@ export default class Web {
     static setmedianame(str, name, ext, fcn) {
         console.log("setmedianame");
         const filename = `${name}.${ext}`;
+        console.log('setmedianame filename', filename);
         db.saveToProjectFiles(filename, str, { encoding: 'base64' });
         if (fcn) fcn(filename);
     }

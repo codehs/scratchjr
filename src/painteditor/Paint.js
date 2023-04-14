@@ -1253,6 +1253,7 @@ export default class Paint {
     /////////////////////////////////
 
     static savePageImage (fcn) {
+        console.log('savePageImage');
         var worthsaving = (gn('layer1').childElementCount > 0);
         if (!worthsaving) {
             Paint.close();
@@ -1324,7 +1325,7 @@ export default class Paint {
     }
 
     static saveSprite (fcn) {
-        // console.log('saveSprite');
+        console.log('saveSprite');
         var cname = document.forms.spriteform.name.value;
         var worthsaving = (gn('layer1').childElementCount > 0) && (PaintUndo.index > 0);
         // Paint.close();
