@@ -68,7 +68,7 @@ window.addEventListener("beforeunload", function () {
     if (document.visibilityState === "hidden") saveDB();
 });
 
-function saveDB() {
+export function saveDB() {
     if (db === null) return;
 
     const binaryData = db.export();
