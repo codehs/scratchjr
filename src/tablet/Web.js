@@ -2,8 +2,8 @@
 //  Web interface functions
 //////////////////////////////////////////////////
 
-import OS from "./OS";
-import * as db from "./WebDB";
+import OS from "./OS.js";
+import * as db from "./WebDB.js";
 
 let mediacounter = 0;
 let callbacks = {};
@@ -22,6 +22,7 @@ export default class Web {
             const result = await db.executeStatementFromJSON(json);
             console.log("stmt", json, result);
             if (fcn) fcn(result);
+            db.saveDB();
         })();
     }
 
@@ -56,7 +57,7 @@ export default class Web {
             var content = await db.readProjectFile(file);
             if (fcn) fcn(content);
         })();
-    } 
+    }
 
     static getmediadata(key, offset, len, fcn) {
         console.log("getmediadata");
@@ -83,7 +84,9 @@ export default class Web {
         (async () => {
             var name = await db.getMD5(content);
             const filename = `${name}.${ext}`;
-            await db.saveToProjectFiles(filename, content, { encoding: 'base64' });
+            await db.saveToProjectFiles(filename, content, {
+                encoding: "base64",
+            });
             if (fcn) fcn(filename);
         })();
     }
@@ -91,7 +94,7 @@ export default class Web {
     static setmedianame(str, name, ext, fcn) {
         console.log("setmedianame");
         const filename = `${name}.${ext}`;
-        db.saveToProjectFiles(filename, str, { encoding: 'base64' });
+        db.saveToProjectFiles(filename, str, { encoding: "base64" });
         if (fcn) fcn(filename);
     }
 
