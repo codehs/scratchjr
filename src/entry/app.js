@@ -4,6 +4,7 @@ import InitialOptions from "../utils/InitialOptions";
 import OS from "../tablet/OS";
 import IO from "../tablet/IO";
 import MediaLib from "../tablet/MediaLib";
+import * as db from "../tablet/WebDB.js";
 
 import { indexMain } from "./index";
 import { homeMain } from "./home";
@@ -39,6 +40,7 @@ window.onload = () => {
 
     const params = new URLSearchParams(window.location.search);
     if (!window.item_id) window.item_id = params.get("item_id");
+    db.initDB();
 
     // Load CSS and set root/entryFunction for all pages
     switch (page) {

@@ -8,8 +8,6 @@ import * as db from "./WebDB.js";
 let mediacounter = 0;
 let callbacks = {};
 
-db.initDB();
-
 export default class Web {
     // Database functions
     static stmt(json, fcn) {
