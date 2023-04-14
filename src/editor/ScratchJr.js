@@ -65,7 +65,7 @@ let shaking = undefined;
 let stopShaking = undefined;
 let version = undefined;
 
-let autoSaveEnabled = true;
+let autoSaveEnabled = false;
 let autoSaveSetInterval = null;
 
 let onBackButtonCallback = [];
