@@ -341,7 +341,7 @@ function indexGohome() {
         doNext();
     });
     function doNext() {
-        window.location.href = "home.html&item_id=" + window.item_id;
+        window.location.href = "home.html?item_id=" + window.item_id;
     }
 }
 
