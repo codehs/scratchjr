@@ -64,7 +64,7 @@ function runMigrations() {
 
 // this event will fire whenever the user closes the tab or navigates away from the page
 // see https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event#usage_notes
-window.addEventListener("visibilitychange", function () {
+window.addEventListener("beforeunload", function () {
     if (document.visibilityState === "hidden") saveDB();
 });
 
