@@ -29,6 +29,17 @@ export default class Home {
         frame.onmousedown = Home.handleTouchStart;
         frame.onmouseup = Home.handleTouchEnd;
         Home.displayYourProjects();
+        if (
+            !localStorage.getItem("project-" + window.item_id + "-initialized")
+        ) {
+            localStorage.setItem(
+                "project-" + window.item_id + "-initialized",
+                "true"
+            );
+            Home.createNewProject();
+        } else {
+            //get the only project
+        }
     }
 
     ////////////////////////////
