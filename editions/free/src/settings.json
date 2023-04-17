@@ -16,7 +16,7 @@
     "categoryFlowColor": "#FFBE57",
     "categoryStopColor": "#D62222",
     "paletteBlockShadowOpacity": 0.8,
-    "autoSaveInterval": 2000,
+    "autoSaveInterval": 15000,
     "defaultLocale": "en",
     "defaultLocaleShort": "en",
     "supportedLocales": {
