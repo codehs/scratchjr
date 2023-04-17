@@ -19,27 +19,42 @@ let performingAction = false;
 
 export default class Home {
     static init() {
-        version = Lobby.version;
-        frame = gn("htmlcontents");
-        var inner = newHTML("div", "inner", frame);
-        var div = newHTML("div", "scrollarea", inner);
-        div.setAttribute("id", "scrollarea");
-        frame.ontouchstart = Home.handleTouchStart;
-        frame.ontouchend = Home.handleTouchEnd;
-        frame.onmousedown = Home.handleTouchStart;
-        frame.onmouseup = Home.handleTouchEnd;
-        Home.displayYourProjects();
-        if (
-            !localStorage.getItem("project-" + window.item_id + "-initialized")
-        ) {
+        // version = Lobby.version;
+        // frame = gn("htmlcontents");
+        // var inner = newHTML("div", "inner", frame);
+        // var div = newHTML("div", "scrollarea", inner);
+        // div.setAttribute("id", "scrollarea");
+        // frame.ontouchstart = Home.handleTouchStart;
+        // frame.ontouchend = Home.handleTouchEnd;
+        // frame.onmousedown = Home.handleTouchStart;
+        // frame.onmouseup = Home.handleTouchEnd;
+        if (window.student_assignment_id) {
+            if (
+                !localStorage.getItem(
+                    "sa-" + window.student_assignment_id + "-initialized"
+                )
+            ) {
+                localStorage.setItem(
+                    "sa-" + window.student_assignment_id + "-initialized",
+                    "true"
+                );
+                Home.createNewProject();
+            } else {
+                //get the only project
+                Home.gotoEditor(1);
+            }
+        }
+        if (!localStorage.getItem("item-" + window.item_id + "-initialized")) {
             localStorage.setItem(
-                "project-" + window.item_id + "-initialized",
+                "item-" + window.item_id + "-initialized",
                 "true"
             );
             Home.createNewProject();
         } else {
             //get the only project
+            Home.gotoEditor(1);
         }
+        // Home.displayYourProjects();
     }
 
     ////////////////////////////
@@ -244,6 +259,7 @@ export default class Home {
     }
 
     static gotoEditor(md5) {
+        console.log(md5);
         OS.setfile("homescroll.sjr", gn("wrapc").scrollTop, function () {
             doNext(md5);
         });

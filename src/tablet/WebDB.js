@@ -92,8 +92,14 @@ export async function initDB() {
 
     // get saved data from localStorage, then initialize the database with it if it exists.
     // otherwise, create a new database and initialize the tables and run migrations.
-    const savedData = localStorage.getItem(window.item_id);
-    console.log("getting from " + window.item_id);
+    let savedData;
+    if (window.student_assignment_id) {
+        savedData = localStorage.getItem("sa-" + window.student_assignment_id);
+        console.log("loading from " + "sa-" + window.student_assignment_id);
+    } else {
+        savedData = localStorage.getItem("item-" + window.item_id);
+        console.log("loading from " + "item-" + window.item_id);
+    }
 
     if (savedData) {
         const binaryData = UTF16StringToBinaryData(savedData);
