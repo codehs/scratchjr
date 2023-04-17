@@ -37,7 +37,7 @@ export function getFirstProjectThumbnail(callback) {
                     ? JSON.parse(projectData.thumbnail)
                     : projectData.thumbnail;
 
-            if (thumbnail.md5) {
+            if (thumbnail && thumbnail.md5) {
                 IO.getAsset(thumbnail.md5, callback);
             }
         }
