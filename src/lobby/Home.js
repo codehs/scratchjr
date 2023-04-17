@@ -19,7 +19,7 @@ let performingAction = false;
 
 export default class Home {
     static init() {
-        // version = Lobby.version;
+        version = Lobby.version;
         // frame = gn("htmlcontents");
         // var inner = newHTML("div", "inner", frame);
         // var div = newHTML("div", "scrollarea", inner);
@@ -43,19 +43,16 @@ export default class Home {
                 //get the only project
                 Home.gotoEditor(1);
             }
+        }
+        if (!localStorage.getItem("item-" + window.item_id + "-initialized")) {
+            localStorage.setItem(
+                "item-" + window.item_id + "-initialized",
+                "true"
+            );
+            Home.createNewProject();
         } else {
-            if (
-                !localStorage.getItem("item-" + window.item_id + "-initialized")
-            ) {
-                localStorage.setItem(
-                    "item-" + window.item_id + "-initialized",
-                    "true"
-                );
-                Home.createNewProject();
-            } else {
-                //get the only project
-                Home.gotoEditor(1);
-            }
+            //get the only project
+            Home.gotoEditor(1);
         }
         // Home.displayYourProjects();
     }
@@ -287,7 +284,7 @@ export default class Home {
     // Project names are given by reading the DOM elements of existing projects...
     static getNextName(name) {
         return name + " " + 1;
-        // Going to overwrite this for now as it's causing errors
+        // Just use 1, we are not using multiple projects right now
         var pn = [];
         var div = gn("scrollarea");
         for (var i = 0; i < div.childElementCount; i++) {
