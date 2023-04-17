@@ -20,7 +20,7 @@ export default class Web {
             const result = await db.executeStatementFromJSON(json);
             console.log("stmt", json, result);
             if (fcn) fcn(result);
-            ScratchJr.saveProject(null, db.saveDB);
+            db.saveDB();
         })();
     }
 
