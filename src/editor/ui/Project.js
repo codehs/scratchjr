@@ -22,6 +22,28 @@ let error = false;
 let projectbarsize = 66;
 let mediaCountBase = 1;
 
+export function getFirstProjectThumbnail(callback) {
+    var json = {};
+    json.cond = "deleted = ? AND version = ? AND gallery IS NULL";
+    json.items = ["name", "thumbnail", "id", "isgift"];
+    json.values = ["NO", "iOSv01"];
+    json.order = "ctime desc";
+    IO.query(OS.database, json, function (str) {
+        var data = JSON.parse(str);
+        if (data.length > 0) {
+            var projectData = IO.parseProjectData(data[0]);
+            var thumbnail =
+                typeof projectData.thumbnail == "string"
+                    ? JSON.parse(projectData.thumbnail)
+                    : projectData.thumbnail;
+
+            if (thumbnail.md5) {
+                IO.getAsset(thumbnail.md5, callback);
+            }
+        }
+    });
+}
+
 export default class Project {
     static get metadata () {
         return metadata;

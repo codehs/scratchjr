@@ -1,6 +1,8 @@
 // Required to let webpack 4 know it needs to copy the wasm file to our assets
 import sqlWasm from "!!file-loader?name=sql-wasm-[contenthash].wasm!sql.js/dist/sql-wasm.wasm";
 import initSqlJs from "sql.js";
+import { setThumbnail } from "./Firebase.js";
+import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 
 // see https://github.com/sql-js/sql.js/#usage
 
@@ -70,6 +72,16 @@ window.addEventListener("beforeunload", function () {
 
 export function saveDB() {
     if (db === null) return;
+
+    // update the thumbnail for the current project in the database
+    // NOTE: this assumes that we are only ever working with the first project in the sql db
+    const queryParams = new URLSearchParams(window.location.search);
+    const studentAssignmentID = queryParams.get('student_assignment_id');
+    if (studentAssignmentID) {
+        getFirstProjectThumbnail(function(thumbnail) {
+            setThumbnail(studentAssignmentID, thumbnail);
+        })
+    }
 
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
