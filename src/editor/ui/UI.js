@@ -906,10 +906,6 @@ export default class UI {
         }
         e.preventDefault();
         e.stopPropagation();
-        var pt = Events.getTargetPoint(e);
-        if (pt.x > (globalx(e.target) + 167)) {
-            return;
-        }
         ScratchAudio.sndFX('tap.wav');
         ScratchJr.stopStrips();
         ScratchJr.unfocus(e);
