@@ -43,16 +43,20 @@ export default class Home {
                 //get the only project
                 Home.gotoEditor(1);
             }
-        }
-        if (!localStorage.getItem("item-" + window.item_id + "-initialized")) {
-            localStorage.setItem(
-                "item-" + window.item_id + "-initialized",
-                "true"
-            );
-            Home.createNewProject();
         } else {
-            //get the only project
-            Home.gotoEditor(1);
+            if (
+                !localStorage.getItem("item-" + window.item_id + "-initialized")
+            ) {
+                localStorage.setItem(
+                    "item-" + window.item_id + "-initialized",
+                    "true"
+                );
+                Home.createNewProject();
+            } else {
+                console.log("project found");
+                //get the only project
+                Home.gotoEditor(1);
+            }
         }
         // Home.displayYourProjects();
     }
