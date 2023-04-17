@@ -151,7 +151,15 @@ export default class Library {
         var div = gn('scrollarea');
         var data = JSON.parse(str);
         if (data.length > 0) {
-            for (var i = 0; i < data.length; i++) {
+            if ('columns' in data[0]) {
+                // reformat array from sql.js to array of objects where keys are column names
+                var asset_info = [];
+                for (let i = 0; i < data[0]['values'].length; i++) {
+                    asset_info.push(Object.fromEntries(data[0]['columns'].map((k, j) => [k, data[0]['values'][i][j]])));
+                }
+                data = asset_info;
+            }
+            for (let i = 0; i < data.length; i++) {
                 Library.addAssetThumbChoose(div, data[i], 120 * scaleMultiplier, 90 * scaleMultiplier,
                     Library.selectAsset);
             }
@@ -431,6 +439,7 @@ export default class Library {
     }
 
     static parseAssetData (data) {
+        console.log('parseAssetData');
         var res = new Object();
         for (var key in data) {
             res[key.toLowerCase()] = data[key];
