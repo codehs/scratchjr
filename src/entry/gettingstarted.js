@@ -31,6 +31,13 @@ export function gettingStartedMain() {
 }
 
 function gettingStartedCloseMe() {
-    window.location.href =
-        "home.html?place=" + place + "&item_id=" + window.item_id;
+    if (window.student_assignment_id) {
+        window.location.href =
+            "home.html?place=" +
+            place +
+            "&student_assignment_id=" +
+            window.student_assignment_id;
+    } else
+        window.location.href =
+            "home.html?place=" + place + "&item_id=" + window.item_id;
 }

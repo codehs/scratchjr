@@ -20,15 +20,45 @@ let performingAction = false;
 export default class Home {
     static init() {
         version = Lobby.version;
-        frame = gn("htmlcontents");
-        var inner = newHTML("div", "inner", frame);
-        var div = newHTML("div", "scrollarea", inner);
-        div.setAttribute("id", "scrollarea");
-        frame.ontouchstart = Home.handleTouchStart;
-        frame.ontouchend = Home.handleTouchEnd;
-        frame.onmousedown = Home.handleTouchStart;
-        frame.onmouseup = Home.handleTouchEnd;
-        Home.displayYourProjects();
+        // frame = gn("htmlcontents");
+        // var inner = newHTML("div", "inner", frame);
+        // var div = newHTML("div", "scrollarea", inner);
+        // div.setAttribute("id", "scrollarea");
+        // frame.ontouchstart = Home.handleTouchStart;
+        // frame.ontouchend = Home.handleTouchEnd;
+        // frame.onmousedown = Home.handleTouchStart;
+        // frame.onmouseup = Home.handleTouchEnd;
+        if (window.student_assignment_id) {
+            if (
+                !localStorage.getItem(
+                    "sa-" + window.student_assignment_id + "-initialized"
+                )
+            ) {
+                localStorage.setItem(
+                    "sa-" + window.student_assignment_id + "-initialized",
+                    "true"
+                );
+                Home.createNewProject();
+            } else {
+                //get the only project
+                Home.gotoEditor(1);
+            }
+        } else {
+            if (
+                !localStorage.getItem("item-" + window.item_id + "-initialized")
+            ) {
+                localStorage.setItem(
+                    "item-" + window.item_id + "-initialized",
+                    "true"
+                );
+                Home.createNewProject();
+            } else {
+                console.log("project found");
+                //get the only project
+                Home.gotoEditor(1);
+            }
+        }
+        // Home.displayYourProjects();
     }
 
     ////////////////////////////
@@ -203,12 +233,20 @@ export default class Home {
         }
         function doNext() {
             OS.analyticsEvent("lobby", "existing_project_edited");
-            window.location.href =
-                "editor.html?pmd5=" +
-                md5 +
-                "&mode=edit" +
-                "&item_id=" +
-                window.item_id;
+            if (window.student_assignment_id) {
+                window.location.href =
+                    "editor.html?pmd5=" +
+                    md5 +
+                    "&mode=edit" +
+                    "&student_assignment_id=" +
+                    window.student_assignment_id;
+            } else
+                window.location.href =
+                    "editor.html?pmd5=" +
+                    md5 +
+                    "&mode=edit" +
+                    "&item_id=" +
+                    window.item_id;
         }
     }
 
@@ -225,21 +263,32 @@ export default class Home {
     }
 
     static gotoEditor(md5) {
+        console.log(md5);
         OS.setfile("homescroll.sjr", gn("wrapc").scrollTop, function () {
             doNext(md5);
         });
         function doNext(md5) {
-            window.location.href =
-                "editor.html?pmd5=" +
-                md5 +
-                "&mode=edit" +
-                "&item_id=" +
-                window.item_id;
+            if (window.student_assignment_id) {
+                window.location.href =
+                    "editor.html?pmd5=" +
+                    md5 +
+                    "&mode=edit" +
+                    "&student_assignment_id=" +
+                    window.student_assignment_id;
+            } else
+                window.location.href =
+                    "editor.html?pmd5=" +
+                    md5 +
+                    "&mode=edit" +
+                    "&item_id=" +
+                    window.item_id;
         }
     }
 
     // Project names are given by reading the DOM elements of existing projects...
     static getNextName(name) {
+        return name + " " + 1;
+        // Just use 1, we are not using multiple projects right now
         var pn = [];
         var div = gn("scrollarea");
         for (var i = 0; i < div.childElementCount; i++) {
