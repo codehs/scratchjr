@@ -583,7 +583,12 @@ z-index: 5;
 
 /* info box */
 
+#projectinfo {
+    visibility: hidden;
+}
+
 .infobox {
+    visibility: hidden;
     position: fixed;
     display: inline-block;
     margin: 0;
