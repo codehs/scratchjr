@@ -451,25 +451,53 @@ export default class ScratchJr {
     static getGotoLink() {
         if (editmode == "storyStarter") {
             if (!storyStarted) {
-                return "home.html?place=help&item_id=" + window.item_id;
+                if (window.student_assignment_id) {
+                    return (
+                        "home.html?place=help&student_assignment_id=" +
+                        window.student_assignment_id
+                    );
+                } else return "home.html?place=help&item_id=" + window.item_id;
             } else {
-                return "home.html?place=home&item_id=" + window.item_id;
+                if (window.student_assignment_id) {
+                    return (
+                        "home.html?place=home&student_assignment_id=" +
+                        window.student_assignment_id
+                    );
+                } else return "home.html?place=home&item_id=" + window.item_id;
             }
         }
 
         if (!currentProject) {
-            return "home.html?place=home&item_id=" + window.item_id;
+            if (window.student_assignment_id) {
+                return (
+                    "home.html?place=home&student_assignment_id=" +
+                    window.student_assignment_id
+                );
+            } else return "home.html?place=home&item_id=" + window.item_id;
         }
 
         if (Project.metadata.gallery == "samples") {
-            return "home.html?place=help&item_id=" + window.item_id;
+            if (window.student_assignment_id) {
+                return (
+                    "home.html?place=help&student_assignment_id=" +
+                    window.student_assignment_id
+                );
+            } else return "home.html?place=help&item_id=" + window.item_id;
         } else {
-            return (
-                "home.html?place=home&timestamp=" +
-                new Date().getTime() +
-                "&item_id=" +
-                window.item_id
-            );
+            if (window.student_assignment_id) {
+                return (
+                    "home.html?place=home&timestamp=" +
+                    new Date().getTime() +
+                    "&student_assignment_id=" +
+                    window.student_assignment_id
+                );
+            } else
+                return (
+                    "home.html?place=home&timestamp=" +
+                    new Date().getTime() +
+                    "&item_id=" +
+                    window.item_id
+                );
         }
     }
 

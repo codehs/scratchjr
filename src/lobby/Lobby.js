@@ -377,8 +377,13 @@ export default class Lobby {
 
     static goHome() {
         if (currentPage === "home") {
-            window.location.href =
-                "index.html?back=true&item_id=" + window.item_id;
+            if (window.student_assignment_id) {
+                window.location.href =
+                    "index.html?back=true&student_assignment_id=" +
+                    window.student_assignment_id;
+            } else
+                window.location.href =
+                    "index.html?back=true&item_id=" + window.item_id;
         } else {
             Lobby.setPage("home");
         }

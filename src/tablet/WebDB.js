@@ -76,17 +76,22 @@ export function saveDB() {
     // update the thumbnail for the current project in the database
     // NOTE: this assumes that we are only ever working with the first project in the sql db
     const queryParams = new URLSearchParams(window.location.search);
-    const studentAssignmentID = queryParams.get('student_assignment_id');
+    const studentAssignmentID = queryParams.get("student_assignment_id");
     if (studentAssignmentID) {
-        getFirstProjectThumbnail(function(thumbnail) {
+        getFirstProjectThumbnail(function (thumbnail) {
             setThumbnail(studentAssignmentID, thumbnail);
-        })
+        });
     }
 
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
-    console.log("saving to " + window.item_id);
-    localStorage.setItem(window.item_id, stringData);
+    if (window.student_assignment_id) {
+        localStorage.setItem("sa-" + window.student_assignment_id, stringData);
+        console.log("saving to " + "sa-" + window.student_assignment_id);
+    } else {
+        localStorage.setItem("item-" + window.item_id, stringData);
+        console.log("saving to " + "item-" + window.item_id);
+    }
 }
 
 export async function initDB() {
@@ -99,8 +104,14 @@ export async function initDB() {
 
     // get saved data from localStorage, then initialize the database with it if it exists.
     // otherwise, create a new database and initialize the tables and run migrations.
-    const savedData = localStorage.getItem(window.item_id);
-    console.log("getting from " + window.item_id);
+    let savedData;
+    if (window.student_assignment_id) {
+        savedData = localStorage.getItem("sa-" + window.student_assignment_id);
+        console.log("loading from " + "sa-" + window.student_assignment_id);
+    } else {
+        savedData = localStorage.getItem("item-" + window.item_id);
+        console.log("loading from " + "item-" + window.item_id);
+    }
 
     if (savedData) {
         const binaryData = UTF16StringToBinaryData(savedData);
