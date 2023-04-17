@@ -16,11 +16,7 @@
     "categoryFlowColor": "#FFBE57",
     "categoryStopColor": "#D62222",
     "paletteBlockShadowOpacity": 0.8,
-<<<<<<< HEAD
-    "autoSaveInterval": 2000,
-=======
     "autoSaveInterval": 15000,
->>>>>>> 78c08e0 (update save frequency)
     "defaultLocale": "en",
     "defaultLocaleShort": "en",
     "supportedLocales": {
