@@ -1,7 +1,7 @@
 // Required to let webpack 4 know it needs to copy the wasm file to our assets
 import sqlWasm from "!!file-loader?name=sql-wasm-[contenthash].wasm!sql.js/dist/sql-wasm.wasm";
 import initSqlJs from "sql.js";
-import { setThumbnail, getFromFirebase } from "./Firebase.js";
+import { setThumbnail, saveToFirebase, getFromFirebase } from "./Firebase.js";
 import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 
 // see https://github.com/sql-js/sql.js/#usage
@@ -15,6 +15,16 @@ function getStringDB() {
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
     return stringData;
+}
+
+window.setStarterCode = setStarterCode;
+
+// key should be the project key in firebase
+// either project-sa-<studentAssignmentID> or project-item-<itemID>
+function setStarterCode(key) {
+    const binaryData = db.export();
+    const stringData = binaryDataToUTF16String(binaryData);
+    saveToFirebase(key + "/starter-code", stringData);
 }
 
 // converts binary data (a Uint8Array, the data format sql.js exports to) to a UTF-16 string
