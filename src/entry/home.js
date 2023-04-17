@@ -15,7 +15,12 @@ export function homeMain() {
 }
 
 function homeGoBack() {
-    window.location.href = "index.html?back=yes&item_id=" + window.item_id;
+    if (window.student_assignment_id) {
+        window.location.href =
+            "index.html?back=yes&student_assignment_id=" +
+            window.student_assignment_id;
+    } else
+        window.location.href = "index.html?back=yes&item_id=" + window.item_id;
 }
 
 function homeStrings() {

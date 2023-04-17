@@ -33,8 +33,13 @@ export default class Samples {
         e.preventDefault();
         e.stopPropagation();
         ScratchAudio.sndFX("tap.wav");
-        window.location.href =
-            "gettingstarted.html?place=help&item_id=" + window.item_id;
+        if (window.student_assignment_id) {
+            window.location.href =
+                "gettingstarted.html?place=help&student_assignment_id=" +
+                window.student_assignment_id;
+        } else
+            window.location.href =
+                "gettingstarted.html?place=help&item_id=" + window.item_id;
     }
 
     ////////////////////////////
@@ -76,13 +81,22 @@ export default class Samples {
         ScratchAudio.sndFX("tap.wav");
         OS.analyticsEvent("samples", "sample_opened", mt.textContent);
         var md5 = mt.md5;
-        window.location.href =
-            "editor.html?item_id=" +
-            window.item_id +
-            "&pmd5=" +
-            md5 +
-            "&mode=" +
-            (window.Settings.useStoryStarters ? "storyStarter" : "look");
+        if (window.student_assignment_id) {
+            window.location.href =
+                "editor.html?student_assignment_id=" +
+                window.student_assignment_id +
+                "&pmd5=" +
+                md5 +
+                "&mode=" +
+                (window.Settings.useStoryStarters ? "storyStarter" : "look");
+        } else
+            window.location.href =
+                "editor.html?item_id=" +
+                window.item_id +
+                "&pmd5=" +
+                md5 +
+                "&mode=" +
+                (window.Settings.useStoryStarters ? "storyStarter" : "look");
     }
 
     static insertThumbnail(img, data) {

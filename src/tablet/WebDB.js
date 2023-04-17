@@ -73,8 +73,13 @@ export function saveDB() {
 
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
-    console.log("saving to " + window.item_id);
-    localStorage.setItem(window.item_id, stringData);
+    if (window.student_assignment_id) {
+        localStorage.setItem("sa-" + window.student_assignment_id, stringData);
+        console.log("saving to " + "sa-" + window.student_assignment_id);
+    } else {
+        localStorage.setItem("item-" + window.item_id, stringData);
+        console.log("saving to " + "item-" + window.item_id);
+    }
 }
 
 export async function initDB() {

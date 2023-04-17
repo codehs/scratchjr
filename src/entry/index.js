@@ -341,7 +341,11 @@ function indexGohome() {
         doNext();
     });
     function doNext() {
-        window.location.href = "home.html?item_id=" + window.item_id;
+        if (window.student_assignment_id) {
+            window.location.href =
+                "home.html?student_assignment_id=" +
+                window.student_assignment_id;
+        } else window.location.href = "home.html?item_id=" + window.item_id;
     }
 }
 
@@ -349,19 +353,34 @@ function indexGoSettings() {
     // Switch to the settings selection page
     // Triggered by tapping the gear icon in the top right
     ScratchAudio.sndFX("tap.wav");
-    window.location.href = "home.html?place=gear&item_id=" + window.item_id;
+    if (window.student_assignment_id) {
+        window.location.href =
+            "home.html?place=gear&student_assignment_id=" +
+            window.student_assignment_id;
+    } else
+        window.location.href = "home.html?place=gear&item_id=" + window.item_id;
 }
 
 function indexGettingstarted() {
     ScratchAudio.sndFX("tap.wav");
-    window.location.href =
-        "gettingstarted.html?place=home&item_id=" + window.item_id;
+    if (window.student_assignment_id) {
+        window.location.href =
+            "gettingstarted.html?place=home&student_assignment_id=" +
+            window.student_assignment_id;
+    } else
+        window.location.href =
+            "gettingstarted.html?place=home&item_id=" + window.item_id;
 }
 
 // For PBS KIDS edition only
 function indexInfo() {
     ScratchAudio.sndFX("tap.wav");
-    window.location.href = "home.html?place=book&item_id=" + window.item_id;
+    if (window.student_assignment_id) {
+        window.location.href =
+            "home.html?place=book&student_assignment_id=" +
+            window.student_assignment_id;
+    } else
+        window.location.href = "home.html?place=book&item_id=" + window.item_id;
 }
 
 function indexMoreApps() {

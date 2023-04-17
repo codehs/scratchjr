@@ -214,12 +214,20 @@ export default class Home {
         }
         function doNext() {
             OS.analyticsEvent("lobby", "existing_project_edited");
-            window.location.href =
-                "editor.html?pmd5=" +
-                md5 +
-                "&mode=edit" +
-                "&item_id=" +
-                window.item_id;
+            if (window.student_assignment_id) {
+                window.location.href =
+                    "editor.html?pmd5=" +
+                    md5 +
+                    "&mode=edit" +
+                    "&student_assignment_id=" +
+                    window.student_assignment_id;
+            } else
+                window.location.href =
+                    "editor.html?pmd5=" +
+                    md5 +
+                    "&mode=edit" +
+                    "&item_id=" +
+                    window.item_id;
         }
     }
 
@@ -240,12 +248,20 @@ export default class Home {
             doNext(md5);
         });
         function doNext(md5) {
-            window.location.href =
-                "editor.html?pmd5=" +
-                md5 +
-                "&mode=edit" +
-                "&item_id=" +
-                window.item_id;
+            if (window.student_assignment_id) {
+                window.location.href =
+                    "editor.html?pmd5=" +
+                    md5 +
+                    "&mode=edit" +
+                    "&student_assignment_id=" +
+                    window.student_assignment_id;
+            } else
+                window.location.href =
+                    "editor.html?pmd5=" +
+                    md5 +
+                    "&mode=edit" +
+                    "&item_id=" +
+                    window.item_id;
         }
     }
 
