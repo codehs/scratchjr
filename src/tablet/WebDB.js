@@ -8,6 +8,15 @@ import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 
 let db = null;
 
+window.getStringDB = getStringDB;
+
+// function to easily get the string db from console
+function getStringDB() {
+    const binaryData = db.export();
+    const stringData = binaryDataToUTF16String(binaryData);
+    return stringData;
+}
+
 // converts binary data (a Uint8Array, the data format sql.js exports to) to a UTF-16 string
 // see https://github.com/sql-js/sql.js/wiki/Persisting-a-Modified-Database
 function binaryDataToUTF16String(binaryData) {
