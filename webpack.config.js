@@ -1,41 +1,48 @@
-var WebpackNotifierPlugin = require('webpack-notifier');
+var WebpackNotifierPlugin = require("webpack-notifier");
 
 module.exports = {
-    devtool: 'source-map',
+    devtool: "source-map",
     entry: {
-        app: './src/entry/app.js'
+        app: "./src/entry/app.js",
     },
     output: {
-        path: __dirname + '/src/build/bundles',
-        filename: '[name].bundle.js'
+        path: __dirname + "/src/build/bundles",
+        filename: "[name].bundle.js",
     },
     performance: {
-        hints: false
+        hints: false,
     },
     watchOptions: {
-        ignored: ["node_modules", "src/build/**/*"]
+        ignored: ["node_modules", "src/build/**/*"],
     },
     module: {
         rules: [
             {
                 test: /\.js$/,
                 include: /node_modules/,
-                loaders: ['strip-sourcemap-loader']
+                loaders: ["strip-sourcemap-loader"],
             },
             {
-                loader: 'babel-loader',
+                loader: "babel-loader",
                 exclude: /node_modules/,
                 test: /\.jsx?$/,
                 query: {
-                    presets: ['es2015', 'stage-3']
-                }
-            }
-        ]
+                    presets: ["es2015", "stage-3"],
+                },
+            },
+            {
+                test: /\.wasm$/,
+                type: "javascript/auto",
+            },
+        ],
     },
     plugins: [
         new WebpackNotifierPlugin({
             title: "ScratchJr",
-            alwaysNotify: true
-        })
-    ]
+            alwaysNotify: true,
+        }),
+    ],
+    node: {
+        fs: "empty",
+    },
 };
