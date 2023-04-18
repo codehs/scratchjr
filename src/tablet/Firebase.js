@@ -17,11 +17,15 @@ const db = getDatabase(app);
 
 const rootRef = ref(db);
 
-export function setThumbnail(studentAssignmentID, thumbnailURL) {
+export function setSAThumbnail(studentAssignmentID, thumbnailURL) {
     set(
         child(rootRef, "project-sa-" + studentAssignmentID + "/thumbnail"),
         thumbnailURL
     );
+}
+
+export function setItemThumbnail(itemID, thumbnailURL) {
+    set(child(rootRef, "project-item-" + itemID + "/thumbnail"), thumbnailURL);
 }
 
 export async function saveToFirebase(location, dbString) {
