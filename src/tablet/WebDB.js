@@ -102,7 +102,7 @@ export function saveDB() {
 
     if (window.student_assignment_id) {
         getFirstProjectThumbnail(function (thumbnail) {
-            setSAThumbnail(studentAssignmentID, thumbnail);
+            setSAThumbnail(window.student_assignment_id, thumbnail);
         });
     } else {
         getFirstProjectThumbnail(function (thumbnail) {
