@@ -54,6 +54,7 @@ export default class IO {
 
     static getThumbnail (str, w, h, destw, desth) {
         str = str.replace(/>\s*</g, '><');
+        console.log(str);
         var xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
         var extxml = document.importNode(xmlDoc.documentElement, true);
         if (extxml.childNodes[0].nodeName == '#comment') {
