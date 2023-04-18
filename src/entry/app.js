@@ -40,10 +40,9 @@ window.onload = () => {
 
     const params = new URLSearchParams(window.location.search);
     if (!window.item_id) window.item_id = params.get("item_id", "");
-    if (!window.student_assignment_id) {
-        console.log("hmm");
+    if (!window.student_assignment_id)
         window.student_assignment_id = params.get("student_assignment_id", "");
-    }
+
     db.initDB();
 
     // Load CSS and set root/entryFunction for all pages
