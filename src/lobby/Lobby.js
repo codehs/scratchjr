@@ -377,13 +377,19 @@ export default class Lobby {
 
     static goHome() {
         if (currentPage === "home") {
+            const params = new URLSearchParams(window.location.search);
             if (window.student_assignment_id) {
-                window.location.href =
-                    "index.html?back=true&student_assignment_id=" +
-                    window.student_assignment_id;
-            } else
-                window.location.href =
-                    "index.html?back=true&item_id=" + window.item_id;
+                params.append(
+                    "student_assignment_id",
+                    window.student_assignment_id
+                );
+            }
+            if (window.item_id) {
+                params.append("item_id", window.item_id);
+            }
+
+            const url = "index.html?back=true&" + params.toString();
+            window.location.href = url;
         } else {
             Lobby.setPage("home");
         }

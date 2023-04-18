@@ -134,7 +134,7 @@ export async function initDB() {
     let savedData;
     if (window.student_assignment_id) {
         savedData = localStorage.getItem("sa-" + window.student_assignment_id);
-        if (savedData) {
+        if (savedData || true) {
             console.log("loading from " + "sa-" + window.student_assignment_id);
         } else {
             const firebaseKey =

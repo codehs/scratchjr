@@ -33,13 +33,19 @@ export default class Samples {
         e.preventDefault();
         e.stopPropagation();
         ScratchAudio.sndFX("tap.wav");
+        const params = new URLSearchParams();
         if (window.student_assignment_id) {
-            window.location.href =
-                "gettingstarted.html?place=help&student_assignment_id=" +
-                window.student_assignment_id;
-        } else
-            window.location.href =
-                "gettingstarted.html?place=help&item_id=" + window.item_id;
+            params.append(
+                "student_assignment_id",
+                window.student_assignment_id
+            );
+        }
+        if (window.item_id) {
+            params.append("item_id", window.item_id);
+        }
+
+        const url = "gettingstarted.html?place=help&" + params.toString();
+        window.location.href = url;
     }
 
     ////////////////////////////
@@ -81,22 +87,25 @@ export default class Samples {
         ScratchAudio.sndFX("tap.wav");
         OS.analyticsEvent("samples", "sample_opened", mt.textContent);
         var md5 = mt.md5;
+        const params = new URLSearchParams();
         if (window.student_assignment_id) {
-            window.location.href =
-                "editor.html?student_assignment_id=" +
-                window.student_assignment_id +
-                "&pmd5=" +
-                md5 +
-                "&mode=" +
-                (window.Settings.useStoryStarters ? "storyStarter" : "look");
-        } else
-            window.location.href =
-                "editor.html?item_id=" +
-                window.item_id +
-                "&pmd5=" +
-                md5 +
-                "&mode=" +
-                (window.Settings.useStoryStarters ? "storyStarter" : "look");
+            params.append(
+                "student_assignment_id",
+                window.student_assignment_id
+            );
+        }
+        if (window.item_id) {
+            params.append("item_id", window.item_id);
+        }
+
+        const url =
+            "editor.html?pmd5=" +
+            md5 +
+            "&mode=" +
+            (window.Settings.useStoryStarters ? "storyStarter" : "look") +
+            "&" +
+            params.toString();
+        window.location.href = url;
     }
 
     static insertThumbnail(img, data) {
