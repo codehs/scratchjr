@@ -6,6 +6,7 @@
 
 import OS from './OS';
 import '@babel/polyfill';
+import { mTime } from '../utils/lib';
 
 let mediacounter = 0;
 let callbacks = {};
@@ -73,7 +74,7 @@ export default class iOS {
     static setfield (db, id, fieldname, val, fcn) {
         var json = {};
         var keylist = [fieldname + ' = ?', 'mtime = ?'];
-        json.values = [val, (new Date()).getTime().toString()];
+        json.values = [val, mTime().toString()];
         json.stmt = 'update ' + db + ' set ' + keylist.toString() + ' where id = ' + id;
         iOS.stmt(json, fcn);
     }

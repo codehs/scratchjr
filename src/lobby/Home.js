@@ -9,7 +9,7 @@ import Project from "../editor/ui/Project";
 import Localization from "../utils/Localization";
 import ScratchAudio from "../utils/ScratchAudio";
 import Vector from "../geom/Vector";
-import { gn, newHTML, isTablet } from "../utils/lib";
+import { gn, newHTML, isTablet, mTime } from "../utils/lib";
 
 let frame;
 let scrollvalue;
@@ -267,7 +267,7 @@ export default class Home {
             Localization.localize("NEW_PROJECT_PREFIX")
         );
         obj.version = version;
-        obj.mtime = new Date().getTime().toString();
+        obj.mtime = mTime().toString();
         IO.createProject(obj, Home.gotoEditor);
     }
 

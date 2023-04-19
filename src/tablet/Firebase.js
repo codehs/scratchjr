@@ -17,24 +17,28 @@ const db = getDatabase(app);
 
 const rootRef = ref(db);
 
+const pathPrefix = window.location.hostname === "localhost" ? "LOCAL/" : "";
+
 export function setSAThumbnail(studentAssignmentID, thumbnailURL) {
-    set(
-        child(rootRef, "project-sa-" + studentAssignmentID + "/thumbnail"),
-        thumbnailURL
-    );
+    const path =
+        pathPrefix + "project-sa-" + studentAssignmentID + "/thumbnail";
+    set(child(rootRef, path), thumbnailURL);
 }
 
 export function setItemThumbnail(itemID, thumbnailURL) {
-    set(child(rootRef, "project-item-" + itemID + "/thumbnail"), thumbnailURL);
+    const path = pathPrefix + "project-item-" + itemID + "/thumbnail";
+    set(child(rootRef, path), thumbnailURL);
 }
 
 export async function saveToFirebase(location, dbString) {
-    await set(child(rootRef, location), dbString);
+    const path = pathPrefix + location;
+    await set(child(rootRef, path), dbString);
     return true;
 }
 
 export async function getFromFirebase(location) {
-    const snapshot = await get(child(rootRef, location));
+    const path = pathPrefix + location;
+    const snapshot = await get(child(rootRef, path));
     if (snapshot.exists()) {
         return snapshot.val();
     } else {

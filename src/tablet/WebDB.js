@@ -14,6 +14,10 @@ import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 let db = null;
 let initCalled = false;
 
+// data store locations
+let baseKey = null;
+let firebasePath = null;
+
 window.getStringDB = getStringDB;
 
 // function to easily get the string db from console
@@ -32,6 +36,22 @@ function setStarterCode(id) {
     const stringData = binaryDataToUTF16String(binaryData);
     if (id) saveToFirebase("chs-" + id + "-starter", stringData);
     else saveToFirebase("chs-" + window.item_id + "-starter", stringData);
+}
+
+window.downloadDB = downloadDB;
+
+async function downloadDB() {
+    const filename = "scratchDB.sqlite";
+    const binaryData = db.export();
+    const blob = new Blob([binaryData], { type: "application/octet-stream" });
+    const response = new Response(blob, {
+        headers: {
+            "Content-Disposition": `attachment; filename="${filename}"`,
+        },
+    });
+    const url = URL.createObjectURL(await response.blob());
+    window.open(url, "_blank");
+    URL.revokeObjectURL(url);
 }
 
 // converts binary data (a Uint8Array, the data format sql.js exports to) to a UTF-16 string
@@ -100,9 +120,18 @@ export function saveDB() {
     console.log("savedb");
     if (db === null) return;
 
+    const binaryData = db.export();
+    const stringData = binaryDataToUTF16String(binaryData);
+    // early return if no changes were made to the db string
+    if (stringData === localStorage.getItem(baseKey)) {
+        console.log("no changes to save, skipping");
+        return;
+    } else {
+        console.log("changes detected, saving");
+    }
+
     // update the thumbnail for the current project in the database
     // NOTE: this assumes that we are only ever working with the first project in the sql db
-
     if (window.student_assignment_id) {
         getFirstProjectThumbnail(function (thumbnail) {
             setSAThumbnail(window.student_assignment_id, thumbnail);
@@ -113,15 +142,41 @@ export function saveDB() {
         });
     }
 
-    const binaryData = db.export();
-    const stringData = binaryDataToUTF16String(binaryData);
-    if (window.student_assignment_id) {
-        localStorage.setItem("sa-" + window.student_assignment_id, stringData);
-        console.log("saving to " + "sa-" + window.student_assignment_id);
+    // save the db string to firebase
+    const timestamp = new Date().getTime();
+    localStorage.setItem(baseKey + "-timestamp", timestamp);
+    localStorage.setItem(baseKey, stringData);
+    saveToFirebase(firebasePath + "/timestamp", timestamp);
+    saveToFirebase(firebasePath + "/db", stringData);
+}
+
+async function getDBStringData() {
+    // determine the base key for the project
+    // all other  keys/paths are derived from this
+    let dbData = null;
+
+    // compare local and firebase timestamp,
+    // get the data from the place with the greater timestamp
+    const localTime =
+        parseInt(localStorage.getItem(baseKey + "-timestamp")) || 0;
+    const firebaseTime =
+        parseInt(await getFromFirebase(firebasePath + "/timestamp")) || 0;
+    if (firebaseTime > localTime) {
+        console.log("loading db data from firebase");
+        dbData = await getFromFirebase(firebasePath + "/db");
     } else {
-        localStorage.setItem("item-" + window.item_id, stringData);
-        console.log("saving to " + "item-" + window.item_id);
+        console.log("loading db data from localstorage");
+        dbData = localStorage.getItem(baseKey);
     }
+
+    // if there's no data, try to get the starter code from firebase
+    // TODO: update to use Joel's logic for starter code
+    if (!dbData) {
+        console.log("loading starter code db data from firebase");
+        const starterCodePath = firebasePath + "/starter-code";
+        dbData = await getFromFirebase(starterCodePath);
+    }
+    return dbData;
 }
 
 export async function initDB() {
@@ -154,6 +209,27 @@ export async function initDB() {
     }
     if (savedData) {
         const binaryData = UTF16StringToBinaryData(savedData);
+
+        // // early return in case of multiple calls
+        // if (db !== null) return;
+
+        // // set up baseKey and firebasePath
+        // if (window.student_assignment_id) {
+        //     const id = window.student_assignment_id;
+        //     baseKey = "sa-" + id;
+        // } else if (window.item_id) {
+        //     const id = window.item_id;
+        //     baseKey = "item-" + id;
+        // } else {
+        //     alert("No IDs found. DB will not be loaded or saved.");
+        // }
+        // firebasePath = "project-" + baseKey;
+
+        // // get the saved db string data, then initialize the database with it if it exists.
+        // // otherwise, create a new database and initialize the tables and run migrations.
+        // const dbStringData = await getDBStringData();
+        // if (dbStringData !== null) {
+        //     const binaryData = UTF16StringToBinaryData(dbStringData);
         db = new SQL.Database(binaryData);
     } else {
         db = new SQL.Database();
@@ -202,7 +278,7 @@ export async function saveToProjectFiles(fileMD5, content) {
     const keylist = ["md5", "contents"];
     const values = "?,?";
     json.values = [fileMD5, content];
-    json.stmt = `insert into projectfiles (${keylist.toString()}) values (${values})`;
+    json.stmt = `insert or replace into projectfiles (${keylist.toString()}) values (${values})`;
     var insertSQLResult = executeStatementFromJSON(json);
 
     // this.save(); // flush the database to disk.

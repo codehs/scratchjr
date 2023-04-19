@@ -1,6 +1,6 @@
 import OS from './OS';
 import MediaLib from './MediaLib';
-import {setCanvasSize, drawThumbnail} from '../utils/lib';
+import {setCanvasSize, drawThumbnail, mTime} from '../utils/lib';
 import SVG2Canvas from '../utils/SVG2Canvas';
 
 const database = 'projects';
@@ -237,7 +237,7 @@ export default class IO {
         var json = {};
         var keylist = ['name', 'version', 'deleted', 'mtime', 'isgift'];
         var values = '?,?,?,?,?';
-        var mtime = (new Date()).getTime().toString();
+        var mtime = mTime().toString();
         var isGift = obj.isgift ? obj.isgift : '0';
         json.values = [obj.name, obj.version, 'NO', mtime, isGift];
         if (obj.json) {
@@ -260,7 +260,7 @@ export default class IO {
         var json = {};
         var keylist = ['version = ?', 'deleted = ?', 'name = ?', 'json = ?', 'thumbnail = ?', 'mtime = ?'];
         json.values = [obj.version, obj.deleted, obj.name, JSON.stringify(obj.json),
-            JSON.stringify(obj.thumbnail), (new Date()).getTime().toString()];
+            JSON.stringify(obj.thumbnail), mTime().toString()];
         json.stmt = 'update ' + database + ' set ' + keylist.toString() + ' where id = ' + obj.id;
         OS.stmt(json, fcn);
     }

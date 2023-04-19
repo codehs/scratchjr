@@ -10,7 +10,7 @@ import IO from '../../tablet/IO';
 import Paint from '../../painteditor/Paint';
 import SVG2Canvas from '../../utils/SVG2Canvas';
 import {frame, gn, newHTML, scaleMultiplier, getIdFor,
-    isAndroid, setProps, setCanvasSize} from '../../utils/lib';
+    isAndroid, setProps, setCanvasSize, mTime} from '../../utils/lib';
 
 let metadata = undefined;
 let mediaCount = -1;
@@ -492,7 +492,7 @@ export default class Project {
                 'pagecount': ScratchJr.stage.pages.length,
                 'md5': md5
             };
-            metadata.mtime = (new Date()).getTime().toString();
+            metadata.mtime = mTime().toString();
             IO.saveProject(metadata, saveDone);
         }
 
