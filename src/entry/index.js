@@ -341,11 +341,19 @@ function indexGohome() {
         doNext();
     });
     function doNext() {
+        const params = new URLSearchParams();
         if (window.student_assignment_id) {
-            window.location.href =
-                "home.html?student_assignment_id=" +
-                window.student_assignment_id;
-        } else window.location.href = "home.html?item_id=" + window.item_id;
+            params.append(
+                "student_assignment_id",
+                window.student_assignment_id
+            );
+        }
+        if (window.item_id) {
+            params.append("item_id", window.item_id);
+        }
+
+        const url = "home.html?" + params.toString();
+        window.location.href = url;
     }
 }
 
@@ -353,34 +361,45 @@ function indexGoSettings() {
     // Switch to the settings selection page
     // Triggered by tapping the gear icon in the top right
     ScratchAudio.sndFX("tap.wav");
+    const params = new URLSearchParams();
     if (window.student_assignment_id) {
-        window.location.href =
-            "home.html?place=gear&student_assignment_id=" +
-            window.student_assignment_id;
-    } else
-        window.location.href = "home.html?place=gear&item_id=" + window.item_id;
+        params.append("student_assignment_id", window.student_assignment_id);
+    }
+    if (window.item_id) {
+        params.append("item_id", window.item_id);
+    }
+
+    const url = "home.html?place=gear&" + params.toString();
+    window.location.href = url;
 }
 
 function indexGettingstarted() {
     ScratchAudio.sndFX("tap.wav");
+    const params = new URLSearchParams();
     if (window.student_assignment_id) {
-        window.location.href =
-            "gettingstarted.html?place=home&student_assignment_id=" +
-            window.student_assignment_id;
-    } else
-        window.location.href =
-            "gettingstarted.html?place=home&item_id=" + window.item_id;
+        params.append("student_assignment_id", window.student_assignment_id);
+    }
+    if (window.item_id) {
+        params.append("item_id", window.item_id);
+    }
+
+    const url = "gettingstarted.html?place=home&" + params.toString();
+    window.location.href = url;
 }
 
 // For PBS KIDS edition only
 function indexInfo() {
     ScratchAudio.sndFX("tap.wav");
+    const params = new URLSearchParams();
     if (window.student_assignment_id) {
-        window.location.href =
-            "home.html?place=book&student_assignment_id=" +
-            window.student_assignment_id;
-    } else
-        window.location.href = "home.html?place=book&item_id=" + window.item_id;
+        params.append("student_assignment_id", window.student_assignment_id);
+    }
+    if (window.item_id) {
+        params.append("item_id", window.item_id);
+    }
+
+    const url = "home.html?place=book&" + params.toString();
+    window.location.href = url;
 }
 
 function indexMoreApps() {

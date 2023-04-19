@@ -26,7 +26,7 @@ function loadSettings(settingsRoot, whenDone) {
 }
 
 // App-wide entry-point
-window.onload = () => {
+window.onload = async () => {
     // Function to be called after settings, locale strings, and Media Lib
     // are asynchronously loaded. This is overwritten per HTML page below.
     let entryFunction = () => {};
@@ -42,7 +42,8 @@ window.onload = () => {
     if (!window.item_id) window.item_id = params.get("item_id", "");
     if (!window.student_assignment_id)
         window.student_assignment_id = params.get("student_assignment_id", "");
-    db.initDB();
+
+    await db.initDB();
 
     // Load CSS and set root/entryFunction for all pages
     switch (page) {

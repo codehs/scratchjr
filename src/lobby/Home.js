@@ -28,34 +28,43 @@ export default class Home {
         // frame.ontouchend = Home.handleTouchEnd;
         // frame.onmousedown = Home.handleTouchStart;
         // frame.onmouseup = Home.handleTouchEnd;
-        if (window.student_assignment_id) {
-            if (
-                !localStorage.getItem(
-                    "sa-" + window.student_assignment_id + "-initialized"
-                )
-            ) {
-                localStorage.setItem(
-                    "sa-" + window.student_assignment_id + "-initialized",
-                    "true"
-                );
-                Home.createNewProject();
-            } else {
-                //get the only project
-                Home.gotoEditor(1);
-            }
+        if (localStorage.getItem("loadFromFirebase")) {
+            Home.gotoEditor(1);
         } else {
-            if (
-                !localStorage.getItem("item-" + window.item_id + "-initialized")
-            ) {
-                localStorage.setItem(
-                    "item-" + window.item_id + "-initialized",
-                    "true"
-                );
-                Home.createNewProject();
+            if (window.student_assignment_id) {
+                if (
+                    !localStorage.getItem(
+                        "sa-" + window.student_assignment_id + "-initialized"
+                    )
+                ) {
+                    localStorage.setItem(
+                        "sa-" + window.student_assignment_id + "-initialized",
+                        "true"
+                    );
+                    console.log("creating new project (SA)");
+                    Home.createNewProject();
+                } else {
+                    //get the only project
+                    console.log("project found (SA)");
+                    Home.gotoEditor(1);
+                }
             } else {
-                console.log("project found");
-                //get the only project
-                Home.gotoEditor(1);
+                if (
+                    !localStorage.getItem(
+                        "item-" + window.item_id + "-initialized"
+                    )
+                ) {
+                    localStorage.setItem(
+                        "item-" + window.item_id + "-initialized",
+                        "true"
+                    );
+                    console.log("creating new project (item)");
+                    Home.createNewProject();
+                } else {
+                    console.log("project found (item)");
+                    //get the only project
+                    Home.gotoEditor(1);
+                }
             }
         }
         // Home.displayYourProjects();
@@ -233,20 +242,20 @@ export default class Home {
         }
         function doNext() {
             OS.analyticsEvent("lobby", "existing_project_edited");
+            const params = new URLSearchParams();
             if (window.student_assignment_id) {
-                window.location.href =
-                    "editor.html?pmd5=" +
-                    md5 +
-                    "&mode=edit" +
-                    "&student_assignment_id=" +
-                    window.student_assignment_id;
-            } else
-                window.location.href =
-                    "editor.html?pmd5=" +
-                    md5 +
-                    "&mode=edit" +
-                    "&item_id=" +
-                    window.item_id;
+                params.append(
+                    "student_assignment_id",
+                    window.student_assignment_id
+                );
+            }
+            if (window.item_id) {
+                params.append("item_id", window.item_id);
+            }
+
+            const url =
+                "editor.html?pmd5=" + md5 + "&mode=edit&" + params.toString();
+            window.location.href = url;
         }
     }
 
@@ -268,20 +277,20 @@ export default class Home {
             doNext(md5);
         });
         function doNext(md5) {
+            const params = new URLSearchParams();
             if (window.student_assignment_id) {
-                window.location.href =
-                    "editor.html?pmd5=" +
-                    md5 +
-                    "&mode=edit" +
-                    "&student_assignment_id=" +
-                    window.student_assignment_id;
-            } else
-                window.location.href =
-                    "editor.html?pmd5=" +
-                    md5 +
-                    "&mode=edit" +
-                    "&item_id=" +
-                    window.item_id;
+                params.append(
+                    "student_assignment_id",
+                    window.student_assignment_id
+                );
+            }
+            if (window.item_id) {
+                params.append("item_id", window.item_id);
+            }
+
+            const url =
+                "editor.html?pmd5=" + md5 + "&mode=edit&" + params.toString();
+            window.location.href = url;
         }
     }
 

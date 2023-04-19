@@ -15,12 +15,16 @@ export function homeMain() {
 }
 
 function homeGoBack() {
+    const params = new URLSearchParams();
     if (window.student_assignment_id) {
-        window.location.href =
-            "index.html?back=yes&student_assignment_id=" +
-            window.student_assignment_id;
-    } else
-        window.location.href = "index.html?back=yes&item_id=" + window.item_id;
+        params.append("student_assignment_id", window.student_assignment_id);
+    }
+    if (window.item_id) {
+        params.append("item_id", window.item_id);
+    }
+
+    const url = "index.html?back=yes&" + params.toString();
+    window.location.href = url;
 }
 
 function homeStrings() {

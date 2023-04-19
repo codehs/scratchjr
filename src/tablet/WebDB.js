@@ -12,6 +12,7 @@ import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 // see https://github.com/sql-js/sql.js/#usage
 
 let db = null;
+let initCalled = false;
 
 window.getStringDB = getStringDB;
 
@@ -26,10 +27,11 @@ window.setStarterCode = setStarterCode;
 
 // key should be the project key in firebase
 // either project-sa-<studentAssignmentID> or project-item-<itemID>
-function setStarterCode(key) {
+function setStarterCode(id) {
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
-    saveToFirebase(key + "/starter-code", stringData);
+    if (id) saveToFirebase("chs-" + id + "-starter", stringData);
+    else saveToFirebase("chs-" + window.item_id + "-starter", stringData);
 }
 
 // converts binary data (a Uint8Array, the data format sql.js exports to) to a UTF-16 string
@@ -95,6 +97,7 @@ window.addEventListener("beforeunload", function () {
 });
 
 export function saveDB() {
+    console.log("savedb");
     if (db === null) return;
 
     // update the thumbnail for the current project in the database
@@ -122,38 +125,33 @@ export function saveDB() {
 }
 
 export async function initDB() {
+    // early return in case of multiple calls
+    if (initCalled) return;
+    initCalled = true;
     const SQL = await initSqlJs({
         locateFile: () => sqlWasm,
     });
-
-    // early return in case of multiple calls
-    if (db !== null) return;
-
     // get saved data from localStorage, then initialize the database with it if it exists.
     // otherwise, create a new database and initialize the tables and run migrations.
     let savedData;
     if (window.student_assignment_id) {
         savedData = localStorage.getItem("sa-" + window.student_assignment_id);
-        if (savedData) {
-            console.log("loading from " + "sa-" + window.student_assignment_id);
-        } else {
-            const firebaseKey =
-                "project-sa-" + window.student_assignment_id + "/starter-code";
-            savedData = await getFromFirebase(firebaseKey);
-            console.log("loading from firebase " + firebaseKey);
-        }
+        console.log("loading from sa-" + window.student_assignment_id);
+        console.log(savedData);
     } else {
         savedData = localStorage.getItem("item-" + window.item_id);
+        console.log("loading from item-" + window.item_id);
+        console.log(savedData);
+    }
+    // Check for firebase save data when we do that
+    if (!savedData) {
+        const firebaseKey = "chs-" + window.item_id + "-starter";
+        savedData = await getFromFirebase(firebaseKey);
         if (savedData) {
-            console.log("loading from " + "item-" + window.item_id);
-        } else {
-            const firebaseKey =
-                "project-item-" + window.item_id + "/starter-code";
-            savedData = await getFromFirebase(firebaseKey);
             console.log("loading from firebase " + firebaseKey);
+            localStorage.setItem("loadFromFirebase", "true");
         }
     }
-
     if (savedData) {
         const binaryData = UTF16StringToBinaryData(savedData);
         db = new SQL.Database(binaryData);
@@ -162,8 +160,8 @@ export async function initDB() {
         initTables();
         runMigrations();
     }
-
     window.db = db;
+    return db;
 }
 
 export async function executeQueryFromJSON(json) {
@@ -177,7 +175,6 @@ export async function executeQueryFromJSON(json) {
 // see https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L898
 export async function executeStatementFromJSON(json) {
     if (db === null) await initDB();
-
     // see Web interface, stmt()
     const { stmt, values } = json;
     const statement = db.prepare(stmt, values);

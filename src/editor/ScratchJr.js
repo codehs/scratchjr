@@ -449,55 +449,34 @@ export default class ScratchJr {
     }
 
     static getGotoLink() {
+        const params = new URLSearchParams();
+        if (window.student_assignment_id) {
+            params.append(
+                "student_assignment_id",
+                window.student_assignment_id
+            );
+        }
+        if (window.item_id) {
+            params.append("item_id", window.item_id);
+        }
+
         if (editmode == "storyStarter") {
             if (!storyStarted) {
-                if (window.student_assignment_id) {
-                    return (
-                        "home.html?place=help&student_assignment_id=" +
-                        window.student_assignment_id
-                    );
-                } else return "home.html?place=help&item_id=" + window.item_id;
+                return "home.html?place=help&" + params.toString();
             } else {
-                if (window.student_assignment_id) {
-                    return (
-                        "home.html?place=home&student_assignment_id=" +
-                        window.student_assignment_id
-                    );
-                } else return "home.html?place=home&item_id=" + window.item_id;
+                return "home.html?place=home&" + params.toString();
             }
         }
 
         if (!currentProject) {
-            if (window.student_assignment_id) {
-                return (
-                    "home.html?place=home&student_assignment_id=" +
-                    window.student_assignment_id
-                );
-            } else return "home.html?place=home&item_id=" + window.item_id;
+            return "home.html?place=home&" + params.toString();
         }
 
         if (Project.metadata.gallery == "samples") {
-            if (window.student_assignment_id) {
-                return (
-                    "home.html?place=help&student_assignment_id=" +
-                    window.student_assignment_id
-                );
-            } else return "home.html?place=help&item_id=" + window.item_id;
+            return "home.html?place=help&" + params.toString();
         } else {
-            if (window.student_assignment_id) {
-                return (
-                    "home.html?place=home&timestamp=" +
-                    new Date().getTime() +
-                    "&student_assignment_id=" +
-                    window.student_assignment_id
-                );
-            } else
-                return (
-                    "home.html?place=home&timestamp=" +
-                    new Date().getTime() +
-                    "&item_id=" +
-                    window.item_id
-                );
+            params.append("timestamp", new Date().getTime());
+            return "home.html?place=home&" + params.toString();
         }
     }
 
