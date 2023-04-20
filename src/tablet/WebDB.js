@@ -197,6 +197,13 @@ export async function initDB() {
         savedData = localStorage.getItem("item-" + window.item_id);
         console.log("loading from item-" + window.item_id);
         console.log(savedData);
+        //     const id = window.student_assignment_id;
+        //     baseKey = "sa-" + id;
+        // } else if (window.item_id) {
+        //     const id = window.item_id;
+        //     baseKey = "item-" + id;
+        // } else if (window.scratchJrPage === "editor") {
+        //     alert("No IDs found. DB will not be loaded or saved.");
     }
     // Check for firebase save data when we do that
     if (!savedData) {
@@ -274,17 +281,31 @@ export async function saveToProjectFiles(fileMD5, content) {
      * @param {string} fileMD5
      * @param {string} content
      */
-    const json = {};
-    const keylist = ["md5", "contents"];
-    const values = "?,?";
-    json.values = [fileMD5, content];
-    json.stmt = `insert or replace into projectfiles (${keylist.toString()}) values (${values})`;
-    var insertSQLResult = executeStatementFromJSON(json);
+    // query for the current file contents to see if they actually changed
+    let currentContents = "";
+    const queryResult = JSON.parse(
+        await executeQueryFromJSON({
+            stmt: `select contents from projectfiles where md5 = ?`,
+            values: [fileMD5],
+        })
+    );
+    if (
+        queryResult.length > 0 &&
+        queryResult[0].values.length > 0 &&
+        queryResult[0].values[0].length > 0
+    ) {
+        currentContents = queryResult[0].values[0][0];
+    }
 
-    // this.save(); // flush the database to disk.
-    saveDB();
+    // if the contents changed, update the db and save
+    if (content !== currentContents) {
+        await executeStatementFromJSON({
+            stmt: `insert or replace into projectfiles (md5, contents) values (?, ?)`,
+            values: [fileMD5, content],
+        });
 
-    return insertSQLResult >= 0;
+        saveDB();
+    }
 }
 
 // actually returns SHA-256
