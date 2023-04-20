@@ -150,7 +150,7 @@ export function saveDB() {
     saveToFirebase(firebasePath + "/db", stringData);
 }
 
-async function getDBStringData() {
+async function getDBDataString() {
     // determine the base key for the project
     // all other  keys/paths are derived from this
     let dbData = null;
@@ -170,11 +170,13 @@ async function getDBStringData() {
     }
 
     // if there's no data, try to get the starter code from firebase
-    // TODO: update to use Joel's logic for starter code
     if (!dbData) {
         console.log("loading starter code db data from firebase");
-        const starterCodePath = firebasePath + "/starter-code";
+        const starterCodePath = `chs-${window.item_id}-starter`;
         dbData = await getFromFirebase(starterCodePath);
+        if (dbData) {
+            localStorage.setItem("loadFromFirebase", "true");
+        }
     }
     return dbData;
 }
@@ -186,57 +188,21 @@ export async function initDB() {
     const SQL = await initSqlJs({
         locateFile: () => sqlWasm,
     });
-    // get saved data from localStorage, then initialize the database with it if it exists.
-    // otherwise, create a new database and initialize the tables and run migrations.
-    let savedData;
     if (window.student_assignment_id) {
-        savedData = localStorage.getItem("sa-" + window.student_assignment_id);
-        console.log("loading from sa-" + window.student_assignment_id);
-        console.log(savedData);
-    } else {
-        savedData = localStorage.getItem("item-" + window.item_id);
-        console.log("loading from item-" + window.item_id);
-        console.log(savedData);
-        //     const id = window.student_assignment_id;
-        //     baseKey = "sa-" + id;
-        // } else if (window.item_id) {
-        //     const id = window.item_id;
-        //     baseKey = "item-" + id;
-        // } else if (window.scratchJrPage === "editor") {
-        //     alert("No IDs found. DB will not be loaded or saved.");
+        const id = window.student_assignment_id;
+        baseKey = "sa-" + id;
+    } else if (window.item_id) {
+        const id = window.item_id;
+        baseKey = "item-" + id;
+    } else if (window.scratchJrPage === "editor") {
+        alert("No IDs found. DB will not be loaded or saved.");
     }
-    // Check for firebase save data when we do that
-    if (!savedData) {
-        const firebaseKey = "chs-" + window.item_id + "-starter";
-        savedData = await getFromFirebase(firebaseKey);
-        if (savedData) {
-            console.log("loading from firebase " + firebaseKey);
-            localStorage.setItem("loadFromFirebase", "true");
-        }
-    }
-    if (savedData) {
-        const binaryData = UTF16StringToBinaryData(savedData);
 
-        // // early return in case of multiple calls
-        // if (db !== null) return;
-
-        // // set up baseKey and firebasePath
-        // if (window.student_assignment_id) {
-        //     const id = window.student_assignment_id;
-        //     baseKey = "sa-" + id;
-        // } else if (window.item_id) {
-        //     const id = window.item_id;
-        //     baseKey = "item-" + id;
-        // } else {
-        //     alert("No IDs found. DB will not be loaded or saved.");
-        // }
-        // firebasePath = "project-" + baseKey;
-
-        // // get the saved db string data, then initialize the database with it if it exists.
-        // // otherwise, create a new database and initialize the tables and run migrations.
-        // const dbStringData = await getDBStringData();
-        // if (dbStringData !== null) {
-        //     const binaryData = UTF16StringToBinaryData(dbStringData);
+    // get saved data from localStorage or firebase, then initialize the database with it if it
+    // exists. otherwise, create a new database and initialize the tables and run migrations.
+    const dbDataString = await getDBDataString();
+    if (dbDataString !== null) {
+        const binaryData = UTF16StringToBinaryData(dbDataString);
         db = new SQL.Database(binaryData);
     } else {
         db = new SQL.Database();
