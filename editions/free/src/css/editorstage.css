@@ -1,5 +1,22 @@
 /* toolbar */
 
+.manualsave {
+    position: absolute;
+    margin-top: 7px;
+    padding: 0px;
+    top: ${css_vh(0.65)};
+    left: ${css_vh(46.25)};
+    width: ${css_vh(6.33)};
+    height: ${css_vh(6.20)};
+    background:  url('../assets/ui/saveCheck.svg');
+    background-size: 100.5%; /* webview pixelates the image unless we do this */
+}
+
+.manualsave:active {
+    background:  url('../assets/ui/saveCheckPressed.svg');
+    background-size: 100.5%;  /* webview pixelates the image unless we do this */
+}
+
 .fullscreen#full {
     position: absolute;
     margin: 0px;
