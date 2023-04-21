@@ -175,6 +175,7 @@ export async function initDB() {
         }
 
         window.db = db;
+        console.log("shouldCreateNewProject: ", shouldCreateNewProject);
         resolve(shouldCreateNewProject);
     });
 

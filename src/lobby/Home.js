@@ -20,6 +20,7 @@ let performingAction = false;
 export default class Home {
     static init() {
         version = Lobby.version;
+        Home.gotoEditor(1);
         // frame = gn("htmlcontents");
         // var inner = newHTML("div", "inner", frame);
         // var div = newHTML("div", "scrollarea", inner);
@@ -28,45 +29,45 @@ export default class Home {
         // frame.ontouchend = Home.handleTouchEnd;
         // frame.onmousedown = Home.handleTouchStart;
         // frame.onmouseup = Home.handleTouchEnd;
-        if (localStorage.getItem("loadFromFirebase")) {
-            Home.gotoEditor(1);
-        } else {
-            if (window.student_assignment_id) {
-                if (
-                    !localStorage.getItem(
-                        "sa-" + window.student_assignment_id + "-initialized"
-                    )
-                ) {
-                    localStorage.setItem(
-                        "sa-" + window.student_assignment_id + "-initialized",
-                        "true"
-                    );
-                    console.log("creating new project (SA)");
-                    Home.createNewProject();
-                } else {
-                    //get the only project
-                    console.log("project found (SA)");
-                    Home.gotoEditor(1);
-                }
-            } else {
-                if (
-                    !localStorage.getItem(
-                        "item-" + window.item_id + "-initialized"
-                    )
-                ) {
-                    localStorage.setItem(
-                        "item-" + window.item_id + "-initialized",
-                        "true"
-                    );
-                    console.log("creating new project (item)");
-                    Home.createNewProject();
-                } else {
-                    console.log("project found (item)");
-                    //get the only project
-                    Home.gotoEditor(1);
-                }
-            }
-        }
+        // if (localStorage.getItem("loadFromFirebase")) {
+        //     Home.gotoEditor(1);
+        // } else {
+        //     if (window.student_assignment_id) {
+        //         if (
+        //             !localStorage.getItem(
+        //                 "sa-" + window.student_assignment_id + "-initialized"
+        //             )
+        //         ) {
+        //             localStorage.setItem(
+        //                 "sa-" + window.student_assignment_id + "-initialized",
+        //                 "true"
+        //             );
+        //             console.log("creating new project (SA)");
+        //             Home.createNewProject();
+        //         } else {
+        //             //get the only project
+        //             console.log("project found (SA)");
+        //             Home.gotoEditor(1);
+        //         }
+        //     } else {
+        //         if (
+        //             !localStorage.getItem(
+        //                 "item-" + window.item_id + "-initialized"
+        //             )
+        //         ) {
+        //             localStorage.setItem(
+        //                 "item-" + window.item_id + "-initialized",
+        //                 "true"
+        //             );
+        //             console.log("creating new project (item)");
+        //             Home.createNewProject();
+        //         } else {
+        //             console.log("project found (item)");
+        //             //get the only project
+        //             Home.gotoEditor(1);
+        //         }
+        //     }
+        // }
         // Home.displayYourProjects();
     }
 
