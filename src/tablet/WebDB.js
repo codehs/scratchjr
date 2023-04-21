@@ -162,10 +162,10 @@ async function getDBDataString() {
     const firebaseTime =
         parseInt(await getFromFirebase(firebasePath + "/timestamp")) || 0;
     if (firebaseTime > localTime) {
-        console.log("loading db data from firebase");
+        console.log("loading db data from firebase", firebasePath);
         dbData = await getFromFirebase(firebasePath + "/db");
     } else {
-        console.log("loading db data from localstorage");
+        console.log("loading db data from localstorage", baseKey);
         dbData = localStorage.getItem(baseKey);
     }
 
@@ -197,6 +197,7 @@ export async function initDB() {
     } else if (window.scratchJrPage === "editor") {
         alert("No IDs found. DB will not be loaded or saved.");
     }
+    firebasePath = "project-" + baseKey;
 
     // get saved data from localStorage or firebase, then initialize the database with it if it
     // exists. otherwise, create a new database and initialize the tables and run migrations.
