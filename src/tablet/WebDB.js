@@ -12,7 +12,7 @@ import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 // see https://github.com/sql-js/sql.js/#usage
 
 let db = null;
-let initCalled = false;
+let initPromise;
 
 // data store locations
 let baseKey = null;
@@ -164,57 +164,76 @@ async function getDBDataString() {
     // try to load from firebase, then if there is no data there try from localstorage
     console.log("loading db data from firebase", firebasePath);
     dbData = await getFromFirebase(firebasePath + "/db");
-    
+
     if (!dbData) {
-        console.log("not in firebase, loading db data from localstorage", baseKey);
+        console.log(
+            "not in firebase, loading db data from localstorage",
+            baseKey
+        );
         dbData = localStorage.getItem(baseKey);
     }
 
     // if there's no data, try to get the starter code from firebase
     if (!dbData) {
-        console.log("not in localstorage, loading starter code db data from firebase");
+        console.log(
+            "not in localstorage, loading starter code db data from firebase"
+        );
         const starterCodePath = `chs-${window.item_id}-starter`;
         dbData = await getFromFirebase(starterCodePath);
         if (dbData) {
             localStorage.setItem("loadFromFirebase", "true");
         } else {
-            console.log('no starter code found in firebase');
+            console.log("no starter code found in firebase");
         }
     }
     return dbData;
 }
 
 export async function initDB() {
-    // early return in case of multiple calls
-    if (initCalled) return;
-    initCalled = true;
-    const SQL = await initSqlJs({
-        locateFile: () => sqlWasm,
-    });
-    if (window.student_assignment_id) {
-        const id = window.student_assignment_id;
-        baseKey = "sa-" + id;
-    } else if (window.item_id) {
-        const id = window.item_id;
-        baseKey = "item-" + id;
-    } else if (window.scratchJrPage === "editor") {
-        alert("No IDs found. DB will not be loaded or saved.");
+    console.log("init");
+    // return existing promise if it exists
+    if (initPromise) {
+        return initPromise;
     }
-    firebasePath = "project-" + baseKey;
 
-    // get saved data from localStorage or firebase, then initialize the database with it if it
-    // exists. otherwise, create a new database and initialize the tables and run migrations.
-    const dbDataString = await getDBDataString();
-    if (dbDataString !== null) {
-        const binaryData = UTF16StringToBinaryData(dbDataString);
-        db = new SQL.Database(binaryData);
-    } else {
-        db = new SQL.Database();
-        initTables();
-        runMigrations();
-    }
-    window.db = db;
-    return db;
+    // create a new promise that resolves with whether we should
+    // create a new project once it's initialized
+    initPromise = new Promise(async (resolve) => {
+        let shouldCreateNewProject = false;
+        const SQL = await initSqlJs({
+            locateFile: () => sqlWasm,
+        });
+
+        // get saved data from localStorage, then initialize the database with it if it exists.
+        // otherwise, create a new database and initialize the tables and run migrations.
+        if (window.student_assignment_id) {
+            const id = window.student_assignment_id;
+            baseKey = "sa-" + id;
+        } else if (window.item_id) {
+            const id = window.item_id;
+            baseKey = "item-" + id;
+        } else if (window.scratchJrPage === "editor") {
+            alert("No IDs found. DB will not be loaded or saved.");
+        }
+        firebasePath = "project-" + baseKey;
+
+        // get saved data from localStorage or firebase, then initialize the database with it if it
+        // exists. otherwise, create a new database and initialize the tables and run migrations.
+        const dbDataString = await getDBDataString();
+        if (dbDataString !== null) {
+            const binaryData = UTF16StringToBinaryData(dbDataString);
+            db = new SQL.Database(binaryData);
+        } else {
+            db = new SQL.Database();
+            initTables();
+            runMigrations();
+            shouldCreateNewProject = true;
+        }
+        window.db = db;
+        resolve(shouldCreateNewProject);
+    });
+
+    return initPromise;
 }
 
 export async function executeQueryFromJSON(json) {
