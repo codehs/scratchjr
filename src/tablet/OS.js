@@ -45,16 +45,16 @@ export default class OS {
             fcn();
             return;
         }
-        if (
-            (!isWeb) &&
-            ((isAndroid && typeof AndroidInterface === "undefined") ||
-            (isiOS && typeof window.tablet !== "object"))
-        ) {
-            // interface not loaded - come back in 100ms
-            setTimeout(function () {
-                OS.waitForInterface(fcn);
-            }, 100);
-        }
+        // if (
+        //     (!isWeb) &&
+        //     ((isAndroid && typeof AndroidInterface === "undefined") ||
+        //     (isiOS && typeof window.tablet !== "object"))
+        // ) {
+        //     // interface not loaded - come back in 100ms
+        //     setTimeout(function () {
+        //         OS.waitForInterface(fcn);
+        //     }, 100);
+        // }
 
         // tabletInterface = isiOS ? iOS : Android;
         tabletInterface = Web;

@@ -230,6 +230,7 @@ export async function initDB() {
             shouldCreateNewProject = true;
         }
         window.db = db;
+        console.log("shouldCreateNewProject: ", shouldCreateNewProject);
         resolve(shouldCreateNewProject);
     });
 
