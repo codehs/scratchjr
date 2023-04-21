@@ -8,6 +8,10 @@ import * as db from "./WebDB.js";
 let mediacounter = 0;
 let callbacks = {};
 
+const audioContext = new AudioContext();
+const audioBuffers = {};
+const audioSources = {};
+
 export default class Web {
     // Database functions
     static stmt(json, fcn) {
@@ -122,17 +126,39 @@ export default class Web {
     // Sound functions
 
     static registerSound(dir, name, fcn) {
-        console.log("registerSound");
-        if (fcn) fcn();
+        console.log("registerSound", dir, name, fcn);
+        (async () => {
+            const response = await fetch(dir + name);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            audioBuffers[name] = audioBuffer;
+            if (fcn) fcn();
+        })();
     }
 
     static playSound(name, fcn) {
         console.log("playSound");
+        if (audioSources[name]) {
+            audioSources[name].stop();
+        }
+
+        audioSources[name] = audioContext.createBufferSource();
+        audioSources[name].buffer = audioBuffers[name];
+        audioSources[name].connect(audioContext.destination);
+        audioSources[name].addEventListener("ended", function () {
+            this.stop();
+            audioSources[name] = null;
+        });
+        audioSources[name].start();
+
         if (fcn) fcn();
     }
 
     static stopSound(name, fcn) {
         console.log("stopSound");
+        if (audioSources[name]) {
+            audioSources[name].stop();
+        }
         if (fcn) fcn();
     }
 

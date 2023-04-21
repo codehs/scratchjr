@@ -11,6 +11,8 @@ let defaultSounds = ['cut.wav', 'snap.wav', 'copy.wav', 'grab.wav', 'boing.wav',
     'keydown.wav', 'entertap.wav', 'exittap.wav', 'splash.wav'];
 let projectSounds = {};
 
+
+
 export default class ScratchAudio {
     static get uiSounds () {
         return uiSounds;
@@ -37,10 +39,7 @@ export default class ScratchAudio {
 
     static init (prefix) {
         if (!prefix) {
-            prefix = '';
-        }
-        if (!isAndroid) {
-            prefix = 'HTML5/';
+            prefix = './';
         }
         uiSounds = {};
 
