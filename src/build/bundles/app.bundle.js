@@ -87438,46 +87438,45 @@ var getDBDataString = function () {
                     case 9:
                         firebaseTime = _context2.t0;
 
-                        if (!(firebaseTime > localTime)) {
-                            _context2.next = 17;
-                            break;
-                        }
-
+                        // try to load from firebase, then if there is no data there try from localstorage
                         console.log("loading db data from firebase", firebasePath);
-                        _context2.next = 14;
+                        _context2.next = 13;
                         return (0, _Firebase.getFromFirebase)(firebasePath + "/db");
 
-                    case 14:
+                    case 13:
                         dbData = _context2.sent;
-                        _context2.next = 19;
-                        break;
 
-                    case 17:
-                        console.log("loading db data from localstorage", baseKey);
-                        dbData = localStorage.getItem(baseKey);
 
-                    case 19:
+                        if (!dbData) {
+                            console.log("not in firebase, loading db data from localstorage", baseKey);
+                            dbData = localStorage.getItem(baseKey);
+                        }
+
+                        // if there's no data, try to get the starter code from firebase
+
                         if (dbData) {
-                            _context2.next = 26;
+                            _context2.next = 22;
                             break;
                         }
 
-                        console.log("loading starter code db data from firebase");
+                        console.log("not in localstorage, loading starter code db data from firebase");
                         starterCodePath = "chs-" + window.item_id + "-starter";
-                        _context2.next = 24;
+                        _context2.next = 20;
                         return (0, _Firebase.getFromFirebase)(starterCodePath);
 
-                    case 24:
+                    case 20:
                         dbData = _context2.sent;
 
                         if (dbData) {
                             localStorage.setItem("loadFromFirebase", "true");
+                        } else {
+                            console.log('no starter code found in firebase');
                         }
 
-                    case 26:
+                    case 22:
                         return _context2.abrupt("return", dbData);
 
-                    case 27:
+                    case 23:
                     case "end":
                         return _context2.stop();
                 }

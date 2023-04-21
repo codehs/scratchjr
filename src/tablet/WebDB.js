@@ -161,21 +161,24 @@ async function getDBDataString() {
         parseInt(localStorage.getItem(baseKey + "-timestamp")) || 0;
     const firebaseTime =
         parseInt(await getFromFirebase(firebasePath + "/timestamp")) || 0;
-    if (firebaseTime > localTime) {
-        console.log("loading db data from firebase", firebasePath);
-        dbData = await getFromFirebase(firebasePath + "/db");
-    } else {
-        console.log("loading db data from localstorage", baseKey);
+    // try to load from firebase, then if there is no data there try from localstorage
+    console.log("loading db data from firebase", firebasePath);
+    dbData = await getFromFirebase(firebasePath + "/db");
+    
+    if (!dbData) {
+        console.log("not in firebase, loading db data from localstorage", baseKey);
         dbData = localStorage.getItem(baseKey);
     }
 
     // if there's no data, try to get the starter code from firebase
     if (!dbData) {
-        console.log("loading starter code db data from firebase");
+        console.log("not in localstorage, loading starter code db data from firebase");
         const starterCodePath = `chs-${window.item_id}-starter`;
         dbData = await getFromFirebase(starterCodePath);
         if (dbData) {
             localStorage.setItem("loadFromFirebase", "true");
+        } else {
+            console.log('no starter code found in firebase');
         }
     }
     return dbData;
