@@ -534,8 +534,11 @@ export default class UI {
 
     static needsScroll () {
         var sc = gn('spritecc');
+        var numSprites = sc.childElementCount;
         var p = sc.parentNode;
-        if (((sc.scrollHeight / p.offsetHeight) == 1) || (gn('spritecc').childElementCount == 0)) {
+        if (
+            (numSprites === 1) || ((sc.scrollHeight / p.offsetHeight) === 1) || (gn('spritecc').childElementCount === 0)
+        ) {
             gn('scrollbar').setAttribute('class', 'scrollbar off');
         } else {
             gn('scrollbar').setAttribute('class', 'scrollbar on');
