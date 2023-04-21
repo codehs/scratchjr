@@ -12,7 +12,7 @@ import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 // see https://github.com/sql-js/sql.js/#usage
 
 let db = null;
-let initCalled = false;
+let initPromise;
 
 window.getStringDB = getStringDB;
 
@@ -125,43 +125,60 @@ export function saveDB() {
 }
 
 export async function initDB() {
-    // early return in case of multiple calls
-    if (initCalled) return;
-    initCalled = true;
-    const SQL = await initSqlJs({
-        locateFile: () => sqlWasm,
-    });
-    // get saved data from localStorage, then initialize the database with it if it exists.
-    // otherwise, create a new database and initialize the tables and run migrations.
-    let savedData;
-    if (window.student_assignment_id) {
-        savedData = localStorage.getItem("sa-" + window.student_assignment_id);
-        console.log("loading from sa-" + window.student_assignment_id);
-        console.log(savedData);
-    } else {
-        savedData = localStorage.getItem("item-" + window.item_id);
-        console.log("loading from item-" + window.item_id);
-        console.log(savedData);
+    console.log("init");
+    // return existing promise if it exists
+    if (initPromise) {
+        return initPromise;
     }
-    // Check for firebase save data when we do that
-    if (!savedData) {
-        const firebaseKey = "chs-" + window.item_id + "-starter";
-        savedData = await getFromFirebase(firebaseKey);
-        if (savedData) {
-            console.log("loading from firebase " + firebaseKey);
-            localStorage.setItem("loadFromFirebase", "true");
+
+    // create a new promise that resolves with whether we should
+    // create a new project once it's initialized
+    initPromise = new Promise(async (resolve) => {
+        let shouldCreateNewProject = false;
+        const SQL = await initSqlJs({
+            locateFile: () => sqlWasm,
+        });
+
+        // get saved data from localStorage, then initialize the database with it if it exists.
+        // otherwise, create a new database and initialize the tables and run migrations.
+        let savedData;
+        if (window.student_assignment_id) {
+            savedData = localStorage.getItem(
+                "sa-" + window.student_assignment_id
+            );
+            console.log("loading from sa-" + window.student_assignment_id);
+            console.log(savedData);
+        } else {
+            savedData = localStorage.getItem("item-" + window.item_id);
+            console.log("loading from item-" + window.item_id);
+            console.log(savedData);
         }
-    }
-    if (savedData) {
-        const binaryData = UTF16StringToBinaryData(savedData);
-        db = new SQL.Database(binaryData);
-    } else {
-        db = new SQL.Database();
-        initTables();
-        runMigrations();
-    }
-    window.db = db;
-    return db;
+
+        // Check for firebase save data when we do that
+        if (!savedData) {
+            const firebaseKey = "chs-" + window.item_id + "-starter";
+            savedData = await getFromFirebase(firebaseKey);
+            if (savedData) {
+                console.log("loading from firebase " + firebaseKey);
+                localStorage.setItem("loadFromFirebase", "true");
+            }
+        }
+
+        if (savedData) {
+            const binaryData = UTF16StringToBinaryData(savedData);
+            db = new SQL.Database(binaryData);
+        } else {
+            db = new SQL.Database();
+            initTables();
+            runMigrations();
+            shouldCreateNewProject = true;
+        }
+
+        window.db = db;
+        resolve(shouldCreateNewProject);
+    });
+
+    return initPromise;
 }
 
 export async function executeQueryFromJSON(json) {
