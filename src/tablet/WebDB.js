@@ -12,7 +12,11 @@ import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 // see https://github.com/sql-js/sql.js/#usage
 
 let db = null;
-let initCalled = false;
+let initPromise;
+
+// data store locations
+let baseKey = null;
+let firebasePath = null;
 
 window.getStringDB = getStringDB;
 
@@ -32,6 +36,22 @@ function setStarterCode(id) {
     const stringData = binaryDataToUTF16String(binaryData);
     if (id) saveToFirebase("chs-" + id + "-starter", stringData);
     else saveToFirebase("chs-" + window.item_id + "-starter", stringData);
+}
+
+window.downloadDB = downloadDB;
+
+async function downloadDB() {
+    const filename = "scratchDB.sqlite";
+    const binaryData = db.export();
+    const blob = new Blob([binaryData], { type: "application/octet-stream" });
+    const response = new Response(blob, {
+        headers: {
+            "Content-Disposition": `attachment; filename="${filename}"`,
+        },
+    });
+    const url = URL.createObjectURL(await response.blob());
+    window.open(url, "_blank");
+    URL.revokeObjectURL(url);
 }
 
 // converts binary data (a Uint8Array, the data format sql.js exports to) to a UTF-16 string
@@ -100,9 +120,18 @@ export function saveDB() {
     console.log("savedb");
     if (db === null) return;
 
+    const binaryData = db.export();
+    const stringData = binaryDataToUTF16String(binaryData);
+    // early return if no changes were made to the db string
+    if (stringData === localStorage.getItem(baseKey)) {
+        console.log("no changes to save, skipping");
+        return;
+    } else {
+        console.log("changes detected, saving");
+    }
+
     // update the thumbnail for the current project in the database
     // NOTE: this assumes that we are only ever working with the first project in the sql db
-
     if (window.student_assignment_id) {
         getFirstProjectThumbnail(function (thumbnail) {
             setSAThumbnail(window.student_assignment_id, thumbnail);
@@ -113,55 +142,99 @@ export function saveDB() {
         });
     }
 
-    const binaryData = db.export();
-    const stringData = binaryDataToUTF16String(binaryData);
-    if (window.student_assignment_id) {
-        localStorage.setItem("sa-" + window.student_assignment_id, stringData);
-        console.log("saving to " + "sa-" + window.student_assignment_id);
-    } else {
-        localStorage.setItem("item-" + window.item_id, stringData);
-        console.log("saving to " + "item-" + window.item_id);
+    // save the db string to firebase
+    const timestamp = new Date().getTime();
+    localStorage.setItem(baseKey + "-timestamp", timestamp);
+    localStorage.setItem(baseKey, stringData);
+    saveToFirebase(firebasePath + "/timestamp", timestamp);
+    saveToFirebase(firebasePath + "/db", stringData);
+}
+
+async function getDBDataString() {
+    // determine the base key for the project
+    // all other  keys/paths are derived from this
+    let dbData = null;
+
+    // compare local and firebase timestamp,
+    // get the data from the place with the greater timestamp
+    const localTime =
+        parseInt(localStorage.getItem(baseKey + "-timestamp")) || 0;
+    const firebaseTime =
+        parseInt(await getFromFirebase(firebasePath + "/timestamp")) || 0;
+    // try to load from firebase, then if there is no data there try from localstorage
+    console.log("loading db data from firebase", firebasePath);
+    dbData = await getFromFirebase(firebasePath + "/db");
+
+    if (!dbData) {
+        console.log(
+            "not in firebase, loading db data from localstorage",
+            baseKey
+        );
+        dbData = localStorage.getItem(baseKey);
     }
+
+    // if there's no data, try to get the starter code from firebase
+    if (!dbData) {
+        console.log(
+            "not in localstorage, loading starter code db data from firebase"
+        );
+        const starterCodePath = `chs-${window.item_id}-starter`;
+        dbData = await getFromFirebase(starterCodePath);
+        if (dbData) {
+            localStorage.setItem("loadFromFirebase", "true");
+        } else {
+            console.log("no starter code found in firebase");
+        }
+    }
+    return dbData;
 }
 
 export async function initDB() {
-    // early return in case of multiple calls
-    if (initCalled) return;
-    initCalled = true;
-    const SQL = await initSqlJs({
-        locateFile: () => sqlWasm,
-    });
-    // get saved data from localStorage, then initialize the database with it if it exists.
-    // otherwise, create a new database and initialize the tables and run migrations.
-    let savedData;
-    if (window.student_assignment_id) {
-        savedData = localStorage.getItem("sa-" + window.student_assignment_id);
-        console.log("loading from sa-" + window.student_assignment_id);
-        console.log(savedData);
-    } else {
-        savedData = localStorage.getItem("item-" + window.item_id);
-        console.log("loading from item-" + window.item_id);
-        console.log(savedData);
+    console.log("init");
+    // return existing promise if it exists
+    if (initPromise) {
+        return initPromise;
     }
-    // Check for firebase save data when we do that
-    if (!savedData) {
-        const firebaseKey = "chs-" + window.item_id + "-starter";
-        savedData = await getFromFirebase(firebaseKey);
-        if (savedData) {
-            console.log("loading from firebase " + firebaseKey);
-            localStorage.setItem("loadFromFirebase", "true");
+
+    // create a new promise that resolves with whether we should
+    // create a new project once it's initialized
+    initPromise = new Promise(async (resolve) => {
+        let shouldCreateNewProject = false;
+        const SQL = await initSqlJs({
+            locateFile: () => sqlWasm,
+        });
+
+        // get saved data from localStorage, then initialize the database with it if it exists.
+        // otherwise, create a new database and initialize the tables and run migrations.
+        if (window.student_assignment_id) {
+            const id = window.student_assignment_id;
+            baseKey = "sa-" + id;
+        } else if (window.item_id) {
+            const id = window.item_id;
+            baseKey = "item-" + id;
+        } else if (window.scratchJrPage === "editor") {
+            alert("No IDs found. DB will not be loaded or saved.");
         }
-    }
-    if (savedData) {
-        const binaryData = UTF16StringToBinaryData(savedData);
-        db = new SQL.Database(binaryData);
-    } else {
-        db = new SQL.Database();
-        initTables();
-        runMigrations();
-    }
-    window.db = db;
-    return db;
+        firebasePath = "project-" + baseKey;
+
+        // get saved data from localStorage or firebase, then initialize the database with it if it
+        // exists. otherwise, create a new database and initialize the tables and run migrations.
+        const dbDataString = await getDBDataString();
+        if (dbDataString !== null) {
+            const binaryData = UTF16StringToBinaryData(dbDataString);
+            db = new SQL.Database(binaryData);
+        } else {
+            db = new SQL.Database();
+            initTables();
+            runMigrations();
+            shouldCreateNewProject = true;
+        }
+        window.db = db;
+        console.log("shouldCreateNewProject: ", shouldCreateNewProject);
+        resolve(shouldCreateNewProject);
+    });
+
+    return initPromise;
 }
 
 export async function executeQueryFromJSON(json) {
@@ -198,17 +271,31 @@ export async function saveToProjectFiles(fileMD5, content) {
      * @param {string} fileMD5
      * @param {string} content
      */
-    const json = {};
-    const keylist = ["md5", "contents"];
-    const values = "?,?";
-    json.values = [fileMD5, content];
-    json.stmt = `insert into projectfiles (${keylist.toString()}) values (${values})`;
-    var insertSQLResult = executeStatementFromJSON(json);
+    // query for the current file contents to see if they actually changed
+    let currentContents = "";
+    const queryResult = JSON.parse(
+        await executeQueryFromJSON({
+            stmt: `select contents from projectfiles where md5 = ?`,
+            values: [fileMD5],
+        })
+    );
+    if (
+        queryResult.length > 0 &&
+        queryResult[0].values.length > 0 &&
+        queryResult[0].values[0].length > 0
+    ) {
+        currentContents = queryResult[0].values[0][0];
+    }
 
-    // this.save(); // flush the database to disk.
-    saveDB();
+    // if the contents changed, update the db and save
+    if (content !== currentContents) {
+        await executeStatementFromJSON({
+            stmt: `insert or replace into projectfiles (md5, contents) values (?, ?)`,
+            values: [fileMD5, content],
+        });
 
-    return insertSQLResult >= 0;
+        saveDB();
+    }
 }
 
 // actually returns SHA-256

@@ -26,6 +26,7 @@ import {
     getUrlVars,
     CSSTransition3D,
     frame,
+    mTime
 } from "../utils/lib";
 
 let workingCanvas = document.createElement("canvas");
@@ -209,7 +210,7 @@ export default class ScratchJr {
             "sec",
             BlockSpecs.loadCount
         );
-        currentProject = urlvars.pmd5;
+        currentProject = "1";
         editmode = urlvars.mode;
         libInit();
         Project.init();
@@ -413,7 +414,7 @@ export default class ScratchJr {
                     {
                         name: newName,
                         version: version,
-                        mtime: new Date().getTime().toString(),
+                        mtime: mTime().toString(),
                     },
                     function (md5) {
                         // Save project data

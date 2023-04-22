@@ -22,7 +22,7 @@ import Localization from '../../utils/Localization';
 import ScratchAudio from '../../utils/ScratchAudio';
 import {frame, gn, CSSTransition, localx, newHTML, scaleMultiplier, fullscreenScaleMultiplier,
     getIdFor, isTablet, newDiv, newTextInput, isAndroid, getDocumentWidth, getDocumentHeight,
-    setProps, globalx} from '../../utils/lib';
+    setProps, globalx, mTime} from '../../utils/lib';
 
 let projectNameTextInput = null;
 let info = null;
@@ -348,7 +348,7 @@ export default class UI {
                 IO.createProject({
                     name: newName,
                     version: ScratchJr.version,
-                    mtime: (new Date()).getTime().toString()
+                    mtime: mTime().toString()
                 }, function (md5) {
                     Project.metadata.id = md5;
                     ScratchJr.currentProject = md5;
@@ -417,7 +417,7 @@ export default class UI {
         ScratchAudio.sndFX('entertap.wav');
         ScratchJr.stopStrips();
         if (!Project.metadata.ctime) {
-            Project.metadata.mtime = (new Date()).getTime();
+            Project.metadata.mtime = mTime();
             Project.metadata.ctime = UI.formatTime((new Date()).getTime());
         }
 

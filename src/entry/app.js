@@ -43,7 +43,9 @@ window.onload = async () => {
     if (!window.student_assignment_id)
         window.student_assignment_id = params.get("student_assignment_id", "");
 
-    await db.initDB();
+    console.log("waitin for db");
+    const shouldCreateNewProject = await db.initDB();
+    console.log("done waitin for db");
 
     // Load CSS and set root/entryFunction for all pages
     switch (page) {
@@ -83,7 +85,19 @@ window.onload = async () => {
             preprocessAndLoadCss("css", "css/editormodal.css");
             preprocessAndLoadCss("css", "css/librarymodal.css");
             preprocessAndLoadCss("css", "css/paintlook.css");
-            entryFunction = () => OS.waitForInterface(editorMain);
+            entryFunction = () =>
+                OS.waitForInterface(() => {
+                    if (shouldCreateNewProject) {
+                        var obj = {};
+                        obj.name =
+                            Localization.localize("NEW_PROJECT_PREFIX") +
+                            " " +
+                            1;
+                        obj.version = window.Settings.scratchJrVersion;
+                        obj.mtime = new Date().getTime().toString();
+                        IO.createProject(obj, editorMain);
+                    } else editorMain();
+                });
             break;
         case "gettingStarted":
             // Getting started video page
