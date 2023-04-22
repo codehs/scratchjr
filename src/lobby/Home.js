@@ -254,8 +254,7 @@ export default class Home {
                 params.append("item_id", window.item_id);
             }
 
-            const url =
-                "editor.html?pmd5=" + md5 + "&mode=edit&" + params.toString();
+            const url = "editor.html?mode=edit&" + params.toString();
             window.location.href = url;
         }
     }
@@ -289,8 +288,7 @@ export default class Home {
                 params.append("item_id", window.item_id);
             }
 
-            const url =
-                "editor.html?pmd5=" + md5 + "&mode=edit&" + params.toString();
+            const url = "editor.html?mode=edit&" + params.toString();
             window.location.href = url;
         }
     }

@@ -99,9 +99,7 @@ export default class Samples {
         }
 
         const url =
-            "editor.html?pmd5=" +
-            md5 +
-            "&mode=" +
+            "editor.html?mode=" +
             (window.Settings.useStoryStarters ? "storyStarter" : "look") +
             "&" +
             params.toString();

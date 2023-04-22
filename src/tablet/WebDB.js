@@ -29,13 +29,27 @@ function getStringDB() {
 
 window.setStarterCode = setStarterCode;
 
-// key should be the project key in firebase
-// either project-sa-<studentAssignmentID> or project-item-<itemID>
+// this stupid path name is because firebase shows the entire
+// string if it's a top level item, which slows down the browser
+// like crazy for the long db strings
 function setStarterCode(id) {
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
-    if (id) saveToFirebase("chs-" + id + "-starter", stringData);
-    else saveToFirebase("chs-" + window.item_id + "-starter", stringData);
+    if (id)
+        saveToFirebase(
+            "starter/chs-" + id + "-starter/chs-" + id + "-starter",
+            stringData
+        );
+    else
+        saveToFirebase(
+            "starter/chs-" +
+                window.item_id +
+                "-starter" +
+                "/chs-" +
+                window.item_id +
+                "-starter",
+            stringData
+        );
 }
 
 window.downloadDB = downloadDB;
@@ -178,7 +192,7 @@ async function getDBDataString() {
         console.log(
             "not in localstorage, loading starter code db data from firebase"
         );
-        const starterCodePath = `chs-${window.item_id}-starter`;
+        const starterCodePath = `starter/chs-${window.item_id}-starter/chs-${window.item_id}-starter`;
         dbData = await getFromFirebase(starterCodePath);
         if (dbData) {
             localStorage.setItem("loadFromFirebase", "true");
