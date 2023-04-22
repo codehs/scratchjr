@@ -146,8 +146,9 @@ export function saveDB() {
     const timestamp = new Date().getTime();
     localStorage.setItem(baseKey + "-timestamp", timestamp);
     localStorage.setItem(baseKey, stringData);
-    saveToFirebase(firebasePath + "/timestamp", timestamp);
-    saveToFirebase(firebasePath + "/db", stringData);
+    // TODO: revert disabling firebase!
+    // saveToFirebase(firebasePath + "/timestamp", timestamp);
+    // saveToFirebase(firebasePath + "/db", stringData);
 }
 
 async function getDBDataString() {
@@ -159,33 +160,36 @@ async function getDBDataString() {
     // get the data from the place with the greater timestamp
     const localTime =
         parseInt(localStorage.getItem(baseKey + "-timestamp")) || 0;
-    const firebaseTime =
-        parseInt(await getFromFirebase(firebasePath + "/timestamp")) || 0;
+
+    // TODO: revert disabling firebase!
+    // const firebaseTime =
+    //     parseInt(await getFromFirebase(firebasePath + "/timestamp")) || 0;
     // try to load from firebase, then if there is no data there try from localstorage
-    console.log("loading db data from firebase", firebasePath);
-    dbData = await getFromFirebase(firebasePath + "/db");
+    // console.log("loading db data from firebase", firebasePath);
+    // dbData = await getFromFirebase(firebasePath + "/db");
 
     if (!dbData) {
         console.log(
-            "not in firebase, loading db data from localstorage",
+            "loading db data from localstorage",
             baseKey
         );
         dbData = localStorage.getItem(baseKey);
     }
 
+    // TODO: revert disabling firebase!
     // if there's no data, try to get the starter code from firebase
-    if (!dbData) {
-        console.log(
-            "not in localstorage, loading starter code db data from firebase"
-        );
-        const starterCodePath = `chs-${window.item_id}-starter`;
-        dbData = await getFromFirebase(starterCodePath);
-        if (dbData) {
-            localStorage.setItem("loadFromFirebase", "true");
-        } else {
-            console.log("no starter code found in firebase");
-        }
-    }
+    // if (!dbData) {
+    //     console.log(
+    //         "not in localstorage, loading starter code db data from firebase"
+    //     );
+    //     const starterCodePath = `chs-${window.item_id}-starter`;
+    //     dbData = await getFromFirebase(starterCodePath);
+    //     if (dbData) {
+    //         localStorage.setItem("loadFromFirebase", "true");
+    //     } else {
+    //         console.log("no starter code found in firebase");
+    //     }
+    // }
     return dbData;
 }
 

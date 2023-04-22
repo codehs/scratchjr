@@ -87438,7 +87438,7 @@ var downloadDB = function () {
 
 var getDBDataString = function () {
     var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-        var dbData, localTime, firebaseTime, starterCodePath;
+        var dbData, localTime;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
                 switch (_context2.prev = _context2.next) {
@@ -87451,63 +87451,36 @@ var getDBDataString = function () {
                         // get the data from the place with the greater timestamp
 
                         localTime = parseInt(localStorage.getItem(baseKey + "-timestamp")) || 0;
-                        _context2.t1 = parseInt;
-                        _context2.next = 5;
-                        return (0, _Firebase.getFromFirebase)(firebasePath + "/timestamp");
 
-                    case 5:
-                        _context2.t2 = _context2.sent;
-                        _context2.t0 = (0, _context2.t1)(_context2.t2);
-
-                        if (_context2.t0) {
-                            _context2.next = 9;
-                            break;
-                        }
-
-                        _context2.t0 = 0;
-
-                    case 9:
-                        firebaseTime = _context2.t0;
-
+                        // TODO: revert disabling firebase!
+                        // const firebaseTime =
+                        //     parseInt(await getFromFirebase(firebasePath + "/timestamp")) || 0;
                         // try to load from firebase, then if there is no data there try from localstorage
-                        console.log("loading db data from firebase", firebasePath);
-                        _context2.next = 13;
-                        return (0, _Firebase.getFromFirebase)(firebasePath + "/db");
-
-                    case 13:
-                        dbData = _context2.sent;
-
+                        // console.log("loading db data from firebase", firebasePath);
+                        // dbData = await getFromFirebase(firebasePath + "/db");
 
                         if (!dbData) {
-                            console.log("not in firebase, loading db data from localstorage", baseKey);
+                            console.log("loading db data from localstorage", baseKey);
                             dbData = localStorage.getItem(baseKey);
                         }
 
+                        // TODO: revert disabling firebase!
                         // if there's no data, try to get the starter code from firebase
-
-                        if (dbData) {
-                            _context2.next = 22;
-                            break;
-                        }
-
-                        console.log("not in localstorage, loading starter code db data from firebase");
-                        starterCodePath = "chs-" + window.item_id + "-starter";
-                        _context2.next = 20;
-                        return (0, _Firebase.getFromFirebase)(starterCodePath);
-
-                    case 20:
-                        dbData = _context2.sent;
-
-                        if (dbData) {
-                            localStorage.setItem("loadFromFirebase", "true");
-                        } else {
-                            console.log("no starter code found in firebase");
-                        }
-
-                    case 22:
+                        // if (!dbData) {
+                        //     console.log(
+                        //         "not in localstorage, loading starter code db data from firebase"
+                        //     );
+                        //     const starterCodePath = `chs-${window.item_id}-starter`;
+                        //     dbData = await getFromFirebase(starterCodePath);
+                        //     if (dbData) {
+                        //         localStorage.setItem("loadFromFirebase", "true");
+                        //     } else {
+                        //         console.log("no starter code found in firebase");
+                        //     }
+                        // }
                         return _context2.abrupt("return", dbData);
 
-                    case 23:
+                    case 4:
                     case "end":
                         return _context2.stop();
                 }
@@ -87982,8 +87955,9 @@ function saveDB() {
     var timestamp = new Date().getTime();
     localStorage.setItem(baseKey + "-timestamp", timestamp);
     localStorage.setItem(baseKey, stringData);
-    (0, _Firebase.saveToFirebase)(firebasePath + "/timestamp", timestamp);
-    (0, _Firebase.saveToFirebase)(firebasePath + "/db", stringData);
+    // TODO: revert disabling firebase!
+    // saveToFirebase(firebasePath + "/timestamp", timestamp);
+    // saveToFirebase(firebasePath + "/db", stringData);
 }
 
 /***/ }),
