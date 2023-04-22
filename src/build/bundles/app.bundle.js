@@ -59804,7 +59804,7 @@ var ScratchJr = function () {
             _Project2.default.loadIcon = document.createElement("img");
             _Project2.default.loadIcon.src = "assets/loading.png";
             ScratchJr.log("blocks init", ScratchJr.getTime(), "sec", _BlockSpecs2.default.loadCount);
-            currentProject = urlvars.pmd5;
+            currentProject = "1";
             editmode = urlvars.mode;
             (0, _lib.libInit)();
             _Project2.default.init();
@@ -73731,7 +73731,7 @@ function loadSettings(settingsRoot, whenDone) {
 
 // App-wide entry-point
 window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var entryFunction, root, page, params;
+    var entryFunction, root, page, params, shouldCreateNewProject;
     return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
             switch (_context.prev = _context.next) {
@@ -73754,15 +73754,21 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                     if (!window.item_id) window.item_id = params.get("item_id", "");
                     if (!window.student_assignment_id) window.student_assignment_id = params.get("student_assignment_id", "");
 
-                    _context.next = 8;
+                    console.log("waitin for db");
+                    _context.next = 9;
                     return db.initDB();
 
-                case 8:
+                case 9:
+                    shouldCreateNewProject = _context.sent;
+
+                    console.log("done waitin for db");
+
+                    // Load CSS and set root/entryFunction for all pages
                     _context.t0 = page;
-                    _context.next = _context.t0 === "index" ? 11 : _context.t0 === "home" ? 18 : _context.t0 === "editor" ? 24 : _context.t0 === "gettingStarted" ? 34 : _context.t0 === "inappAbout" ? 39 : _context.t0 === "inappInterfaceGuide" ? 43 : _context.t0 === "inappPaintEditorGuide" ? 48 : _context.t0 === "inappBlocksGuide" ? 53 : _context.t0 === "inappPrivacyPolicy" ? 58 : 63;
+                    _context.next = _context.t0 === "index" ? 14 : _context.t0 === "home" ? 21 : _context.t0 === "editor" ? 27 : _context.t0 === "gettingStarted" ? 37 : _context.t0 === "inappAbout" ? 42 : _context.t0 === "inappInterfaceGuide" ? 46 : _context.t0 === "inappPaintEditorGuide" ? 51 : _context.t0 === "inappBlocksGuide" ? 56 : _context.t0 === "inappPrivacyPolicy" ? 61 : 66;
                     break;
 
-                case 11:
+                case 14:
                     // Index page (splash screen)
                     (0, _lib.preprocessAndLoadCss)("css", "css/font.css");
                     (0, _lib.preprocessAndLoadCss)("css", "css/base.css");
@@ -73776,9 +73782,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                             _OS2.default.registerLibraryAssets(_MediaLib2.default.version, assets, _index.indexMain);
                         });
                     };
-                    return _context.abrupt("break", 63);
+                    return _context.abrupt("break", 66);
 
-                case 18:
+                case 21:
                     // Lobby pages
                     (0, _lib.preprocessAndLoadCss)("css", "css/font.css");
                     (0, _lib.preprocessAndLoadCss)("css", "css/base.css");
@@ -73787,9 +73793,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                     entryFunction = function entryFunction() {
                         return _OS2.default.waitForInterface(_home.homeMain);
                     };
-                    return _context.abrupt("break", 63);
+                    return _context.abrupt("break", 66);
 
-                case 24:
+                case 27:
                     // Editor pages
                     (0, _lib.preprocessAndLoadCss)("css", "css/font.css");
                     (0, _lib.preprocessAndLoadCss)("css", "css/base.css");
@@ -73800,11 +73806,19 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                     (0, _lib.preprocessAndLoadCss)("css", "css/librarymodal.css");
                     (0, _lib.preprocessAndLoadCss)("css", "css/paintlook.css");
                     entryFunction = function entryFunction() {
-                        return _OS2.default.waitForInterface(_editor.editorMain);
+                        return _OS2.default.waitForInterface(function () {
+                            if (shouldCreateNewProject) {
+                                var obj = {};
+                                obj.name = _Localization2.default.localize("NEW_PROJECT_PREFIX") + " " + 1;
+                                obj.version = window.Settings.scratchJrVersion;
+                                obj.mtime = new Date().getTime().toString();
+                                _IO2.default.createProject(obj, _editor.editorMain);
+                            } else (0, _editor.editorMain)();
+                        });
                     };
-                    return _context.abrupt("break", 63);
+                    return _context.abrupt("break", 66);
 
-                case 34:
+                case 37:
                     // Getting started video page
                     (0, _lib.preprocessAndLoadCss)("css", "css/font.css");
                     (0, _lib.preprocessAndLoadCss)("css", "css/base.css");
@@ -73812,18 +73826,18 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                     entryFunction = function entryFunction() {
                         return _OS2.default.waitForInterface(_gettingstarted.gettingStartedMain);
                     };
-                    return _context.abrupt("break", 63);
+                    return _context.abrupt("break", 66);
 
-                case 39:
+                case 42:
                     // About ScratchJr in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/about.css");
                     entryFunction = function entryFunction() {
                         return (0, _inapp.inappAbout)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 63);
+                    return _context.abrupt("break", 66);
 
-                case 43:
+                case 46:
                     // Interface guide in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/style.css");
                     (0, _lib.preprocessAndLoadCss)("style", "style/interface.css");
@@ -73831,9 +73845,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         return (0, _inapp.inappInterfaceGuide)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 63);
+                    return _context.abrupt("break", 66);
 
-                case 48:
+                case 51:
                     // Paint editor guide in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/style.css");
                     (0, _lib.preprocessAndLoadCss)("style", "style/paint.css");
@@ -73841,9 +73855,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         return (0, _inapp.inappPaintEditorGuide)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 63);
+                    return _context.abrupt("break", 66);
 
-                case 53:
+                case 56:
                     // Blocks guide in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/style.css");
                     (0, _lib.preprocessAndLoadCss)("style", "style/blocks.css");
@@ -73851,9 +73865,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         return (0, _inapp.inappBlocksGuide)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 63);
+                    return _context.abrupt("break", 66);
 
-                case 58:
+                case 61:
                     // Blocks guide in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/style.css");
                     (0, _lib.preprocessAndLoadCss)("style", "style/privacy.css");
@@ -73861,9 +73875,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         return (0, _inapp.inappPrivacyPolicy)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 63);
+                    return _context.abrupt("break", 66);
 
-                case 63:
+                case 66:
 
                     // Start up sequence
                     // Load settings from JSON
@@ -73879,7 +73893,7 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         _InitialOptions2.default.initWithSettings(window.Settings.initialOptions);
                     });
 
-                case 64:
+                case 67:
                 case "end":
                     return _context.stop();
             }
@@ -75148,6 +75162,7 @@ var Home = function () {
         key: "init",
         value: function init() {
             version = _Lobby2.default.version;
+            Home.gotoEditor(1);
             // frame = gn("htmlcontents");
             // var inner = newHTML("div", "inner", frame);
             // var div = newHTML("div", "scrollarea", inner);
@@ -75156,31 +75171,45 @@ var Home = function () {
             // frame.ontouchend = Home.handleTouchEnd;
             // frame.onmousedown = Home.handleTouchStart;
             // frame.onmouseup = Home.handleTouchEnd;
-            if (localStorage.getItem("loadFromFirebase")) {
-                Home.gotoEditor(1);
-            } else {
-                if (window.student_assignment_id) {
-                    if (!localStorage.getItem("sa-" + window.student_assignment_id + "-initialized")) {
-                        localStorage.setItem("sa-" + window.student_assignment_id + "-initialized", "true");
-                        console.log("creating new project (SA)");
-                        Home.createNewProject();
-                    } else {
-                        //get the only project
-                        console.log("project found (SA)");
-                        Home.gotoEditor(1);
-                    }
-                } else {
-                    if (!localStorage.getItem("item-" + window.item_id + "-initialized")) {
-                        localStorage.setItem("item-" + window.item_id + "-initialized", "true");
-                        console.log("creating new project (item)");
-                        Home.createNewProject();
-                    } else {
-                        console.log("project found (item)");
-                        //get the only project
-                        Home.gotoEditor(1);
-                    }
-                }
-            }
+            // if (localStorage.getItem("loadFromFirebase")) {
+            //     Home.gotoEditor(1);
+            // } else {
+            //     if (window.student_assignment_id) {
+            //         if (
+            //             !localStorage.getItem(
+            //                 "sa-" + window.student_assignment_id + "-initialized"
+            //             )
+            //         ) {
+            //             localStorage.setItem(
+            //                 "sa-" + window.student_assignment_id + "-initialized",
+            //                 "true"
+            //             );
+            //             console.log("creating new project (SA)");
+            //             Home.createNewProject();
+            //         } else {
+            //             //get the only project
+            //             console.log("project found (SA)");
+            //             Home.gotoEditor(1);
+            //         }
+            //     } else {
+            //         if (
+            //             !localStorage.getItem(
+            //                 "item-" + window.item_id + "-initialized"
+            //             )
+            //         ) {
+            //             localStorage.setItem(
+            //                 "item-" + window.item_id + "-initialized",
+            //                 "true"
+            //             );
+            //             console.log("creating new project (item)");
+            //             Home.createNewProject();
+            //         } else {
+            //             console.log("project found (item)");
+            //             //get the only project
+            //             Home.gotoEditor(1);
+            //         }
+            //     }
+            // }
             // Home.displayYourProjects();
         }
 
@@ -86442,8 +86471,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _lib = __webpack_require__(/*! ../utils/lib */ "./src/utils/lib.js");
@@ -86513,12 +86540,16 @@ var OS = function () {
                 fcn();
                 return;
             }
-            if (!_lib.isWeb && (_lib.isAndroid && typeof AndroidInterface === "undefined" || _lib.isiOS && _typeof(window.tablet) !== "object")) {
-                // interface not loaded - come back in 100ms
-                setTimeout(function () {
-                    OS.waitForInterface(fcn);
-                }, 100);
-            }
+            // if (
+            //     (!isWeb) &&
+            //     ((isAndroid && typeof AndroidInterface === "undefined") ||
+            //     (isiOS && typeof window.tablet !== "object"))
+            // ) {
+            //     // interface not loaded - come back in 100ms
+            //     setTimeout(function () {
+            //         OS.waitForInterface(fcn);
+            //     }, 100);
+            // }
 
             // tabletInterface = isiOS ? iOS : Android;
             tabletInterface = _Web2.default;
@@ -87470,7 +87501,7 @@ var getDBDataString = function () {
                         if (dbData) {
                             localStorage.setItem("loadFromFirebase", "true");
                         } else {
-                            console.log('no starter code found in firebase');
+                            console.log("no starter code found in firebase");
                         }
 
                     case 22:
@@ -87490,98 +87521,98 @@ var getDBDataString = function () {
 }();
 
 var initDB = exports.initDB = function () {
-    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-        var SQL, id, _id, dbDataString, binaryData;
+    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+        var _this = this;
 
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
-            while (1) {
-                switch (_context3.prev = _context3.next) {
-                    case 0:
-                        if (!initCalled) {
-                            _context3.next = 2;
-                            break;
-                        }
-
-                        return _context3.abrupt("return");
-
-                    case 2:
-                        initCalled = true;
-                        _context3.next = 5;
-                        return (0, _sql2.default)({
-                            locateFile: function locateFile() {
-                                return _sqlWasm2.default;
-                            }
-                        });
-
-                    case 5:
-                        SQL = _context3.sent;
-
-                        if (window.student_assignment_id) {
-                            id = window.student_assignment_id;
-
-                            baseKey = "sa-" + id;
-                        } else if (window.item_id) {
-                            _id = window.item_id;
-
-                            baseKey = "item-" + _id;
-                        } else if (window.scratchJrPage === "editor") {
-                            alert("No IDs found. DB will not be loaded or saved.");
-                        }
-                        firebasePath = "project-" + baseKey;
-
-                        // get saved data from localStorage or firebase, then initialize the database with it if it
-                        // exists. otherwise, create a new database and initialize the tables and run migrations.
-                        _context3.next = 10;
-                        return getDBDataString();
-
-                    case 10:
-                        dbDataString = _context3.sent;
-
-                        if (dbDataString !== null) {
-                            binaryData = UTF16StringToBinaryData(dbDataString);
-
-                            db = new SQL.Database(binaryData);
-                        } else {
-                            db = new SQL.Database();
-                            initTables();
-                            runMigrations();
-                        }
-                        window.db = db;
-                        return _context3.abrupt("return", db);
-
-                    case 14:
-                    case "end":
-                        return _context3.stop();
-                }
-            }
-        }, _callee3, this);
-    }));
-
-    return function initDB() {
-        return _ref3.apply(this, arguments);
-    };
-}();
-
-var executeQueryFromJSON = exports.executeQueryFromJSON = function () {
-    var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(json) {
-        var stmt, values;
         return regeneratorRuntime.wrap(function _callee4$(_context4) {
             while (1) {
                 switch (_context4.prev = _context4.next) {
                     case 0:
-                        if (!(db === null)) {
+                        console.log("init");
+                        // return existing promise if it exists
+
+                        if (!initPromise) {
                             _context4.next = 3;
                             break;
                         }
 
-                        _context4.next = 3;
-                        return initDB();
+                        return _context4.abrupt("return", initPromise);
 
                     case 3:
 
-                        // see Web interface, query()
-                        stmt = json.stmt, values = json.values;
-                        return _context4.abrupt("return", JSON.stringify(db.exec(stmt, values)));
+                        // create a new promise that resolves with whether we should
+                        // create a new project once it's initialized
+                        initPromise = new Promise(function () {
+                            var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(resolve) {
+                                var shouldCreateNewProject, SQL, id, _id, dbDataString, binaryData;
+
+                                return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                                    while (1) {
+                                        switch (_context3.prev = _context3.next) {
+                                            case 0:
+                                                shouldCreateNewProject = false;
+                                                _context3.next = 3;
+                                                return (0, _sql2.default)({
+                                                    locateFile: function locateFile() {
+                                                        return _sqlWasm2.default;
+                                                    }
+                                                });
+
+                                            case 3:
+                                                SQL = _context3.sent;
+
+
+                                                // get saved data from localStorage, then initialize the database with it if it exists.
+                                                // otherwise, create a new database and initialize the tables and run migrations.
+                                                if (window.student_assignment_id) {
+                                                    id = window.student_assignment_id;
+
+                                                    baseKey = "sa-" + id;
+                                                } else if (window.item_id) {
+                                                    _id = window.item_id;
+
+                                                    baseKey = "item-" + _id;
+                                                } else if (window.scratchJrPage === "editor") {
+                                                    alert("No IDs found. DB will not be loaded or saved.");
+                                                }
+                                                firebasePath = "project-" + baseKey;
+
+                                                // get saved data from localStorage or firebase, then initialize the database with it if it
+                                                // exists. otherwise, create a new database and initialize the tables and run migrations.
+                                                _context3.next = 8;
+                                                return getDBDataString();
+
+                                            case 8:
+                                                dbDataString = _context3.sent;
+
+                                                if (dbDataString !== null) {
+                                                    binaryData = UTF16StringToBinaryData(dbDataString);
+
+                                                    db = new SQL.Database(binaryData);
+                                                } else {
+                                                    db = new SQL.Database();
+                                                    initTables();
+                                                    runMigrations();
+                                                    shouldCreateNewProject = true;
+                                                }
+                                                window.db = db;
+                                                console.log("shouldCreateNewProject: ", shouldCreateNewProject);
+                                                resolve(shouldCreateNewProject);
+
+                                            case 13:
+                                            case "end":
+                                                return _context3.stop();
+                                        }
+                                    }
+                                }, _callee3, _this);
+                            }));
+
+                            return function (_x) {
+                                return _ref4.apply(this, arguments);
+                            };
+                        }());
+
+                        return _context4.abrupt("return", initPromise);
 
                     case 5:
                     case "end":
@@ -87591,17 +87622,14 @@ var executeQueryFromJSON = exports.executeQueryFromJSON = function () {
         }, _callee4, this);
     }));
 
-    return function executeQueryFromJSON(_x) {
-        return _ref4.apply(this, arguments);
+    return function initDB() {
+        return _ref3.apply(this, arguments);
     };
 }();
 
-// see https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L898
-
-
-var executeStatementFromJSON = exports.executeStatementFromJSON = function () {
+var executeQueryFromJSON = exports.executeQueryFromJSON = function () {
     var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(json) {
-        var stmt, values, statement, result, lastRowId;
+        var stmt, values;
         return regeneratorRuntime.wrap(function _callee5$(_context5) {
             while (1) {
                 switch (_context5.prev = _context5.next) {
@@ -87615,6 +87643,43 @@ var executeStatementFromJSON = exports.executeStatementFromJSON = function () {
                         return initDB();
 
                     case 3:
+
+                        // see Web interface, query()
+                        stmt = json.stmt, values = json.values;
+                        return _context5.abrupt("return", JSON.stringify(db.exec(stmt, values)));
+
+                    case 5:
+                    case "end":
+                        return _context5.stop();
+                }
+            }
+        }, _callee5, this);
+    }));
+
+    return function executeQueryFromJSON(_x2) {
+        return _ref5.apply(this, arguments);
+    };
+}();
+
+// see https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L898
+
+
+var executeStatementFromJSON = exports.executeStatementFromJSON = function () {
+    var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(json) {
+        var stmt, values, statement, result, lastRowId;
+        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+            while (1) {
+                switch (_context6.prev = _context6.next) {
+                    case 0:
+                        if (!(db === null)) {
+                            _context6.next = 3;
+                            break;
+                        }
+
+                        _context6.next = 3;
+                        return initDB();
+
+                    case 3:
                         // see Web interface, stmt()
                         stmt = json.stmt, values = json.values;
                         statement = db.prepare(stmt, values);
@@ -87623,18 +87688,18 @@ var executeStatementFromJSON = exports.executeStatementFromJSON = function () {
                             statement.get();
                         }result = db.exec("select last_insert_rowid();");
                         lastRowId = result[0].values[0][0];
-                        return _context5.abrupt("return", lastRowId);
+                        return _context6.abrupt("return", lastRowId);
 
                     case 9:
                     case "end":
-                        return _context5.stop();
+                        return _context6.stop();
                 }
             }
-        }, _callee5, this);
+        }, _callee6, this);
     }));
 
-    return function executeStatementFromJSON(_x2) {
-        return _ref5.apply(this, arguments);
+    return function executeStatementFromJSON(_x3) {
+        return _ref6.apply(this, arguments);
     };
 }();
 
@@ -87642,11 +87707,11 @@ var executeStatementFromJSON = exports.executeStatementFromJSON = function () {
 
 
 var saveToProjectFiles = exports.saveToProjectFiles = function () {
-    var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(fileMD5, content) {
+    var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(fileMD5, content) {
         var currentContents, queryResult;
-        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+        return regeneratorRuntime.wrap(function _callee7$(_context7) {
             while (1) {
-                switch (_context6.prev = _context6.next) {
+                switch (_context7.prev = _context7.next) {
                     case 0:
                         /**
                          * Function to save project content to local storage
@@ -87662,16 +87727,16 @@ var saveToProjectFiles = exports.saveToProjectFiles = function () {
                          */
                         // query for the current file contents to see if they actually changed
                         currentContents = "";
-                        _context6.t0 = JSON;
-                        _context6.next = 4;
+                        _context7.t0 = JSON;
+                        _context7.next = 4;
                         return executeQueryFromJSON({
                             stmt: "select contents from projectfiles where md5 = ?",
                             values: [fileMD5]
                         });
 
                     case 4:
-                        _context6.t1 = _context6.sent;
-                        queryResult = _context6.t0.parse.call(_context6.t0, _context6.t1);
+                        _context7.t1 = _context7.sent;
+                        queryResult = _context7.t0.parse.call(_context7.t0, _context7.t1);
 
                         if (queryResult.length > 0 && queryResult[0].values.length > 0 && queryResult[0].values[0].length > 0) {
                             currentContents = queryResult[0].values[0][0];
@@ -87680,11 +87745,11 @@ var saveToProjectFiles = exports.saveToProjectFiles = function () {
                         // if the contents changed, update the db and save
 
                         if (!(content !== currentContents)) {
-                            _context6.next = 11;
+                            _context7.next = 11;
                             break;
                         }
 
-                        _context6.next = 10;
+                        _context7.next = 10;
                         return executeStatementFromJSON({
                             stmt: "insert or replace into projectfiles (md5, contents) values (?, ?)",
                             values: [fileMD5, content]
@@ -87696,14 +87761,14 @@ var saveToProjectFiles = exports.saveToProjectFiles = function () {
 
                     case 11:
                     case "end":
-                        return _context6.stop();
+                        return _context7.stop();
                 }
             }
-        }, _callee6, this);
+        }, _callee7, this);
     }));
 
-    return function saveToProjectFiles(_x3, _x4) {
-        return _ref6.apply(this, arguments);
+    return function saveToProjectFiles(_x4, _x5) {
+        return _ref7.apply(this, arguments);
     };
 }();
 
@@ -87711,15 +87776,15 @@ var saveToProjectFiles = exports.saveToProjectFiles = function () {
 
 
 var getMD5 = exports.getMD5 = function () {
-    var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(data) {
+    var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(data) {
         var utf8;
-        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+        return regeneratorRuntime.wrap(function _callee8$(_context8) {
             while (1) {
-                switch (_context7.prev = _context7.next) {
+                switch (_context8.prev = _context8.next) {
                     case 0:
                         // return crypto.createHash('md5').update(data).digest('hex');
                         utf8 = new TextEncoder().encode(data);
-                        return _context7.abrupt("return", crypto.subtle.digest("SHA-256", utf8).then(function (hashBuffer) {
+                        return _context8.abrupt("return", crypto.subtle.digest("SHA-256", utf8).then(function (hashBuffer) {
                             var hashArray = Array.from(new Uint8Array(hashBuffer));
                             var hashHex = hashArray.map(function (bytes) {
                                 return bytes.toString(16).padStart(2, "0");
@@ -87729,14 +87794,14 @@ var getMD5 = exports.getMD5 = function () {
 
                     case 2:
                     case "end":
-                        return _context7.stop();
+                        return _context8.stop();
                 }
             }
-        }, _callee7, this);
+        }, _callee8, this);
     }));
 
-    return function getMD5(_x5) {
-        return _ref7.apply(this, arguments);
+    return function getMD5(_x6) {
+        return _ref8.apply(this, arguments);
     };
 }();
 
@@ -87744,11 +87809,11 @@ var getMD5 = exports.getMD5 = function () {
 
 
 var readProjectFile = exports.readProjectFile = function () {
-    var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(fileMD5) {
+    var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(fileMD5) {
         var json, table, rows;
-        return regeneratorRuntime.wrap(function _callee8$(_context8) {
+        return regeneratorRuntime.wrap(function _callee9$(_context9) {
             while (1) {
-                switch (_context8.prev = _context8.next) {
+                switch (_context9.prev = _context9.next) {
                     case 0:
                         json = {};
 
@@ -87760,34 +87825,34 @@ var readProjectFile = exports.readProjectFile = function () {
 
                         json.stmt = "select " + json.items + " from " + table + " where " + json.cond + (json.order ? " order by " + json.order : "");
 
-                        _context8.next = 8;
+                        _context9.next = 8;
                         return executeQueryFromJSON(json);
 
                     case 8:
-                        rows = _context8.sent;
+                        rows = _context9.sent;
 
                         rows = JSON.parse(rows);
 
                         if (!(rows.length > 0)) {
-                            _context8.next = 12;
+                            _context9.next = 12;
                             break;
                         }
 
-                        return _context8.abrupt("return", rows[0]["values"][0][0]);
+                        return _context9.abrupt("return", rows[0]["values"][0][0]);
 
                     case 12:
-                        return _context8.abrupt("return", null);
+                        return _context9.abrupt("return", null);
 
                     case 13:
                     case "end":
-                        return _context8.stop();
+                        return _context9.stop();
                 }
             }
-        }, _callee8, this);
+        }, _callee9, this);
     }));
 
-    return function readProjectFile(_x6) {
-        return _ref8.apply(this, arguments);
+    return function readProjectFile(_x7) {
+        return _ref9.apply(this, arguments);
     };
 }();
 
@@ -87813,7 +87878,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 // see https://github.com/sql-js/sql.js/#usage
 
 var db = null;
-var initCalled = false;
+var initPromise = void 0;
 
 // data store locations
 var baseKey = null;
