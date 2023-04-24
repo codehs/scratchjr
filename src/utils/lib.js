@@ -237,6 +237,7 @@ export function setCanvasSize(c, w, h) {
 }
 
 export function setCanvasSizeScaledToWindowDocumentHeight(c, w, h) {
+    var scaleMultiplier = window.innerHeight / 768.0;
     var multiplier = window.devicePixelRatio * scaleMultiplier;
     var scaledWidth = Math.floor(w * multiplier);
     var scaledHeight = Math.floor(h * multiplier);

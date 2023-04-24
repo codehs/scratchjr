@@ -13,7 +13,7 @@ import Matrix from '../../geom/Matrix';
 import Vector from '../../geom/Vector';
 import {newHTML, newDiv, gn,
     setCanvasSizeScaledToWindowDocumentHeight,
-    DEGTOR, getIdFor, setProps, preprocessAndLoadCss} from '../../utils/lib';
+    DEGTOR, getIdFor, setProps, preprocessAndLoadCss, setCanvasSize, getDocumentHeight, frame} from '../../utils/lib';
 
 var windowHeight = window.innerHeight;
 var windowWidth = window.innerWidth;
@@ -29,6 +29,22 @@ window.addEventListener('resize', function (event){
     preprocessAndLoadCss("css", "css/paintlook.css");
     let scaleMultiplier = window.innerHeight  / 768.0;
     ScratchJr.stage.setStageScaleAndPosition(scaleMultiplier, 46, 74);
+    let scriptsElem = gn('scripts');
+    let dc = gn('scriptscontainer');
+    let h = Math.max(getDocumentHeight(), frame.offsetHeight);
+    setCanvasSize(scriptsElem, scriptsElem.offsetWidth, h - scriptsElem.offsetTop);
+    setCanvasSize(dc, scriptsElem.offsetWidth, h - scriptsElem.offsetTop);
+
+    // Page.updateThumb(null);
+    // ScratchJr.stage.currentPage.updateThumb(null);
+    // var dc = gn('scriptscontainer');
+    // // var sc = gn('look');
+    // var scripts = document.getElementsByClassName('look');
+    // for (var i = 0; i < scripts.length; i++) {
+    //     setCanvasSize(scripts[i], dc.offsetWidth, dc.offsetHeight);
+    // }
+
+
     // let prevArea =  windowHeight * windowWidth;
     // let newArea = window.innerHeight * window.innerWidth;
     // let deviation = Math.abs(newArea - prevArea) / prevArea;      
@@ -271,6 +287,7 @@ export default class Page {
         tb.owner = this.id;
         tb.type = 'pagethumb';
         var container = newHTML('div', 'pc-container', tb);
+        console.log('CONTAINER!!!');
         var c = newHTML('canvas', 'pc', container);
         this.setPageThumb(c);
         var num = newHTML('div', 'pagenum', tb);
