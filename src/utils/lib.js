@@ -690,11 +690,11 @@ export function colorToRGBA(color, opacity) {
  * turning them into pixel values.
  */
 export function css_vh(y) {
-    return (y * WINDOW_INNER_HEIGHT) / 100.0 + "px";
+    return (y * window.innerHeight) / 100.0 + "px";
 }
 
 export function css_vw(x) {
-    return (x * WINDOW_INNER_WIDTH) / 100.0 + "px";
+    return (x * window.innerWidth) / 100.0 + "px";
 }
 
 Number.prototype.mod = function (n) {
