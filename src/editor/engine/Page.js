@@ -13,7 +13,26 @@ import Matrix from '../../geom/Matrix';
 import Vector from '../../geom/Vector';
 import {newHTML, newDiv, gn,
     setCanvasSizeScaledToWindowDocumentHeight,
-    DEGTOR, getIdFor, setProps} from '../../utils/lib';
+    DEGTOR, getIdFor, setProps, preprocessAndLoadCss, setCanvasSize, getDocumentHeight, frame} from '../../utils/lib';
+
+
+window.addEventListener('resize', function (event){
+    preprocessAndLoadCss("css", "css/font.css");
+    preprocessAndLoadCss("css", "css/base.css");
+    preprocessAndLoadCss("css", "css/editor.css");
+    preprocessAndLoadCss("css", "css/editorleftpanel.css");
+    preprocessAndLoadCss("css", "css/editorstage.css");
+    preprocessAndLoadCss("css", "css/editormodal.css");
+    preprocessAndLoadCss("css", "css/librarymodal.css");
+    preprocessAndLoadCss("css", "css/paintlook.css");
+    let scaleMultiplier = window.innerHeight  / 768.0;
+    ScratchJr.stage.setStageScaleAndPosition(scaleMultiplier, 46, 74);
+    let scriptsElem = gn('scripts');
+    let dc = gn('scriptscontainer');
+    let h = Math.max(getDocumentHeight(), frame.offsetHeight);
+    setCanvasSize(scriptsElem, scriptsElem.offsetWidth, h - scriptsElem.offsetTop);
+    setCanvasSize(dc, scriptsElem.offsetWidth, h - scriptsElem.offsetTop);
+});
 
 export default class Page {
     constructor (id, data, fcn) {
