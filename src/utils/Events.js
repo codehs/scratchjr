@@ -261,18 +261,16 @@ export default class Events {
     */
 
     static getTargetPoint (e) {
-        if (isTablet) {
-            if (e.touches && (e.touches.length > 0)) {
-                return {
-                    x: e.touches[0].pageX,
-                    y: e.touches[0].pageY
-                };
-            } else if (e.changedTouches) {
-                return {
-                    x: e.changedTouches[0].pageX,
-                    y: e.changedTouches[0].pageY
-                };
-            }
+        if (e.touches && (e.touches.length > 0)) {
+            return {
+                x: e.touches[0].pageX,
+                y: e.touches[0].pageY
+            };
+        } else if (e.changedTouches) {
+            return {
+                x: e.changedTouches[0].pageX,
+                y: e.changedTouches[0].pageY
+            };
         }
         return {
             x: e.clientX,
