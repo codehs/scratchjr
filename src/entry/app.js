@@ -18,6 +18,8 @@ import {
     inappPrivacyPolicy,
 } from "./inapp";
 
+window.addEventListener("touchmove", (e) => e.preventDefault());
+
 function loadSettings(settingsRoot, whenDone) {
     IO.requestFromServer(settingsRoot + "settings.json", (result) => {
         window.Settings = JSON.parse(result);
