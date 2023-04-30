@@ -66,9 +66,9 @@ export default class PaintAction {
         if (!gn('layer1')) {
             return;
         }
-        if (evt.touches && (evt.touches.length > 1)) {
-            return;
-        }
+        // if (evt.touches && (evt.touches.length > 1)) {
+        //     return;
+        // }
         PaintAction.clearDragGroup();
         dragging = false;
         var mt = PaintAction.getMouseTarget(evt);
@@ -317,9 +317,9 @@ export default class PaintAction {
 
 
     static selectMouseMove (evt) {
-        if (evt.touches && (evt.touches.length > 1)) {
-            return;
-        }
+        // if (evt.touches && (evt.touches.length > 1)) {
+        //     return;
+        // }
         if (PaintAction.onBackground()) {
             PaintAction.clearEvents();
             Paint.Scroll(evt);
