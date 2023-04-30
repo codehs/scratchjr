@@ -43,9 +43,9 @@ export default class Scripts {
     ////////////////////////////////////////////////
 
     scriptsMouseDown (e) {
-        if (isTablet && e.touches && (e.touches.length > 1)) {
-            return;
-        }
+        // if (isTablet && e.touches && (e.touches.length > 1)) {
+        //     return;
+        // }
         if (ScratchJr.onHold) {
             return;
         }

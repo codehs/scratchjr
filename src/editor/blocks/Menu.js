@@ -82,9 +82,9 @@ export default class Menu {
             fcn(evt, mu, block, c);
         };
         function handleTouchStart (e) {
-            if (isTablet && e.touches && (e.touches.length > 1)) {
-                return;
-            }
+            // if (isTablet && e.touches && (e.touches.length > 1)) {
+            //     return;
+            // }
             e.preventDefault();
             e.stopPropagation();
             fcn(e, mu, block, c);

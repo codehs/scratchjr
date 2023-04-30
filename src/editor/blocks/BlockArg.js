@@ -298,9 +298,9 @@ export default class BlockArg {
     }
 
     pressDropDown (e, fcn) {
-        if (isTablet && e.touches && (e.touches.length > 1)) {
-            return;
-        }
+        // if (isTablet && e.touches && (e.touches.length > 1)) {
+        //     return;
+        // }
         if (ScratchJr.onHold) {
             return;
         }
