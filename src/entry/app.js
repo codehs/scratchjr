@@ -19,6 +19,7 @@ import {
 } from "./inapp";
 
 // window.addEventListener("touchmove", (e) => e.preventDefault(), {passive: false});
+window.addEventListener("contextmenu", (e) => e.preventDefault(), {passive: false});
 
 function loadSettings(settingsRoot, whenDone) {
     IO.requestFromServer(settingsRoot + "settings.json", (result) => {
