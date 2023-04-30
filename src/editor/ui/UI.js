@@ -1076,9 +1076,9 @@ export default class UI {
     }
 
     static setTextColor (e) {
-        if (e.touches && (e.touches.length > 1)) {
-            return;
-        }
+        // if (e.touches && (e.touches.length > 1)) {
+        //     return;
+        // }
         e.preventDefault();
         e.stopPropagation();
         if (window.event) {

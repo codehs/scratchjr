@@ -67,9 +67,9 @@ export default class Thumbs {
     }
 
     static pageMouseDown (e) {
-        if (e.touches && (e.touches.length > 1)) {
-            return;
-        }
+        // if (e.touches && (e.touches.length > 1)) {
+        //     return;
+        // }
         if (ScratchJr.onHold) {
             return;
         }
