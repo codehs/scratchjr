@@ -360,9 +360,9 @@ export default class Thumbs {
     }
 
     static clickOnEmptyPage (e) {
-        if (isTablet && e.touches && (e.touches.length > 1)) {
-            return;
-        }
+        // if (isTablet && e.touches && (e.touches.length > 1)) {
+        //     return;
+        // }
         ScratchAudio.sndFX('tap.wav');
         e.preventDefault();
         ScratchJr.stage.currentPage.div.style.visibility = 'hidden';

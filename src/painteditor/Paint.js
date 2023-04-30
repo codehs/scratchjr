@@ -360,9 +360,9 @@ export default class Paint {
     }
 
     static mouseDown (e) {
-        if ((isTablet && e.target.ontouchstart) || e.target.ontouchstart) {
-            return;
-        }
+        // if ((isTablet && e.target.ontouchstart) || e.target.ontouchstart) {
+        //     return;
+        // }
         var pt = Events.getTargetPoint(e);
         if (hitRect(gn('donecheck'), pt)) {
             Paint.backToProject(e);

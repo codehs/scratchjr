@@ -71,9 +71,9 @@ export default class Palette {
     }
 
     static paletteMouseDown (e) {
-        if (isTablet && e.touches && (e.touches.length > 1)) {
-            return;
-        }
+        // if (isTablet && e.touches && (e.touches.length > 1)) {
+        //     return;
+        // }
         if (ScratchJr.onHold) {
             return;
         }
