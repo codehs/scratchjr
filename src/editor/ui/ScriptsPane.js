@@ -256,9 +256,9 @@ export default class ScriptsPane {
         if (Menu.openMenu) {
             return;
         }
-        if (isTablet && e.touches && (e.touches.length > 1)) {
-            return;
-        }
+        // if (isTablet && e.touches && (e.touches.length > 1)) {
+        //     return;
+        // }
         e.preventDefault();
         e.stopPropagation();
         var sc = ScratchJr.getActiveScript();
@@ -272,21 +272,34 @@ export default class ScriptsPane {
     }
 
     static setDragBackgroundEvents (fcnmove, fcnup) {
-        if (isTablet) { // setDragBackgroundEvents
-            window.ontouchmove = function (evt) {
-                fcnmove(evt);
-            };
-            window.ontouchend = function (evt) {
-                fcnup(evt);
-            };
-        } else {
-            window.onmousemove = function (evt) {
-                fcnmove(evt);
-            };
-            window.onmouseup = function (evt) {
-                fcnup(evt);
-            };
-        }
+        // if (isTablet) { // setDragBackgroundEvents
+        //     window.ontouchmove = function (evt) {
+        //         fcnmove(evt);
+        //     };
+        //     window.ontouchend = function (evt) {
+        //         fcnup(evt);
+        //     };
+        // } else {
+        //     window.onmousemove = function (evt) {
+        //         fcnmove(evt);
+        //     };
+        //     window.onmouseup = function (evt) {
+        //         fcnup(evt);
+        //     };
+        // }
+        // Now, set both touch and mouse events
+        window.ontouchmove = function (evt) {
+            fcnmove(evt);
+        };
+        window.ontouchend = function (evt) {
+            fcnup(evt);
+        };
+        window.onmousemove = function (evt) {
+            fcnmove(evt);
+        };
+        window.onmouseup = function (evt) {
+            fcnup(evt);
+        };
     }
 
     static dragMove (e) {
