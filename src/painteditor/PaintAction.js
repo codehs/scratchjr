@@ -141,7 +141,7 @@ export default class PaintAction {
         window.removeEventListener('touchend', onTouchEnd);
         window.removeEventListener('touchcancel', onTouchCancel);
         window.removeEventListener('mousemove', onMouseMove);
-        window.removeEventListener('mouseup', onMouseMove);
+        window.removeEventListener('mouseup', onMouseUp);
     }
 
     static stopAction (e) {
