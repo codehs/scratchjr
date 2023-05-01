@@ -73764,19 +73764,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-// window.addEventListener("touchmove", (e) => e.preventDefault(), {passive: false});
 window.addEventListener("contextmenu", function (e) {
     return e.preventDefault();
 }, { passive: false });
-window.addEventListener("touchstart", function (e) {
-    console.log(e);
-});
-window.addEventListener("touchmove", function (e) {
-    console.log(e);
-});
-window.addEventListener("touchend", function (e) {
-    console.log(e);
-});
 
 function loadSettings(settingsRoot, whenDone) {
     _IO2.default.requestFromServer(settingsRoot + "settings.json", function (result) {
@@ -77899,8 +77889,9 @@ var Paint = function () {
                 Paint.initSprite(sw, sh);
             }
             // window.ontouchstart = Paint.detectGesture;
+            // const canvas = document.getElementById("maincanvas");
             window.addEventListener("touchstart", Paint.detectGesture);
-            window.onmousedown = Paint.detectGesture;
+            window.addEventListener("touchmove", Paint.detectGesture);
             window.ondevicemotion = undefined;
 
             // Set the back button callback
@@ -77973,7 +77964,7 @@ var Paint = function () {
             //     console.log("touchmove paint bg");
             //     Paint.dragBackground(evt);
             // };
-            window.addEventListener('touchmove', function (evt) {
+            window.addEventListener("touchmove", function (evt) {
                 console.log("touchmove paint bg");
                 Paint.dragBackground(evt);
             });
@@ -77983,7 +77974,7 @@ var Paint = function () {
             //     Paint.setCanvasTransform(currentZoom);
             //     PaintAction.clearEvents();
             // };
-            window.addEventListener('touchend', function () {
+            window.addEventListener("touchend", function () {
                 console.log("touchend paint bg");
                 Paint.bounceBack();
                 Paint.setCanvasTransform(currentZoom);
@@ -78012,7 +78003,7 @@ var Paint = function () {
             //     console.log("touchmove paint pinch");
             //     Paint.gestureStart(e);
             // };
-            window.addEventListener('touchmove', function () {
+            window.addEventListener("touchmove", function () {
                 console.log("touchmove paint pinch");
                 Paint.gestureStart(e);
             });
@@ -78093,9 +78084,9 @@ var Paint = function () {
     }, {
         key: "mouseDown",
         value: function mouseDown(e) {
-            // if ((isTablet && e.target.ontouchstart) || e.target.ontouchstart) {
-            //     return;
-            // }
+            if (e.target.ontouchstart) {
+                return;
+            }
             console.log("Paint.mouseDown");
             console.log(e);
             var pt = _Events2.default.getTargetPoint(e);

@@ -225,8 +225,9 @@ export default class Paint {
             Paint.initSprite(sw, sh);
         }
         // window.ontouchstart = Paint.detectGesture;
+        // const canvas = document.getElementById("maincanvas");
         window.addEventListener("touchstart", Paint.detectGesture);
-        window.onmousedown = Paint.detectGesture;
+        window.addEventListener("touchmove", Paint.detectGesture);
         window.ondevicemotion = undefined;
 
         // Set the back button callback
@@ -298,7 +299,7 @@ export default class Paint {
         //     console.log("touchmove paint bg");
         //     Paint.dragBackground(evt);
         // };
-        window.addEventListener('touchmove', function (evt) {
+        window.addEventListener("touchmove", function (evt) {
             console.log("touchmove paint bg");
             Paint.dragBackground(evt);
         });
@@ -308,7 +309,7 @@ export default class Paint {
         //     Paint.setCanvasTransform(currentZoom);
         //     PaintAction.clearEvents();
         // };
-        window.addEventListener('touchend', function () {
+        window.addEventListener("touchend", function () {
             console.log("touchend paint bg");
             Paint.bounceBack();
             Paint.setCanvasTransform(currentZoom);
@@ -336,7 +337,7 @@ export default class Paint {
         //     console.log("touchmove paint pinch");
         //     Paint.gestureStart(e);
         // };
-        window.addEventListener('touchmove', function () {
+        window.addEventListener("touchmove", function () {
             console.log("touchmove paint pinch");
             Paint.gestureStart(e);
         });
@@ -428,9 +429,9 @@ export default class Paint {
     }
 
     static mouseDown(e) {
-        // if ((isTablet && e.target.ontouchstart) || e.target.ontouchstart) {
-        //     return;
-        // }
+        if (e.target.ontouchstart) {
+            return;
+        }
         console.log("Paint.mouseDown");
         console.log(e);
         var pt = Events.getTargetPoint(e);

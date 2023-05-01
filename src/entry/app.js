@@ -18,17 +18,7 @@ import {
     inappPrivacyPolicy,
 } from "./inapp";
 
-// window.addEventListener("touchmove", (e) => e.preventDefault(), {passive: false});
 window.addEventListener("contextmenu", (e) => e.preventDefault(), {passive: false});
-window.addEventListener("touchstart", (e) => {
-    console.log(e)
-});
-window.addEventListener("touchmove", (e) => {
-    console.log(e);
-});
-window.addEventListener("touchend", (e) => {
-    console.log(e)
-});
 
 function loadSettings(settingsRoot, whenDone) {
     IO.requestFromServer(settingsRoot + "settings.json", (result) => {
