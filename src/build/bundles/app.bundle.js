@@ -79650,9 +79650,9 @@ var PaintAction = function () {
             window.ontouchend = undefined;
             window.onmousemove = undefined;
             window.onmouseup = undefined;
-            window.removeEventListener('touchmove');
-            window.removeEventListener('touchend');
-            window.removeEventListener('touchcancel');
+            // window.removeEventListener('touchmove');
+            // window.removeEventListener('touchend');
+            // window.removeEventListener('touchcancel');
         }
     }, {
         key: 'stopAction',

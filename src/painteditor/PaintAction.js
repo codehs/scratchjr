@@ -120,9 +120,9 @@ export default class PaintAction {
         window.ontouchend = undefined;
         window.onmousemove = undefined;
         window.onmouseup = undefined;
-        window.removeEventListener('touchmove');
-        window.removeEventListener('touchend');
-        window.removeEventListener('touchcancel');
+        // window.removeEventListener('touchmove');
+        // window.removeEventListener('touchend');
+        // window.removeEventListener('touchcancel');
     }
 
     static stopAction (e) {
