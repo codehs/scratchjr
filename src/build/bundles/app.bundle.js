@@ -77891,7 +77891,7 @@ var Paint = function () {
             // window.ontouchstart = Paint.detectGesture;
             // const canvas = document.getElementById("maincanvas");
             window.addEventListener("touchstart", Paint.detectGesture);
-            window.addEventListener("touchmove", Paint.detectGesture);
+            window.addEventListener("mousedown", Paint.detectGesture);
             window.ondevicemotion = undefined;
 
             // Set the back button callback
