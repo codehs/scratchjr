@@ -79650,6 +79650,9 @@ var PaintAction = function () {
             window.ontouchend = undefined;
             window.onmousemove = undefined;
             window.onmouseup = undefined;
+            window.removeEventListener('touchmove');
+            window.removeEventListener('touchend');
+            window.removeEventListener('touchcancel');
         }
     }, {
         key: 'stopAction',
@@ -79687,14 +79690,22 @@ var PaintAction = function () {
     }, {
         key: 'setEvents',
         value: function setEvents() {
-            window.ontouchmove = function (evt) {
+            // window.ontouchmove = function (evt) {
+            //     console.log('touchmove paint');
+            //     PaintAction.mouseMove(evt);
+            // };
+            // window.ontouchend = function (evt) {
+            //     console.log('touchend paint');
+            //     PaintAction.mouseUp(evt);
+            // };
+            window.addEventListener('touchmove', function (evt) {
                 console.log('touchmove paint');
                 PaintAction.mouseMove(evt);
-            };
-            window.ontouchend = function (evt) {
+            });
+            window.addEventListener('touchend', function (evt) {
                 console.log('touchend paint');
                 PaintAction.mouseUp(evt);
-            };
+            });
             window.onmousemove = function (evt) {
                 console.log('mousemove paint');
                 PaintAction.mouseMove(evt);
@@ -79708,6 +79719,11 @@ var PaintAction = function () {
                 PaintAction.mouseMove(evt);
                 PaintAction.mouseUp(evt);
             };
+            window.addEventListener('touchcancel', function (evt) {
+                console.log('touchcancel paint');
+                PaintAction.mouseMove(evt);
+                PaintAction.mouseUp(evt);
+            });
         }
     }, {
         key: 'mouseMove',
