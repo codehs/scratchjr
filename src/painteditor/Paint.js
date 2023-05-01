@@ -266,17 +266,21 @@ export default class Paint {
         Ghost.clearLayer();
         initialPoint = PaintAction.getScreenPt(e);
         window.ontouchmove = function (evt) {
+            console.log('touchmove paint bg');
             Paint.dragBackground(evt);
         };
         window.ontouchend = function () {
+            console.log('touchend paint bg');
             Paint.bounceBack();
             Paint.setCanvasTransform(currentZoom);
             PaintAction.clearEvents();
         };
         window.onmousemove = function (evt) {
+            console.log('mousemove paint bg');
             Paint.dragBackground(evt);
         };
         window.onmouseup = function () {
+            console.log('mouseup paint bg');
             Paint.bounceBack();
             Paint.setCanvasTransform(currentZoom);
             PaintAction.clearEvents();
@@ -290,9 +294,11 @@ export default class Paint {
             return;
         }
         window.ontouchmove = function () {
+            console.log('touchmove paint pinch');
             Paint.gestureStart(e);
         };
         window.onmousemove = function () {
+            console.log('test3');
             Paint.gestureStart(e);
         };
     }
@@ -320,6 +326,7 @@ export default class Paint {
 
     static gestureChange (e) {
         e.preventDefault();
+        console.log('gestureChange');
         var scale = Math.min(maxZoom, Events.scaleStartsAt * Events.zoomScale(e));
         scale = Math.max(minZoom, scale);
         var mc = gn('maincanvas');
@@ -337,6 +344,7 @@ export default class Paint {
 
     static gestureEnd (e) {
         e.preventDefault();
+        console.log('gestureChange');
         window.ontouchmove = undefined;
         window.ontouchend = undefined;
         window.onmousemove = undefined;

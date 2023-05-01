@@ -130,15 +130,19 @@ export default class Events {
             delta = 7;
         }
         window.ontouchmove = function (evt) {
+            console.log('touchmove events');
             Events.mouseMove(evt);
         };
         window.ontouchend = function (evt) {
+            console.log('touchend events');
             Events.mouseUp(evt);
         };
         window.onmousemove = function (evt) {
+            console.log('mousemove events');
             Events.mouseMove(evt);
         };
         window.onmouseup = function (evt) {
+            console.log('mouseup events');
             Events.mouseUp(evt);
         };
     }

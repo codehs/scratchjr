@@ -42,9 +42,11 @@ export default class ScriptsPane {
         ScratchJr.stage.currentPage.setCurrentSprite(gn(sprname).owner);
         currentsc.owner.activate();
         currentsc.parentNode.ontouchstart = function (evt) {
+            console.log('touchstart script block');
             currentsc.owner.scriptsMouseDown(evt);
         };
         currentsc.parentNode.onmousedown = function (evt) {
+            console.log('mousedown script block');
             currentsc.owner.scriptsMouseDown(evt);
         };
         scroll.update();
@@ -124,6 +126,7 @@ export default class ScriptsPane {
     ////////////////////////////////////////////////
 
     static draggingBlock (e) {
+        console.log('dragging script block');
         e.preventDefault();
         var pt = Events.getTargetPoint(e);
         var dx = pt.x - Events.dragmousex;
@@ -174,6 +177,7 @@ export default class ScriptsPane {
 
     static dropBlock (e, el) {
         e.preventDefault();
+        console.log('dropping script block');
         var sc = ScratchJr.getActiveScript();
         var spr = sc.owner.spr.id;
         var page = ScratchJr.stage.currentPage;
@@ -289,15 +293,19 @@ export default class ScriptsPane {
         // }
         // Now, set both touch and mouse events
         window.ontouchmove = function (evt) {
+            console.log('touchmove scripts bg');
             fcnmove(evt);
         };
         window.ontouchend = function (evt) {
+            console.log('touchend scripts bg');
             fcnup(evt);
         };
         window.onmousemove = function (evt) {
+            console.log('mousemove scripts bg');
             fcnmove(evt);
         };
         window.onmouseup = function (evt) {
+            console.log('mouseup scripts bg');
             fcnup(evt);
         };
     }
