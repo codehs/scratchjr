@@ -92,9 +92,9 @@ function onTouchEndScroll(e) {
 
 function clearEvents() {
     window.removeEventListener('touchmove', onTouchPinchStart);
-    window.removeEventListener('touchmove', onMousePinchStart);
+    window.removeEventListener('mousemove', onMousePinchStart);
     window.removeEventListener('touchmove', onTouchMoveScroll);
-    window.removeEventListener('touchmove', onTouchEndScroll);
+    window.removeEventListener('touchend', onTouchEndScroll);
 }
 
 export default class Paint {
