@@ -47,6 +47,27 @@ let dragging = false;
 let timeoutEvent;
 let mindist = 10;
 
+function onTouchMove(evt) {
+    console.log('touchmove paint');
+    PaintAction.mouseMove(evt);
+}
+function onTouchEnd(evt) {
+    console.log('touchend paint');
+    PaintAction.mouseUp(evt);
+}
+function onTouchCancel(evt) {
+    console.log('touchcancel paint');
+    PaintAction.mouseMove(evt);
+    PaintAction.mouseUp(evt);
+};
+function onMouseMove (evt) {
+    console.log('mousemove paint');
+    PaintAction.mouseMove(evt);
+};
+function onMouseUp(evt) {
+    console.log('mouseup paint');
+    PaintAction.mouseUp(evt);
+};
 
 //Main Events
 /////////////////////////////////
@@ -116,13 +137,11 @@ export default class PaintAction {
 
     static clearEvents () {
         currentShape = undefined;
-        window.ontouchmove = undefined;
-        window.ontouchend = undefined;
-        window.onmousemove = undefined;
-        window.onmouseup = undefined;
-        // window.removeEventListener('touchmove');
-        // window.removeEventListener('touchend');
-        // window.removeEventListener('touchcancel');
+        window.removeEventListener('touchmove', onTouchMove);
+        window.removeEventListener('touchend', onTouchEnd);
+        window.removeEventListener('touchcancel', onTouchCancel);
+        window.removeEventListener('mousemove', onMouseMove);
+        window.removeEventListener('mouseup', onMouseMove);
     }
 
     static stopAction (e) {
@@ -158,40 +177,11 @@ export default class PaintAction {
     }
 
     static setEvents () {
-        // window.ontouchmove = function (evt) {
-        //     console.log('touchmove paint');
-        //     PaintAction.mouseMove(evt);
-        // };
-        // window.ontouchend = function (evt) {
-        //     console.log('touchend paint');
-        //     PaintAction.mouseUp(evt);
-        // };
-        window.addEventListener('touchmove', function (evt) {
-            console.log('touchmove paint');
-            PaintAction.mouseMove(evt);
-        });
-        window.addEventListener('touchend' ,function (evt) {
-            console.log('touchend paint');
-            PaintAction.mouseUp(evt);
-        });
-        window.onmousemove = function (evt) {
-            console.log('mousemove paint');
-            PaintAction.mouseMove(evt);
-        };
-        window.onmouseup = function (evt) {
-            console.log('mouseup paint');
-            PaintAction.mouseUp(evt);
-        };
-        window.ontouchcancel = function (evt) {
-            console.log('touchcancel paint');
-            PaintAction.mouseMove(evt);
-            PaintAction.mouseUp(evt);
-        };
-        window.addEventListener('touchcancel', function (evt) {
-            console.log('touchcancel paint');
-            PaintAction.mouseMove(evt);
-            PaintAction.mouseUp(evt);
-        });
+        window.addEventListener('touchmove', onTouchMove);
+        window.addEventListener('touchend' ,onTouchEnd);
+        window.addEventListener('touchcancel', onTouchCancel);
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
     }
 
     static mouseMove (evt) {
