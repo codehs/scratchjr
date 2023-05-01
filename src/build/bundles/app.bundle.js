@@ -77888,8 +77888,6 @@ var Paint = function () {
             } else {
                 Paint.initSprite(sw, sh);
             }
-            // window.ontouchstart = Paint.detectGesture;
-            // const canvas = document.getElementById("maincanvas");
             window.addEventListener("touchstart", Paint.detectGesture);
             window.addEventListener("mousedown", Paint.detectGesture);
             window.ondevicemotion = undefined;
@@ -78370,8 +78368,8 @@ var Paint = function () {
         value: function checkMark(pt) {
             var clicky = (0, _lib.newHTML)("div", "paintdone", pt);
             clicky.id = "donecheck";
-            clicky.ontouchstart = Paint.backToProject;
-            clicky.onmousedown = Paint.backToProject;
+            clicky.addEventListener("touchstart", Paint.backToProject);
+            clicky.addEventListener("mousedown", Paint.backToProject);
         }
     }, {
         key: "nameOfcostume",
@@ -78479,8 +78477,8 @@ var Paint = function () {
                 var but = (0, _lib.newHTML)("div", "element off", section);
                 var icon = (0, _lib.newHTML)("div", "tool " + list[i] + " off", but);
                 icon.setAttribute("key", list[i]);
-                icon.ontouchstart = Paint.setMode;
-                icon.onmousedown = Paint.setMode;
+                icon.addEventListener("touchstart", Paint.setMode);
+                icon.addEventListener("mousedown", Paint.setMode);
             }
         }
     }, {
@@ -78498,8 +78496,8 @@ var Paint = function () {
                     strokewidth = pensizes[Number(this.key)];
                     Paint.selectPenSize(n);
                 };
-                ps.ontouchstart = setSize;
-                ps.onmousedown = setSize;
+                ps.addEventListener('touchstart', setSize);
+                ps.addEventListener('mousedown', setSize);
                 var c = (0, _lib.newHTML)("div", "line t" + i, ps);
                 Paint.drawPenSizeInColor(c);
             }
@@ -78563,8 +78561,8 @@ var Paint = function () {
                 var but = (0, _lib.newHTML)("div", "element off", pal);
                 var icon = (0, _lib.newHTML)("div", "tool " + list[i] + " off", but);
                 icon.setAttribute("key", list[i]);
-                icon.ontouchstart = Paint.setMode;
-                icon.onmousedown = Paint.setMode;
+                icon.addEventListener('touchstart', Paint.setMode);
+                icon.addEventListener('mousedown', Paint.setMode);
             }
         }
     }, {
@@ -78585,19 +78583,19 @@ var Paint = function () {
                 fc.style.display = "none";
             }
 
-            fc.ontouchstart = Paint.setMode;
-            fc.onmousedown = Paint.setMode;
+            fc.addEventListener('touchstart', Paint.setMode);
+            fc.addEventListener('mousedown', Paint.setMode);
             var captureContainer = (0, _lib.newHTML)("div", "snapshot-container", (0, _lib.gn)("backdrop"));
             captureContainer.setAttribute("id", "capture-container");
             var capture = (0, _lib.newHTML)("div", "snapshot", captureContainer);
             capture.setAttribute("id", "capture");
             capture.setAttribute("key", "camerasnap");
-            capture.ontouchstart = Paint.setMode;
-            capture.onmousedown = Paint.setMode;
+            capture.addEventListener('touchstart', Paint.setMode);
+            capture.addEventListener('mousedown', Paint.setMode);
             var cc = (0, _lib.newHTML)("div", "cameraclose", topbar);
             cc.setAttribute("id", "cameraclose");
-            cc.ontouchstart = Paint.closeCameraMode;
-            cc.onmousedown = Paint.closeCameraMode;
+            cc.addEventListener('touchstart', Paint.closeCameraMode);
+            cc.addEventListener('mousedown', Paint.closeCameraMode);
         }
     }, {
         key: "closeCameraMode",
@@ -78678,8 +78676,8 @@ var Paint = function () {
                 sf = (0, _lib.newHTML)("div", "splasharea off", colour);
                 Paint.setSplashColor(sf, splash, swatchlist[i]);
                 Paint.addImageUrl(sf, splashshade);
-                colour.ontouchstart = Paint.selectSwatch;
-                colour.onmousedown = Paint.selectSwatch;
+                colour.addEventListener("touchstart", Paint.selectSwatch);
+                colour.addEventListener("mousedown", Paint.selectSwatch);
             }
             Paint.setSwatchColor((0, _lib.gn)("swatches").childNodes[swatchlist.indexOf("#1C1C1C")]);
         }
