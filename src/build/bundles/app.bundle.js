@@ -77770,18 +77770,30 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// function clearWindowEvents() {
+//     const allListeners = window.getEventListeners();
+
+//     // Iterate over all registered event listeners and remove them
+//     Object.keys(allListeners).forEach((eventName) => {
+//         if (eve)
+//         allListeners[eventName].forEach((listener) => {
+//             window.removeEventListener(eventName, listener.listener);
+//         });
+//     });
+// }
+
 // Originally several files (Paint.js, PaintIO.js, PaintLayout.js)
 // were all contributing utility functions to the Paint object.
 // To consolidate it into a single module, I've combined these below.
 // A nice refactor would be to split them back into the "modules," but that will likely involve
 // some serious code changes - determining where the relevant Paint.X are called, if any shared
 // data needs to be moved, etc. -TM
-var xmlns = 'http://www.w3.org/2000/svg';
-var xmlnslink = 'http://www.w3.org/1999/xlink';
-var fillcolor = '#080808';
+var xmlns = "http://www.w3.org/2000/svg";
+var xmlnslink = "http://www.w3.org/1999/xlink";
+var fillcolor = "#080808";
 var workspaceWidth = 432;
 var workspaceHeight = 384;
-var mode = 'select';
+var mode = "select";
 var pensizes = [1, 2, 4, 8, 16];
 
 var strokewidth = 2;
@@ -77816,7 +77828,7 @@ var Paint = function () {
     }
 
     _createClass(Paint, null, [{
-        key: 'init',
+        key: "init",
 
 
         ///////////////////////////////////////////
@@ -77824,47 +77836,47 @@ var Paint = function () {
         ///////////////////////////////////////////
 
         value: function init(w, h) {
-            paintFrame = document.getElementById('paintframe');
-            paintFrame.style.width = w + 'px';
-            paintFrame.style.height = h + 'px';
+            paintFrame = document.getElementById("paintframe");
+            paintFrame.style.width = w + "px";
+            paintFrame.style.height = h + "px";
             _BlockSpecs2.default.loadCount++;
-            _IO2.default.requestFromServer('assets/paint/splash.svg', Paint.setSplash);
+            _IO2.default.requestFromServer("assets/paint/splash.svg", Paint.setSplash);
             _BlockSpecs2.default.loadCount++;
-            _IO2.default.requestFromServer('assets/paint/splashshade.svg', Paint.setSplashShade);
+            _IO2.default.requestFromServer("assets/paint/splashshade.svg", Paint.setSplashShade);
         }
     }, {
-        key: 'setSplash',
+        key: "setSplash",
         value: function setSplash(str) {
             _BlockSpecs2.default.loadCount--;
             splash = str;
         }
     }, {
-        key: 'setSplashShade',
+        key: "setSplashShade",
         value: function setSplashShade(str) {
             _BlockSpecs2.default.loadCount--;
-            splashshade = 'data:image/svg+xml;base64,' + btoa(str);
+            splashshade = "data:image/svg+xml;base64," + btoa(str);
         }
     }, {
-        key: 'open',
+        key: "open",
         value: function open(bkg, md5, sname, cname, cscale, sw, sh) {
-            console.log('open (function)');
-            var action = '';
-            var label = '';
+            console.log("open (function)");
+            var action = "";
+            var label = "";
             // Analytics:
             // * md3: name of the asset, an md5 hash for user generated, filename for library items
             // * sname: is not set for a new character (ignored for backgrounds)
             // log two events:
             // * paint editor is opened
             // * type of edit (edit_background, edit_character, new_character)
-            _OS2.default.analyticsEvent('paint_editor', 'paint_editor_open');
+            _OS2.default.analyticsEvent("paint_editor", "paint_editor_open");
             if (bkg) {
-                action = 'edit_background';
-                label = md5 in _MediaLib2.default.keys ? md5 : 'user_background';
+                action = "edit_background";
+                label = md5 in _MediaLib2.default.keys ? md5 : "user_background";
             } else {
-                action = sname ? 'edit_character' : 'new_character';
-                label = md5 in _MediaLib2.default.keys ? md5 : 'user_character';
+                action = sname ? "edit_character" : "new_character";
+                label = md5 in _MediaLib2.default.keys ? md5 : "user_character";
             }
-            _OS2.default.analyticsEvent('paint_editor', action, label);
+            _OS2.default.analyticsEvent("paint_editor", action, label);
             _PaintUndo2.default.buffer = [];
             _PaintUndo2.default.index = 0;
             maxZoom = 5;
@@ -77872,8 +77884,8 @@ var Paint = function () {
             workspaceWidth = 432;
             workspaceHeight = 384;
             Paint.clearWorkspace();
-            _lib.frame.style.display = 'none';
-            paintFrame.className = 'paintframe appear';
+            _lib.frame.style.display = "none";
+            paintFrame.className = "paintframe appear";
             currentMd5 = md5;
             isBkg = bkg;
             spriteId = sname;
@@ -77887,13 +77899,13 @@ var Paint = function () {
                 Paint.initSprite(sw, sh);
             }
             // window.ontouchstart = Paint.detectGesture;
-            window.addEventListener('touchstart', Paint.detectGesture);
+            window.addEventListener("touchstart", Paint.detectGesture);
             window.onmousedown = Paint.detectGesture;
             window.ondevicemotion = undefined;
 
             // Set the back button callback
             _ScratchJr2.default.onBackButtonCallback.push(function () {
-                var e = document.createEvent('TouchEvent');
+                var e = document.createEvent("TouchEvent");
                 e.initTouchEvent();
                 Paint.backToProject(e);
             });
@@ -77901,9 +77913,8 @@ var Paint = function () {
 
         //Paint Editor Gestures
 
-
     }, {
-        key: 'blockGestures',
+        key: "blockGestures",
         value: function blockGestures(e) {
             if (!e.touches) {
                 return;
@@ -77913,7 +77924,7 @@ var Paint = function () {
             }
         }
     }, {
-        key: 'detectGesture',
+        key: "detectGesture",
         value: function detectGesture(e) {
             if (_Camera2.default.active) {
                 return;
@@ -77929,10 +77940,11 @@ var Paint = function () {
             cmdForGesture[n](e);
         }
     }, {
-        key: 'clearEvents',
+        key: "clearEvents",
         value: function clearEvents(e) {
             window.ontouchmove = undefined;
             window.ontouchend = undefined;
+            // clearWindowEvents();
             window.onmousemove = undefined;
             window.onmouseup = undefined;
             if (_PaintAction2.default.currentshape) {
@@ -77942,13 +77954,13 @@ var Paint = function () {
             _PaintAction2.default.clearEvents();
         }
     }, {
-        key: 'ignore',
+        key: "ignore",
         value: function ignore(e) {
             e.preventDefault();
             e.stopPropagation();
         }
     }, {
-        key: 'Scroll',
+        key: "Scroll",
         value: function Scroll(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -77957,50 +77969,64 @@ var Paint = function () {
             }
             _Ghost2.default.clearLayer();
             initialPoint = _PaintAction2.default.getScreenPt(e);
-            window.ontouchmove = function (evt) {
-                console.log('touchmove paint bg');
+            // window.ontouchmove = function (evt) {
+            //     console.log("touchmove paint bg");
+            //     Paint.dragBackground(evt);
+            // };
+            window.addEventListener('touchmove', function (evt) {
+                console.log("touchmove paint bg");
                 Paint.dragBackground(evt);
-            };
-            window.ontouchend = function () {
-                console.log('touchend paint bg');
+            });
+            // window.ontouchend = function () {
+            //     console.log("touchend paint bg");
+            //     Paint.bounceBack();
+            //     Paint.setCanvasTransform(currentZoom);
+            //     PaintAction.clearEvents();
+            // };
+            window.addEventListener('touchend', function () {
+                console.log("touchend paint bg");
                 Paint.bounceBack();
                 Paint.setCanvasTransform(currentZoom);
                 _PaintAction2.default.clearEvents();
-            };
+            });
             window.onmousemove = function (evt) {
-                console.log('mousemove paint bg');
+                console.log("mousemove paint bg");
                 Paint.dragBackground(evt);
             };
             window.onmouseup = function () {
-                console.log('mouseup paint bg');
+                console.log("mouseup paint bg");
                 Paint.bounceBack();
                 Paint.setCanvasTransform(currentZoom);
                 _PaintAction2.default.clearEvents();
             };
         }
     }, {
-        key: 'pinchStart',
+        key: "pinchStart",
         value: function pinchStart(e) {
             e.preventDefault();
             e.stopPropagation();
             if (_PaintAction2.default.currentshape) {
                 return;
             }
-            window.ontouchmove = function () {
-                console.log('touchmove paint pinch');
+            // window.ontouchmove = function () {
+            //     console.log("touchmove paint pinch");
+            //     Paint.gestureStart(e);
+            // };
+            window.addEventListener('touchmove', function () {
+                console.log("touchmove paint pinch");
                 Paint.gestureStart(e);
-            };
+            });
             window.onmousemove = function () {
-                console.log('test3');
+                console.log("test3");
                 Paint.gestureStart(e);
             };
         }
     }, {
-        key: 'gestureStart',
+        key: "gestureStart",
         value: function gestureStart(e) {
             window.ontouchmove = undefined;
             window.onmousemove = undefined;
-            var skipmodes = ['path', 'ellipse', 'rect'];
+            var skipmodes = ["path", "ellipse", "rect"];
             if (skipmodes.indexOf(mode) > -1) {
                 if (_PaintAction2.default.currentshape && _PaintAction2.default.currentshape.parentNode) {
                     _PaintAction2.default.currentshape.parentNode.removeChild(_PaintAction2.default.currentshape);
@@ -78012,19 +78038,21 @@ var Paint = function () {
             initialPoint = _PaintAction2.default.zoomPt(_Events2.default.pinchcenter);
             _Events2.default.clearEvents();
             _Events2.default.clearDragAndDrop();
-            window.ontouchmove = Paint.gestureChange;
-            window.ontouchend = Paint.gestureEnd;
+            // window.ontouchmove = Paint.gestureChange;
+            window.addEventListener("touchmove", Paint.gestureChange);
+            // window.ontouchend = Paint.gestureEnd;
+            window.addEventListener("touchend", Paint.gestureEnd);
             window.onmousemove = Paint.gestureChange;
             window.onmouseup = Paint.gestureEnd;
         }
     }, {
-        key: 'gestureChange',
+        key: "gestureChange",
         value: function gestureChange(e) {
             e.preventDefault();
-            console.log('gestureChange');
+            console.log("gestureChange");
             var scale = Math.min(maxZoom, _Events2.default.scaleStartsAt * _Events2.default.zoomScale(e));
             scale = Math.max(minZoom, scale);
-            var mc = (0, _lib.gn)('maincanvas');
+            var mc = (0, _lib.gn)("maincanvas");
             var w = mc.offsetWidth * scale;
             var h = mc.offsetHeight * scale;
             var size = Math.min(w, h);
@@ -78037,10 +78065,10 @@ var Paint = function () {
             Paint.adjustPos(delta);
         }
     }, {
-        key: 'gestureEnd',
+        key: "gestureEnd",
         value: function gestureEnd(e) {
             e.preventDefault();
-            console.log('gestureChange');
+            console.log("gestureChange");
             window.ontouchmove = undefined;
             window.ontouchend = undefined;
             window.onmousemove = undefined;
@@ -78058,20 +78086,20 @@ var Paint = function () {
             Paint.setZoomTo(scale);
         }
     }, {
-        key: 'canvasFits',
+        key: "canvasFits",
         value: function canvasFits() {
-            return (0, _lib.gn)('maincanvas').offsetWidth * currentZoom <= (0, _lib.gn)('workspacebkg').offsetWidth && (0, _lib.gn)('maincanvas').offsetHeight * currentZoom <= (0, _lib.gn)('workspacebkg').offsetHeight;
+            return (0, _lib.gn)("maincanvas").offsetWidth * currentZoom <= (0, _lib.gn)("workspacebkg").offsetWidth && (0, _lib.gn)("maincanvas").offsetHeight * currentZoom <= (0, _lib.gn)("workspacebkg").offsetHeight;
         }
     }, {
-        key: 'mouseDown',
+        key: "mouseDown",
         value: function mouseDown(e) {
             // if ((isTablet && e.target.ontouchstart) || e.target.ontouchstart) {
             //     return;
             // }
-            console.log('Paint.mouseDown');
+            console.log("Paint.mouseDown");
             console.log(e);
             var pt = _Events2.default.getTargetPoint(e);
-            if ((0, _lib.hitRect)((0, _lib.gn)('donecheck'), pt)) {
+            if ((0, _lib.hitRect)((0, _lib.gn)("donecheck"), pt)) {
                 Paint.backToProject(e);
             } else {
                 _PaintAction2.default.mouseDown(e);
@@ -78083,14 +78111,14 @@ var Paint = function () {
             }
         }
     }, {
-        key: 'close',
+        key: "close",
         value: function close() {
-            _OS2.default.analyticsEvent('paint_editor', 'paint_editor_close');
+            _OS2.default.analyticsEvent("paint_editor", "paint_editor_close");
             saving = true;
-            paintFrame.className = 'paintframe disappear';
-            _lib.frame.style.display = 'block';
+            paintFrame.className = "paintframe disappear";
+            _lib.frame.style.display = "block";
             _ScratchJr2.default.editorEvents();
-            window.removeEventListener('touchstart', Paint.detectGesture);
+            window.removeEventListener("touchstart", Paint.detectGesture);
             window.ontouchmove = undefined;
             window.ontouchend = undefined;
             window.onmousemove = undefined;
@@ -78105,9 +78133,9 @@ var Paint = function () {
             }, 500); // delay so it doesn't open the info box
         }
     }, {
-        key: 'backToProject',
+        key: "backToProject",
         value: function backToProject(e) {
-            console.log('back to project');
+            console.log("back to project");
             e.preventDefault();
             e.stopPropagation();
             if (saving) {
@@ -78123,7 +78151,7 @@ var Paint = function () {
             _Camera2.default.close();
             _PaintAction2.default.clearDragGroup();
             _ScratchJr2.default.unfocus();
-            _ScratchAudio2.default.sndFX('tap.wav');
+            _ScratchAudio2.default.sndFX("tap.wav");
             if (spriteId == null && currentName == null) {
                 Paint.savePageImage(Paint.changePage);
             } else {
@@ -78132,11 +78160,11 @@ var Paint = function () {
             _ScratchJr2.default.onBackButtonCallback.pop();
         }
     }, {
-        key: 'saveEditState',
+        key: "saveEditState",
         value: function saveEditState() {
             _Camera2.default.close();
             _ScratchJr2.default.unfocus();
-            _ScratchAudio2.default.sndFX('tap.wav');
+            _ScratchAudio2.default.sndFX("tap.wav");
             if (spriteId == null && currentName == null) {
                 Paint.savePageImage();
             } else {
@@ -78149,7 +78177,7 @@ var Paint = function () {
         /////////////////////////
 
     }, {
-        key: 'setMode',
+        key: "setMode",
         value: function setMode(e) {
             if (e.touches && e.touches.length > 1) {
                 return;
@@ -78166,60 +78194,60 @@ var Paint = function () {
             }
             _Path2.default.quitEditMode();
             if (_Camera2.default.active) {
-                _Camera2.default.doAction(t.getAttribute('key'));
+                _Camera2.default.doAction(t.getAttribute("key"));
             } else {
-                var tools = ['select', 'rotate', 'stamper', 'scissors', 'camera', 'paintbucket'];
-                if (tools.indexOf(t.getAttribute('key')) > -1) {
-                    _ScratchAudio2.default.sndFX('tap.wav');
+                var tools = ["select", "rotate", "stamper", "scissors", "camera", "paintbucket"];
+                if (tools.indexOf(t.getAttribute("key")) > -1) {
+                    _ScratchAudio2.default.sndFX("tap.wav");
                 }
-                Paint.selectButton(t.getAttribute('key'));
+                Paint.selectButton(t.getAttribute("key"));
             }
         }
     }, {
-        key: 'selectButton',
+        key: "selectButton",
         value: function selectButton(str) {
-            Paint.selectButtonFromDiv((0, _lib.gn)('painttools'), str);
-            Paint.selectButtonFromDiv((0, _lib.gn)('selectortools'), str);
-            Paint.selectButtonFromDiv((0, _lib.gn)('edittools'), str);
-            Paint.selectButtonFromDiv((0, _lib.gn)('filltools'), str);
-            if ((0, _lib.gn)('stamps')) {
-                Paint.selectButtonFromDiv((0, _lib.gn)('stamps'), str);
+            Paint.selectButtonFromDiv((0, _lib.gn)("painttools"), str);
+            Paint.selectButtonFromDiv((0, _lib.gn)("selectortools"), str);
+            Paint.selectButtonFromDiv((0, _lib.gn)("edittools"), str);
+            Paint.selectButtonFromDiv((0, _lib.gn)("filltools"), str);
+            if ((0, _lib.gn)("stamps")) {
+                Paint.selectButtonFromDiv((0, _lib.gn)("stamps"), str);
             }
             mode = str;
             Paint.selectPenSize(pensizes.indexOf(strokewidth));
         }
     }, {
-        key: 'selectButtonFromDiv',
+        key: "selectButtonFromDiv",
         value: function selectButtonFromDiv(p, str) {
             for (var i = 0; i < p.childElementCount; i++) {
                 var elem = p.childNodes[i];
-                if (elem.childNodes[0].getAttribute('key') == str) {
-                    elem.setAttribute('class', Paint.getClass(elem, 'on'));
-                    if (elem.childNodes[0].getAttribute('class')) {
-                        elem.childNodes[0].setAttribute('class', Paint.getClass(elem.childNodes[0], 'on'));
+                if (elem.childNodes[0].getAttribute("key") == str) {
+                    elem.setAttribute("class", Paint.getClass(elem, "on"));
+                    if (elem.childNodes[0].getAttribute("class")) {
+                        elem.childNodes[0].setAttribute("class", Paint.getClass(elem.childNodes[0], "on"));
                     }
                 } else {
-                    elem.setAttribute('class', Paint.getClass(elem, 'off'));
-                    if (elem.childNodes[0].getAttribute('class')) {
-                        elem.childNodes[0].setAttribute('class', Paint.getClass(elem.childNodes[0], 'off'));
+                    elem.setAttribute("class", Paint.getClass(elem, "off"));
+                    if (elem.childNodes[0].getAttribute("class")) {
+                        elem.childNodes[0].setAttribute("class", Paint.getClass(elem.childNodes[0], "off"));
                     }
                 }
             }
         }
     }, {
-        key: 'getClass',
+        key: "getClass",
         value: function getClass(elem, state) {
-            var list = elem.getAttribute('class').split(' ');
+            var list = elem.getAttribute("class").split(" ");
             list.pop();
             list.push(state);
-            return list.join(' ');
+            return list.join(" ");
         }
 
         //Zoom Management
         ///////////////////////////////////////////
 
     }, {
-        key: 'setZoomTo',
+        key: "setZoomTo",
         value: function setZoomTo(value) {
             currentZoom = value;
             Paint.bounceBack();
@@ -78227,80 +78255,80 @@ var Paint = function () {
             _Ghost2.default.drawOffscreen();
         }
     }, {
-        key: 'updateZoomScale',
+        key: "updateZoomScale",
         value: function updateZoomScale(value) {
             currentZoom = value;
             Paint.setCanvasTransform(value);
         }
     }, {
-        key: 'setCanvasTransform',
+        key: "setCanvasTransform",
         value: function setCanvasTransform(value) {
             if (_lib.isAndroid) {
                 // Use 3D translate to increase speed
-                (0, _lib.gn)('maincanvas').style.webkitTransform = 'translate3d(' + (0, _lib.gn)('maincanvas').dx + 'px,' + (0, _lib.gn)('maincanvas').dy + 'px, 0px) scale(' + value + ',' + value + ')';
+                (0, _lib.gn)("maincanvas").style.webkitTransform = "translate3d(" + (0, _lib.gn)("maincanvas").dx + "px," + (0, _lib.gn)("maincanvas").dy + "px, 0px) scale(" + value + "," + value + ")";
             } else {
                 // Use 2D translate to maintain sharpness
-                (0, _lib.gn)('maincanvas').style.webkitTransform = 'translate(' + (0, _lib.gn)('maincanvas').dx + 'px,' + (0, _lib.gn)('maincanvas').dy + 'px) scale(' + value + ',' + value + ')';
+                (0, _lib.gn)("maincanvas").style.webkitTransform = "translate(" + (0, _lib.gn)("maincanvas").dx + "px," + (0, _lib.gn)("maincanvas").dy + "px) scale(" + value + "," + value + ")";
             }
         }
     }, {
-        key: 'adjustPos',
+        key: "adjustPos",
         value: function adjustPos(delta) {
-            (0, _lib.gn)('maincanvas').dx += delta.x;
-            (0, _lib.gn)('maincanvas').dy += delta.y;
+            (0, _lib.gn)("maincanvas").dx += delta.x;
+            (0, _lib.gn)("maincanvas").dy += delta.y;
             Paint.setCanvasTransform(currentZoom);
         }
     }, {
-        key: 'bounceBack',
+        key: "bounceBack",
         value: function bounceBack() {
-            var mx = Math.floor(((0, _lib.gn)('workspacebkg').offsetWidth - workspaceWidth) / 2);
-            var my = Math.floor(((0, _lib.gn)('workspacebkg').offsetHeight - workspaceHeight) / 2);
-            (0, _lib.gn)('maincanvas').dx = Paint.canvasFits() ? mx : Paint.getCoorx(20, mx);
-            (0, _lib.gn)('maincanvas').dy = Paint.canvasFits() ? my : Paint.getCoory(20, my);
+            var mx = Math.floor(((0, _lib.gn)("workspacebkg").offsetWidth - workspaceWidth) / 2);
+            var my = Math.floor(((0, _lib.gn)("workspacebkg").offsetHeight - workspaceHeight) / 2);
+            (0, _lib.gn)("maincanvas").dx = Paint.canvasFits() ? mx : Paint.getCoorx(20, mx);
+            (0, _lib.gn)("maincanvas").dy = Paint.canvasFits() ? my : Paint.getCoory(20, my);
         }
     }, {
-        key: 'getCoorx',
+        key: "getCoorx",
         value: function getCoorx(indent, val) {
-            if ((0, _lib.gn)('maincanvas').offsetWidth * currentZoom <= (0, _lib.gn)('workspacebkg').offsetWidth) {
+            if ((0, _lib.gn)("maincanvas").offsetWidth * currentZoom <= (0, _lib.gn)("workspacebkg").offsetWidth) {
                 return val;
             }
-            var dx = (0, _lib.gn)('maincanvas').dx + (0, _lib.gn)('maincanvas').cx - (0, _lib.gn)('maincanvas').cx * currentZoom;
+            var dx = (0, _lib.gn)("maincanvas").dx + (0, _lib.gn)("maincanvas").cx - (0, _lib.gn)("maincanvas").cx * currentZoom;
             if (dx > indent) {
-                return (0, _lib.gn)('maincanvas').dx + (indent - dx);
+                return (0, _lib.gn)("maincanvas").dx + (indent - dx);
             }
-            val = (dx / currentZoom + (0, _lib.gn)('maincanvas').offsetWidth) * currentZoom;
-            var edge = (0, _lib.gn)('workspacebkg').offsetWidth - indent;
+            val = (dx / currentZoom + (0, _lib.gn)("maincanvas").offsetWidth) * currentZoom;
+            var edge = (0, _lib.gn)("workspacebkg").offsetWidth - indent;
             if (val < edge) {
-                return (0, _lib.gn)('maincanvas').dx + (edge - val);
+                return (0, _lib.gn)("maincanvas").dx + (edge - val);
             }
-            return (0, _lib.gn)('maincanvas').dx;
+            return (0, _lib.gn)("maincanvas").dx;
         }
     }, {
-        key: 'getCoory',
+        key: "getCoory",
         value: function getCoory(indent, val) {
-            if ((0, _lib.gn)('maincanvas').offsetHeight * currentZoom <= (0, _lib.gn)('workspacebkg').offsetHeight) {
+            if ((0, _lib.gn)("maincanvas").offsetHeight * currentZoom <= (0, _lib.gn)("workspacebkg").offsetHeight) {
                 return val;
             }
-            var dy = (0, _lib.gn)('maincanvas').dy + (0, _lib.gn)('maincanvas').cy - (0, _lib.gn)('maincanvas').cy * currentZoom;
+            var dy = (0, _lib.gn)("maincanvas").dy + (0, _lib.gn)("maincanvas").cy - (0, _lib.gn)("maincanvas").cy * currentZoom;
             if (dy > indent) {
-                return (0, _lib.gn)('maincanvas').dy + (indent - dy);
+                return (0, _lib.gn)("maincanvas").dy + (indent - dy);
             }
-            val = (dy / currentZoom + (0, _lib.gn)('maincanvas').offsetHeight) * currentZoom;
-            var edge = (0, _lib.gn)('workspacebkg').offsetHeight - indent;
+            val = (dy / currentZoom + (0, _lib.gn)("maincanvas").offsetHeight) * currentZoom;
+            var edge = (0, _lib.gn)("workspacebkg").offsetHeight - indent;
             if (val < edge) {
-                return (0, _lib.gn)('maincanvas').dy + (edge - val);
+                return (0, _lib.gn)("maincanvas").dy + (edge - val);
             }
-            return (0, _lib.gn)('maincanvas').dy;
+            return (0, _lib.gn)("maincanvas").dy;
         }
     }, {
-        key: 'scaleToFit',
+        key: "scaleToFit",
         value: function scaleToFit() {
             var dh = root.parentNode.parentNode.offsetHeight / (workspaceHeight + 10);
             var dw = root.parentNode.parentNode.offsetWidth / (workspaceWidth + 10);
             Paint.setZoomTo(Math.min(dw, dh));
         }
     }, {
-        key: 'dragBackground',
+        key: "dragBackground",
         value: function dragBackground(evt) {
             if (Paint.canvasFits()) {
                 return;
@@ -78313,7 +78341,6 @@ var Paint = function () {
         /////////////////////////////////////////////////////////
         //dispatch table
 
-
         // Originally PaintLayout.js
 
         /////////////////////////////////
@@ -78321,17 +78348,17 @@ var Paint = function () {
         /////////////////////////////////
 
     }, {
-        key: 'layout',
+        key: "layout",
         value: function layout() {
             Paint.topbar();
-            var div = (0, _lib.newHTML)('div', 'innerpaint', paintFrame);
+            var div = (0, _lib.newHTML)("div", "innerpaint", paintFrame);
             Paint.leftPalette(div);
-            var workspaceContainer = (0, _lib.newHTML)('div', 'workspacebkg-container', div);
-            var workspace = (0, _lib.newHTML)('div', 'workspacebkg', workspaceContainer);
-            workspace.setAttribute('id', 'workspacebkg');
+            var workspaceContainer = (0, _lib.newHTML)("div", "workspacebkg-container", div);
+            var workspace = (0, _lib.newHTML)("div", "workspacebkg", workspaceContainer);
+            workspace.setAttribute("id", "workspacebkg");
             Paint.rightPalette(div);
             Paint.colorPalette(paintFrame);
-            Paint.selectButton('path');
+            Paint.selectButton("path");
             Paint.createSVGeditor(workspace);
         }
 
@@ -78340,30 +78367,30 @@ var Paint = function () {
         /////////////////////////////////
 
     }, {
-        key: 'topbar',
+        key: "topbar",
         value: function topbar() {
-            var pt = (0, _lib.newHTML)('div', 'paintop', paintFrame);
+            var pt = (0, _lib.newHTML)("div", "paintop", paintFrame);
             Paint.checkMark(pt);
             _PaintUndo2.default.setup(pt); // plug here the undo
             Paint.nameOfcostume(pt);
         }
     }, {
-        key: 'checkMark',
+        key: "checkMark",
         value: function checkMark(pt) {
-            var clicky = (0, _lib.newHTML)('div', 'paintdone', pt);
-            clicky.id = 'donecheck';
+            var clicky = (0, _lib.newHTML)("div", "paintdone", pt);
+            clicky.id = "donecheck";
             clicky.ontouchstart = Paint.backToProject;
             clicky.onmousedown = Paint.backToProject;
         }
     }, {
-        key: 'nameOfcostume',
+        key: "nameOfcostume",
         value: function nameOfcostume(p) {
-            var sform = (0, _lib.newHTML)('form', 'spriteform', p);
-            sform.name = 'spriteform';
-            var ti = (0, _lib.newHTML)('input', undefined, sform);
+            var sform = (0, _lib.newHTML)("form", "spriteform", p);
+            sform.name = "spriteform";
+            var ti = (0, _lib.newHTML)("input", undefined, sform);
             ti.autocomplete = false;
             ti.autocorrect = false;
-            ti.name = 'name';
+            ti.name = "name";
             ti.maxLength = 25;
             ti.firstTime = true;
             ti.ontouchstart = function () {};
@@ -78375,14 +78402,14 @@ var Paint = function () {
             sform.onsubmit = Paint.submitNameChange;
         }
     }, {
-        key: 'submitNameChange',
+        key: "submitNameChange",
         value: function submitNameChange(e) {
             e.preventDefault();
             var input = e.target;
             input.blur();
         }
     }, {
-        key: 'nameFocus',
+        key: "nameFocus",
         value: function nameFocus(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -78397,17 +78424,17 @@ var Paint = function () {
             }, 1);
         }
     }, {
-        key: 'nameBlur',
+        key: "nameBlur",
         value: function nameBlur(e) {
             _ScratchJr2.default.activeFocus = undefined;
             var spr = _ScratchJr2.default.getSprite();
             var ti = e.target;
             var val = _ScratchJr2.default.validate(ti.value, spr.name);
             ti.value = val.substring(0, ti.maxLength);
-            _ScratchJr2.default.storyStart('Paint.nameBlur');
+            _ScratchJr2.default.storyStart("Paint.nameBlur");
         }
     }, {
-        key: 'handleNamePress',
+        key: "handleNamePress",
         value: function handleNamePress(e) {
             var key = e.keyCode || e.which;
             if (key == 13) {
@@ -78416,15 +78443,15 @@ var Paint = function () {
                 var ti = e.target;
                 if (ti.firstTime) {
                     ti.firstTime = false;
-                    ti.value = '';
+                    ti.value = "";
                 }
                 if (ti.value.length == 25) {
-                    _ScratchAudio2.default.sndFX('boing.wav');
+                    _ScratchAudio2.default.sndFX("boing.wav");
                 }
             }
         }
     }, {
-        key: 'handleKeyRelease',
+        key: "handleKeyRelease",
         value: function handleKeyRelease(e) {
             var key = e.keyCode || e.which;
             var ti = e.target;
@@ -78433,7 +78460,7 @@ var Paint = function () {
             }
             if (ti.firstTime) {
                 ti.firstTime = false;
-                ti.value = '';
+                ti.value = "";
             }
         }
 
@@ -78442,36 +78469,36 @@ var Paint = function () {
         /////////////////////////////////
 
     }, {
-        key: 'leftPalette',
+        key: "leftPalette",
         value: function leftPalette(div) {
-            var leftpal = (0, _lib.newHTML)('div', 'side up', div);
-            var pal = (0, _lib.newHTML)('div', 'paintpalette', leftpal);
-            pal.setAttribute('id', 'paintpalette');
+            var leftpal = (0, _lib.newHTML)("div", "side up", div);
+            var pal = (0, _lib.newHTML)("div", "paintpalette", leftpal);
+            pal.setAttribute("id", "paintpalette");
             Paint.setupEditPalette(pal);
             Paint.createSizeSelector(pal);
         }
     }, {
-        key: 'setupEditPalette',
+        key: "setupEditPalette",
         value: function setupEditPalette(pal) {
-            var section = (0, _lib.newHTML)('div', 'section', pal);
-            section.setAttribute('id', 'painttools');
-            var list = ['path', 'ellipse', 'rect', 'tri'];
+            var section = (0, _lib.newHTML)("div", "section", pal);
+            section.setAttribute("id", "painttools");
+            var list = ["path", "ellipse", "rect", "tri"];
             var i = 0;
             for (i = 0; i < list.length; i++) {
-                var but = (0, _lib.newHTML)('div', 'element off', section);
-                var icon = (0, _lib.newHTML)('div', 'tool ' + list[i] + ' off', but);
-                icon.setAttribute('key', list[i]);
+                var but = (0, _lib.newHTML)("div", "element off", section);
+                var icon = (0, _lib.newHTML)("div", "tool " + list[i] + " off", but);
+                icon.setAttribute("key", list[i]);
                 icon.ontouchstart = Paint.setMode;
                 icon.onmousedown = Paint.setMode;
             }
         }
     }, {
-        key: 'createSizeSelector',
+        key: "createSizeSelector",
         value: function createSizeSelector(pal) {
-            var section = (0, _lib.newHTML)('div', 'section space', pal);
-            section.setAttribute('id', 'sizeSelector');
+            var section = (0, _lib.newHTML)("div", "section space", pal);
+            section.setAttribute("id", "sizeSelector");
             for (var i = 0; i < pensizes.length; i++) {
-                var ps = (0, _lib.newHTML)('div', 'pensizeholder', section);
+                var ps = (0, _lib.newHTML)("div", "pensizeholder", section);
                 ps.key = i;
                 var setSize = function setSize(e) {
                     e.preventDefault();
@@ -78482,7 +78509,7 @@ var Paint = function () {
                 };
                 ps.ontouchstart = setSize;
                 ps.onmousedown = setSize;
-                var c = (0, _lib.newHTML)('div', 'line t' + i, ps);
+                var c = (0, _lib.newHTML)("div", "line t" + i, ps);
                 Paint.drawPenSizeInColor(c);
             }
             strokewidth = pensizes[1];
@@ -78493,16 +78520,15 @@ var Paint = function () {
         // Pen sizes
         ////////////////////////////////////////
 
-
     }, {
-        key: 'drawPenSizeInColor',
+        key: "drawPenSizeInColor",
         value: function drawPenSizeInColor(c) {
             c.style.background = fillcolor;
         }
     }, {
-        key: 'updateStrokes',
+        key: "updateStrokes",
         value: function updateStrokes() {
-            var div = (0, _lib.gn)('sizeSelector');
+            var div = (0, _lib.gn)("sizeSelector");
             if (!div) {
                 return;
             }
@@ -78512,15 +78538,15 @@ var Paint = function () {
             }
         }
     }, {
-        key: 'selectPenSize',
+        key: "selectPenSize",
         value: function selectPenSize(str) {
-            var p = (0, _lib.gn)('sizeSelector');
+            var p = (0, _lib.gn)("sizeSelector");
             for (var i = 0; i < p.childElementCount; i++) {
                 var elem = p.childNodes[i];
                 if (elem.key == str) {
-                    elem.setAttribute('class', 'pensizeholder on');
+                    elem.setAttribute("class", "pensizeholder on");
                 } else {
-                    elem.setAttribute('class', 'pensizeholder off');
+                    elem.setAttribute("class", "pensizeholder off");
                 }
             }
         }
@@ -78530,82 +78556,82 @@ var Paint = function () {
         /////////////////////////////////
 
     }, {
-        key: 'rightPalette',
+        key: "rightPalette",
         value: function rightPalette(div) {
-            var rightpal = (0, _lib.newHTML)('div', 'side', div);
-            Paint.addSidePalette(rightpal, 'selectortools', ['select', 'rotate']);
-            Paint.addSidePalette(rightpal, 'edittools', ['stamper', 'scissors']);
-            Paint.addSidePalette(rightpal, 'filltools', _OS2.default.camera == '1' && _Camera2.default.available ? ['camera', 'paintbucket'] : ['paintbucket']);
+            var rightpal = (0, _lib.newHTML)("div", "side", div);
+            Paint.addSidePalette(rightpal, "selectortools", ["select", "rotate"]);
+            Paint.addSidePalette(rightpal, "edittools", ["stamper", "scissors"]);
+            Paint.addSidePalette(rightpal, "filltools", _OS2.default.camera == "1" && _Camera2.default.available ? ["camera", "paintbucket"] : ["paintbucket"]);
         }
     }, {
-        key: 'addSidePalette',
+        key: "addSidePalette",
         value: function addSidePalette(p, id, list) {
-            var pal = (0, _lib.newHTML)('div', 'paintpalette short', p);
-            pal.setAttribute('id', id);
+            var pal = (0, _lib.newHTML)("div", "paintpalette short", p);
+            pal.setAttribute("id", id);
             for (var i = 0; i < list.length; i++) {
-                var but = (0, _lib.newHTML)('div', 'element off', pal);
-                var icon = (0, _lib.newHTML)('div', 'tool ' + list[i] + ' off', but);
-                icon.setAttribute('key', list[i]);
+                var but = (0, _lib.newHTML)("div", "element off", pal);
+                var icon = (0, _lib.newHTML)("div", "tool " + list[i] + " off", but);
+                icon.setAttribute("key", list[i]);
                 icon.ontouchstart = Paint.setMode;
                 icon.onmousedown = Paint.setMode;
             }
         }
     }, {
-        key: 'cameraToolsOn',
+        key: "cameraToolsOn",
         value: function cameraToolsOn() {
-            (0, _lib.gn)('backdrop').setAttribute('class', 'modal-backdrop fade dark');
-            (0, _lib.setProps)((0, _lib.gn)('backdrop').style, {
-                display: 'block'
+            (0, _lib.gn)("backdrop").setAttribute("class", "modal-backdrop fade dark");
+            (0, _lib.setProps)((0, _lib.gn)("backdrop").style, {
+                display: "block"
             });
-            var topbar = (0, _lib.newHTML)('div', 'phototopbar', (0, _lib.gn)('backdrop'));
-            topbar.setAttribute('id', 'photocontrols');
+            var topbar = (0, _lib.newHTML)("div", "phototopbar", (0, _lib.gn)("backdrop"));
+            topbar.setAttribute("id", "photocontrols");
             //  var actions = newHTML("div",'actions', topbar);
             //  var buttons = newHTML('div', 'photobuttons', actions);
-            var fc = (0, _lib.newHTML)('div', 'flipcamera', topbar);
-            fc.setAttribute('id', 'cameraflip');
-            fc.setAttribute('key', 'cameraflip');
+            var fc = (0, _lib.newHTML)("div", "flipcamera", topbar);
+            fc.setAttribute("id", "cameraflip");
+            fc.setAttribute("key", "cameraflip");
             if (_lib.isAndroid && !AndroidInterface.scratchjr_has_multiple_cameras()) {
-                fc.style.display = 'none';
+                fc.style.display = "none";
             }
 
             fc.ontouchstart = Paint.setMode;
             fc.onmousedown = Paint.setMode;
-            var captureContainer = (0, _lib.newHTML)('div', 'snapshot-container', (0, _lib.gn)('backdrop'));
-            captureContainer.setAttribute('id', 'capture-container');
-            var capture = (0, _lib.newHTML)('div', 'snapshot', captureContainer);
-            capture.setAttribute('id', 'capture');
-            capture.setAttribute('key', 'camerasnap');
+            var captureContainer = (0, _lib.newHTML)("div", "snapshot-container", (0, _lib.gn)("backdrop"));
+            captureContainer.setAttribute("id", "capture-container");
+            var capture = (0, _lib.newHTML)("div", "snapshot", captureContainer);
+            capture.setAttribute("id", "capture");
+            capture.setAttribute("key", "camerasnap");
             capture.ontouchstart = Paint.setMode;
             capture.onmousedown = Paint.setMode;
-            var cc = (0, _lib.newHTML)('div', 'cameraclose', topbar);
-            cc.setAttribute('id', 'cameraclose');
+            var cc = (0, _lib.newHTML)("div", "cameraclose", topbar);
+            cc.setAttribute("id", "cameraclose");
             cc.ontouchstart = Paint.closeCameraMode;
             cc.onmousedown = Paint.closeCameraMode;
         }
     }, {
-        key: 'closeCameraMode',
+        key: "closeCameraMode",
         value: function closeCameraMode(evt) {
             evt.preventDefault();
             evt.stopPropagation();
-            _ScratchAudio2.default.sndFX('exittap.wav');
+            _ScratchAudio2.default.sndFX("exittap.wav");
             _Camera2.default.close();
-            Paint.selectButton('select');
+            Paint.selectButton("select");
         }
     }, {
-        key: 'cameraToolsOff',
+        key: "cameraToolsOff",
         value: function cameraToolsOff() {
-            (0, _lib.gn)('backdrop').setAttribute('class', 'modal-backdrop fade');
-            (0, _lib.setProps)((0, _lib.gn)('backdrop').style, {
-                display: 'none'
+            (0, _lib.gn)("backdrop").setAttribute("class", "modal-backdrop fade");
+            (0, _lib.setProps)((0, _lib.gn)("backdrop").style, {
+                display: "none"
             });
-            if ((0, _lib.gn)('photocontrols')) {
-                (0, _lib.gn)('photocontrols').parentNode.removeChild((0, _lib.gn)('photocontrols'));
+            if ((0, _lib.gn)("photocontrols")) {
+                (0, _lib.gn)("photocontrols").parentNode.removeChild((0, _lib.gn)("photocontrols"));
             }
-            if ((0, _lib.gn)('capture')) {
-                var captureContainer = (0, _lib.gn)('capture').parentNode;
+            if ((0, _lib.gn)("capture")) {
+                var captureContainer = (0, _lib.gn)("capture").parentNode;
                 var captureContainerParent = captureContainer.parentNode;
-                captureContainer.removeChild((0, _lib.gn)('capture'));
-                captureContainerParent.removeChild((0, _lib.gn)('capture-container'));
+                captureContainer.removeChild((0, _lib.gn)("capture"));
+                captureContainerParent.removeChild((0, _lib.gn)("capture-container"));
             }
         }
 
@@ -78613,30 +78639,29 @@ var Paint = function () {
         // canvas Area
         //////////////////////////////////
 
-
     }, {
-        key: 'setUpCanvasArea',
+        key: "setUpCanvasArea",
         value: function setUpCanvasArea() {
-            var workspace = (0, _lib.gn)('workspacebkg');
+            var workspace = (0, _lib.gn)("workspacebkg");
             var dx = Math.floor((workspace.offsetWidth - workspaceWidth) / 2);
             var dy = Math.floor((workspace.offsetHeight - workspaceHeight) / 2);
             var w = workspaceWidth;
             var h = workspaceHeight;
 
-            var div = (0, _lib.gn)('maincanvas');
-            div.style.background = '#F5F2F7';
-            div.style.top = '0px';
-            div.style.left = '0px';
+            var div = (0, _lib.gn)("maincanvas");
+            div.style.background = "#F5F2F7";
+            div.style.top = "0px";
+            div.style.left = "0px";
 
-            div.style.width = w + 'px';
-            div.style.height = h + 'px';
+            div.style.width = w + "px";
+            div.style.height = h + "px";
             div.cx = div.offsetWidth / 2;
             div.cy = div.offsetHeight / 2;
             div.dx = dx;
             div.dy = dy;
 
-            root.setAttributeNS(null, 'width', w);
-            root.setAttributeNS(null, 'height', h);
+            root.setAttributeNS(null, "width", w);
+            root.setAttributeNS(null, "height", h);
             Paint.drawGrid(w, h);
             _PaintAction2.default.clearEvents();
         }
@@ -78646,43 +78671,43 @@ var Paint = function () {
         /////////////////////////////////
 
     }, {
-        key: 'colorPalette',
+        key: "colorPalette",
         value: function colorPalette(div) {
             var swatchlist = Paint.initSwatchList();
-            var spalContainer = (0, _lib.newHTML)('div', 'swatchpalette-container', div);
-            var spal = (0, _lib.newHTML)('div', 'swatchpalette', spalContainer);
-            spal.setAttribute('id', 'swatches');
+            var spalContainer = (0, _lib.newHTML)("div", "swatchpalette-container", div);
+            var spal = (0, _lib.newHTML)("div", "swatchpalette", spalContainer);
+            spal.setAttribute("id", "swatches");
             for (var i = 0; i < swatchlist.length; i++) {
-                var colour = (0, _lib.newHTML)('div', 'swatchbucket', spal);
+                var colour = (0, _lib.newHTML)("div", "swatchbucket", spal);
                 // bucket
-                var sf = (0, _lib.newHTML)('div', 'swatchframe', colour);
-                var sc = (0, _lib.newHTML)('div', 'swatchcolor', sf);
+                var sf = (0, _lib.newHTML)("div", "swatchframe", colour);
+                var sc = (0, _lib.newHTML)("div", "swatchcolor", sf);
                 sc.style.background = swatchlist[i];
                 //
-                sf = (0, _lib.newHTML)('div', 'splasharea off', colour);
+                sf = (0, _lib.newHTML)("div", "splasharea off", colour);
                 Paint.setSplashColor(sf, splash, swatchlist[i]);
                 Paint.addImageUrl(sf, splashshade);
                 colour.ontouchstart = Paint.selectSwatch;
                 colour.onmousedown = Paint.selectSwatch;
             }
-            Paint.setSwatchColor((0, _lib.gn)('swatches').childNodes[swatchlist.indexOf('#1C1C1C')]);
+            Paint.setSwatchColor((0, _lib.gn)("swatches").childNodes[swatchlist.indexOf("#1C1C1C")]);
         }
     }, {
-        key: 'setSplashColor',
+        key: "setSplashColor",
         value: function setSplashColor(p, str, color) {
-            var dataurl = 'data:image/svg+xml;base64,' + btoa(str.replace(/#662D91/g, color));
+            var dataurl = "data:image/svg+xml;base64," + btoa(str.replace(/#662D91/g, color));
             Paint.addImageUrl(p, dataurl);
         }
     }, {
-        key: 'addImageUrl',
+        key: "addImageUrl",
         value: function addImageUrl(p, url) {
-            var img = document.createElement('img');
+            var img = document.createElement("img");
             img.src = url;
-            img.style.position = 'absolute';
+            img.style.position = "absolute";
             p.appendChild(img);
         }
     }, {
-        key: 'selectSwatch',
+        key: "selectSwatch",
         value: function selectSwatch(e) {
             if (e.touches && e.touches.length > 1) {
                 return;
@@ -78698,31 +78723,31 @@ var Paint = function () {
             } else {
                 t = e.target;
             }
-            var b = 'swatchbucket' != t.className;
+            var b = "swatchbucket" != t.className;
             while (b) {
                 t = t.parentNode;
-                b = t && 'swatchbucket' != t.className;
+                b = t && "swatchbucket" != t.className;
             }
             if (!t) {
                 return;
             }
-            _ScratchAudio2.default.sndFX('splash.wav');
+            _ScratchAudio2.default.sndFX("splash.wav");
             Paint.setSwatchColor(t);
         }
     }, {
-        key: 'setSwatchColor',
+        key: "setSwatchColor",
         value: function setSwatchColor(t) {
-            var tools = ['select', 'wand', 'stamper', 'scissors', 'rotate'];
+            var tools = ["select", "wand", "stamper", "scissors", "rotate"];
             if (t && tools.indexOf(mode) > -1) {
-                Paint.selectButton('paintbucket');
+                Paint.selectButton("paintbucket");
             }
             var c = t.childNodes[0].childNodes[0].style.backgroundColor;
-            for (var i = 0; i < (0, _lib.gn)('swatches').childElementCount; i++) {
-                var mycolor = (0, _lib.gn)('swatches').childNodes[i].childNodes[0].childNodes[0].style.backgroundColor;
+            for (var i = 0; i < (0, _lib.gn)("swatches").childElementCount; i++) {
+                var mycolor = (0, _lib.gn)("swatches").childNodes[i].childNodes[0].childNodes[0].style.backgroundColor;
                 if (c == mycolor) {
-                    (0, _lib.gn)('swatches').childNodes[i].childNodes[1].setAttribute('class', 'splasharea on');
+                    (0, _lib.gn)("swatches").childNodes[i].childNodes[1].setAttribute("class", "splasharea on");
                 } else {
-                    (0, _lib.gn)('swatches').childNodes[i].childNodes[1].setAttribute('class', 'splasharea off');
+                    (0, _lib.gn)("swatches").childNodes[i].childNodes[1].setAttribute("class", "splasharea off");
                 }
             }
             fillcolor = c;
@@ -78730,112 +78755,110 @@ var Paint = function () {
             Paint.updateStrokes();
         }
     }, {
-        key: 'initSwatchList',
+        key: "initSwatchList",
         value: function initSwatchList() {
             return [
             //	"#FF5500", // new orange
-            '#FFD2F2', '#FF99D6', '#FF4583', // red pinks
-            '#C30001', '#FF0023', '#FF8300', '#FFB200', '#FFF42E', '#FFF9C2', // pale yellow
-            '#E2FFBD', //  pale green
-            '#CFF500', // lime green
-            '#50D823', // problematic
+            "#FFD2F2", "#FF99D6", "#FF4583", // red pinks
+            "#C30001", "#FF0023", "#FF8300", "#FFB200", "#FFF42E", "#FFF9C2", // pale yellow
+            "#E2FFBD", //  pale green
+            "#CFF500", // lime green
+            "#50D823", // problematic
             //          "#2BFC49", // less problematic
-            '#29C130',
+            "#29C130",
             //          "#56C43B",  // ERROR?
-            '#2BBF8A', // new green
-            '#027607', '#114D24', //greens
-            '#FFFFFF', '#CCDDE7', '#61787C', '#1C1C1C', // grays
+            "#2BBF8A", // new green
+            "#027607", "#114D24", //greens
+            "#FFFFFF", "#CCDDE7", "#61787C", "#1C1C1C", // grays
             // '#D830A3', // sarah's pink shoes border
-            '#FF64E9', // purple pinks
-            '#D999FF', ' #A159D3', // vilote
-            '#722696', // sarah's violet
-            '#141463', '#003399', '#1D40ED', '#0079D3', '#009EFF', '#76C8FF', '#ACE0FD', '#11B7BC', '#21F9F3', '#C3FCFC',
+            "#FF64E9", // purple pinks
+            "#D999FF", " #A159D3", // vilote
+            "#722696", // sarah's violet
+            "#141463", "#003399", "#1D40ED", "#0079D3", "#009EFF", "#76C8FF", "#ACE0FD", "#11B7BC", "#21F9F3", "#C3FCFC",
             // '#54311E', '#8E572A', '#E4B69D', '#FFCDA4', '#FFEDD7' // skin colors
-            '#FDDBB4', '#E4B681', '#BF8C5C', '#955D31', '#6B3D1F', '#482D18' // new skin colors
-            ];
+            "#FDDBB4", "#E4B681", "#BF8C5C", "#955D31", "#6B3D1F", "#482D18"];
         }
 
         /////////////////////////////////////////////////
         //  Setup SVG Editor
         ////////////////////////////////////////////////
 
-
     }, {
-        key: 'createSVGeditor',
+        key: "createSVGeditor",
         value: function createSVGeditor(container) {
-            var div = (0, _lib.newHTML)('div', 'maincanvas', container);
-            div.setAttribute('id', 'maincanvas');
-            div.style.background = '#F5F2F7';
-            div.style.top = '0px';
-            div.style.left = '0px';
+            var div = (0, _lib.newHTML)("div", "maincanvas", container);
+            div.setAttribute("id", "maincanvas");
+            div.style.background = "#F5F2F7";
+            div.style.top = "0px";
+            div.style.left = "0px";
             window.onmousemove = undefined;
             window.onmouseup = undefined;
             root = _SVGTools2.default.create(div);
-            root.setAttribute('class', 'active3d');
+            root.setAttribute("class", "active3d");
             window.xform = _Transform2.default.getTranslateTransform();
             window.selxform = _Transform2.default.getTranslateTransform();
-            var layer = _SVGTools2.default.createGroup(root, 'layer1');
-            layer.setAttribute('style', 'pointer-events:visiblePainted');
-            _SVGTools2.default.createGroup(root, 'draglayer');
-            _SVGTools2.default.createGroup(root, 'paintgrid');
-            (0, _lib.gn)('paintgrid').setAttribute('opacity', 0.5);
+            var layer = _SVGTools2.default.createGroup(root, "layer1");
+            layer.setAttribute("style", "pointer-events:visiblePainted");
+            _SVGTools2.default.createGroup(root, "draglayer");
+            _SVGTools2.default.createGroup(root, "paintgrid");
+            (0, _lib.gn)("paintgrid").setAttribute("opacity", 0.5);
         }
     }, {
-        key: 'clearWorkspace',
+        key: "clearWorkspace",
         value: function clearWorkspace() {
             var fcn = function fcn(div) {
                 while (div.childElementCount > 0) {
                     div.removeChild(div.childNodes[0]);
                 }
             };
-            fcn((0, _lib.gn)('layer1'));
-            fcn((0, _lib.gn)('paintgrid'));
-            fcn((0, _lib.gn)('draglayer'));
+            fcn((0, _lib.gn)("layer1"));
+            fcn((0, _lib.gn)("paintgrid"));
+            fcn((0, _lib.gn)("draglayer"));
             _Path2.default.quitEditMode();
         }
     }, {
-        key: 'drawGrid',
+        key: "drawGrid",
         value: function drawGrid(w, h) {
             var attr, path;
             if (!isBkg) {
                 attr = {
-                    'd': Paint.getGridPath(w, h, 12),
-                    'id': (0, _lib.getIdFor)('gridpath'),
-                    'opacity': 1,
-                    'stroke': '#dcddde',
-                    'fill': 'none',
-                    'stroke-width': 0.5
+                    d: Paint.getGridPath(w, h, 12),
+                    id: (0, _lib.getIdFor)("gridpath"),
+                    opacity: 1,
+                    stroke: "#dcddde",
+                    fill: "none",
+                    "stroke-width": 0.5
                 };
-                path = _SVGTools2.default.addChild((0, _lib.gn)('paintgrid'), 'path', attr);
-                path.setAttribute('style', 'pointer-events:none;');
+                path = _SVGTools2.default.addChild((0, _lib.gn)("paintgrid"), "path", attr);
+                path.setAttribute("style", "pointer-events:none;");
             }
             attr = {
-                'd': Paint.getGridPath(w, h, isBkg ? 24 : 48),
-                'id': (0, _lib.getIdFor)('gridpath'),
-                'opacity': 1,
-                'stroke': '#c1c2c3',
-                'fill': 'none',
-                'stroke-width': 0.5
+                d: Paint.getGridPath(w, h, isBkg ? 24 : 48),
+                id: (0, _lib.getIdFor)("gridpath"),
+                opacity: 1,
+                stroke: "#c1c2c3",
+                fill: "none",
+                "stroke-width": 0.5
             };
-            path = _SVGTools2.default.addChild((0, _lib.gn)('paintgrid'), 'path', attr);
-            path.setAttribute('style', 'pointer-events:none;');
+            path = _SVGTools2.default.addChild((0, _lib.gn)("paintgrid"), "path", attr);
+            path.setAttribute("style", "pointer-events:none;");
         }
     }, {
-        key: 'getGridPath',
+        key: "getGridPath",
         value: function getGridPath(w, h, gridsize) {
-            var str = '';
+            var str = "";
             var dx = gridsize;
             // vertical
             var cmd;
             for (var i = 0; i < w / gridsize; i++) {
-                cmd = 'M' + dx + ',' + 0 + 'L' + dx + ',' + h;
+                cmd = "M" + dx + "," + 0 + "L" + dx + "," + h;
                 str += cmd;
                 dx += gridsize;
             }
             var dy = gridsize;
             // horizontal
             for (i = 0; i < h / gridsize; i++) {
-                cmd = 'M' + 0 + ',' + dy + 'L' + w + ',' + dy;
+                cmd = "M" + 0 + "," + dy + "L" + w + "," + dy;
                 str += cmd;
                 dy += gridsize;
             }
@@ -78848,7 +78871,7 @@ var Paint = function () {
         //////////////////////////
 
     }, {
-        key: 'initBkg',
+        key: "initBkg",
         value: function initBkg(ow, oh) {
             nativeJr = true;
             workspaceWidth = ow;
@@ -78857,27 +78880,27 @@ var Paint = function () {
             var dh = root.parentNode.parentNode.offsetHeight / (workspaceHeight + 10);
             var dw = root.parentNode.parentNode.offsetWidth / (workspaceWidth + 10);
             Paint.setZoomTo(Math.min(dw, dh));
-            document.forms.spriteform.style.visibility = 'hidden';
+            document.forms.spriteform.style.visibility = "hidden";
             if (currentMd5) {
                 Paint.loadBackground(currentMd5);
             } else {
                 var attr = {
-                    'id': 'staticbkg',
-                    'opacity': 1,
-                    'fixed': 'yes',
+                    id: "staticbkg",
+                    opacity: 1,
+                    fixed: "yes",
                     fill: _ScratchJr2.default.stagecolor
                 };
-                var cmds = [['M', 0, 0], ['L', 480, 0], ['L', 480, 360], ['L', 0, 360], ['L', 0, 0]];
+                var cmds = [["M", 0, 0], ["L", 480, 0], ["L", 480, 360], ["L", 0, 360], ["L", 0, 0]];
                 attr.d = _SVG2Canvas2.default.arrayToString(cmds);
-                _SVGTools2.default.addChild((0, _lib.gn)('layer1'), 'path', attr);
+                _SVGTools2.default.addChild((0, _lib.gn)("layer1"), "path", attr);
                 _Ghost2.default.drawOffscreen();
                 _PaintUndo2.default.record(true);
             }
         }
     }, {
-        key: 'loadBackground',
+        key: "loadBackground",
         value: function loadBackground(md5) {
-            if (md5.indexOf('samples/') >= 0) {
+            if (md5.indexOf("samples/") >= 0) {
                 // Load sample asset
                 Paint.loadChar(md5);
             } else if (!_MediaLib2.default.keys[md5]) {
@@ -78895,7 +78918,7 @@ var Paint = function () {
             }
         }
     }, {
-        key: 'getBkg',
+        key: "getBkg",
         value: function getBkg(url) {
             var xmlrequest = new XMLHttpRequest();
             xmlrequest.onreadystatechange = function () {
@@ -78903,33 +78926,33 @@ var Paint = function () {
                     Paint.createBkgFromXML(xmlrequest.responseText);
                 }
             };
-            xmlrequest.open('GET', url, true);
+            xmlrequest.open("GET", url, true);
             xmlrequest.send(null);
         }
     }, {
-        key: 'loadBkg',
+        key: "loadBkg",
         value: function loadBkg(str) {
             Paint.createBkgFromXML(str);
         }
     }, {
-        key: 'createBkgFromXML',
+        key: "createBkgFromXML",
         value: function createBkgFromXML(str) {
-            nativeJr = str.indexOf('Scratch Jr') > -1;
-            str = str.replace(/>\s*</g, '><');
+            nativeJr = str.indexOf("Scratch Jr") > -1;
+            str = str.replace(/>\s*</g, "><");
             console.log(str);
-            var xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
+            var xmlDoc = new DOMParser().parseFromString(str, "text/xml");
             var extxml = document.importNode(xmlDoc.documentElement, true);
             var flat = Paint.skipUnwantedElements(extxml, []);
             for (var i = 0; i < flat.length; i++) {
-                (0, _lib.gn)('layer1').appendChild(flat[i]);
-                if (flat[i].getAttribute('id') == 'fixed') {
-                    flat[i].setAttribute('fixed', 'yes');
+                (0, _lib.gn)("layer1").appendChild(flat[i]);
+                if (flat[i].getAttribute("id") == "fixed") {
+                    flat[i].setAttribute("fixed", "yes");
                 }
-                flat[i].setAttribute('file', 'yes');
+                flat[i].setAttribute("file", "yes");
             }
-            Paint.doAbsolute((0, _lib.gn)('layer1'));
+            Paint.doAbsolute((0, _lib.gn)("layer1"));
             if (!nativeJr) {
-                Paint.reassingIds((0, _lib.gn)('layer1'));
+                Paint.reassingIds((0, _lib.gn)("layer1"));
             } // make sure there are unique mask names
             //	gn("layer1").childNodes[0].setAttribute('id', "staticbkg");
             var dh = root.parentNode.parentNode.offsetHeight / (workspaceHeight + 10);
@@ -78937,15 +78960,15 @@ var Paint = function () {
             Paint.setZoomTo(Math.min(dw, dh));
             _PaintUndo2.default.record(true);
             if (!nativeJr) {
-                Paint.selectButton('paintbucket');
+                Paint.selectButton("paintbucket");
             }
         }
     }, {
-        key: 'initSprite',
+        key: "initSprite",
         value: function initSprite(ow, oh) {
             // console.log('initSprite');
             nativeJr = true;
-            document.forms.spriteform.style.visibility = 'visible';
+            document.forms.spriteform.style.visibility = "visible";
             document.forms.spriteform.name.value = (0, _lib.gn)(currentName) ? (0, _lib.gn)(currentName).owner.name : currentName;
             if (ow) {
                 workspaceWidth = ow;
@@ -78957,7 +78980,7 @@ var Paint = function () {
                 Paint.loadCharacter(currentMd5);
             } else {
                 Paint.setUpCanvasArea();
-                (0, _lib.setCanvasSize)(_Ghost2.default.maskCanvas, Math.round(Number(root.getAttribute('width')) * currentZoom), Math.round(Number(root.getAttribute('height')) * currentZoom));
+                (0, _lib.setCanvasSize)(_Ghost2.default.maskCanvas, Math.round(Number(root.getAttribute("width")) * currentZoom), Math.round(Number(root.getAttribute("height")) * currentZoom));
                 var dh = root.parentNode.parentNode.offsetHeight / (workspaceHeight + 10);
                 var dw = root.parentNode.parentNode.offsetWidth / (workspaceWidth + 10);
                 Paint.setZoomTo(Math.min(dw, dh));
@@ -78965,10 +78988,10 @@ var Paint = function () {
             }
         }
     }, {
-        key: 'loadCharacter',
+        key: "loadCharacter",
         value: function loadCharacter(md5) {
             // console.log('loadCharacter');
-            if (md5.indexOf('samples/') >= 0) {
+            if (md5.indexOf("samples/") >= 0) {
                 // Load sample asset
                 Paint.loadChar(md5);
             } else if (!_MediaLib2.default.keys[md5]) {
@@ -78987,12 +79010,12 @@ var Paint = function () {
             }
         }
     }, {
-        key: 'loadSprite',
+        key: "loadSprite",
         value: function loadSprite(svg) {
             Paint.createCharFromXML(svg, currentName);
         }
     }, {
-        key: 'loadChar',
+        key: "loadChar",
         value: function loadChar(url) {
             // console.log('loadChar');
             var xmlrequest = new XMLHttpRequest();
@@ -79001,14 +79024,14 @@ var Paint = function () {
                     Paint.createCharFromXML(xmlrequest.responseText, currentName);
                 }
             };
-            xmlrequest.open('GET', url, true);
+            xmlrequest.open("GET", url, true);
             xmlrequest.send(null);
         }
     }, {
-        key: 'adjustShapePosition',
+        key: "adjustShapePosition",
         value: function adjustShapePosition(dx, dy) {
             window.xform.setTranslate(dx, dy);
-            _Transform2.default.translateTo((0, _lib.gn)('layer1'), window.xform);
+            _Transform2.default.translateTo((0, _lib.gn)("layer1"), window.xform);
         }
 
         ///////////////////////////////////
@@ -79016,44 +79039,44 @@ var Paint = function () {
         /////////////////////////////////
 
     }, {
-        key: 'savePageImage',
+        key: "savePageImage",
         value: function savePageImage(fcn) {
-            console.log('savePageImage');
-            var worthsaving = (0, _lib.gn)('layer1').childElementCount > 0;
+            console.log("savePageImage");
+            var worthsaving = (0, _lib.gn)("layer1").childElementCount > 0;
             if (!worthsaving) {
                 Paint.close();
             } else {
                 saving = true;
                 if (fcn) {
-                    _Alert2.default.open(paintFrame, (0, _lib.gn)('donecheck'), _Localization2.default.localize('ALERT_SAVING'), '#28A5DA');
+                    _Alert2.default.open(paintFrame, (0, _lib.gn)("donecheck"), _Localization2.default.localize("ALERT_SAVING"), "#28A5DA");
                     _Alert2.default.balloon.style.zIndex = 12000;
                 }
-                svgdata = _SVGTools2.default.saveBackground((0, _lib.gn)('layer1'), workspaceWidth, workspaceHeight);
-                _IO2.default.setMedia(svgdata, 'svg', function (str) {
+                svgdata = _SVGTools2.default.saveBackground((0, _lib.gn)("layer1"), workspaceWidth, workspaceHeight);
+                _IO2.default.setMedia(svgdata, "svg", function (str) {
                     Paint.changeBackground(str, fcn);
                 });
             }
         }
     }, {
-        key: 'changeBackground',
+        key: "changeBackground",
         value: function changeBackground(md5, fcn) {
             saveMD5 = md5;
-            var type = 'userbkgs';
+            var type = "userbkgs";
             var mobj = {};
-            mobj.cond = 'md5 = ? AND version = ?';
-            mobj.items = ['*'];
+            mobj.cond = "md5 = ? AND version = ?";
+            mobj.items = ["*"];
             mobj.values = [saveMD5, _ScratchJr2.default.version];
             _IO2.default.query(type, mobj, function (str) {
                 Paint.checkDuplicateBkg(str, fcn);
             });
         }
     }, {
-        key: 'checkDuplicateBkg',
+        key: "checkDuplicateBkg",
         value: function checkDuplicateBkg(str, fcn) {
             var list = JSON.parse(str);
             if (list.length > 0) {
                 if (fcn) {
-                    fcn('duplicate');
+                    fcn("duplicate");
                 }
             } else {
                 Paint.addToBkgLib(fcn);
@@ -79073,75 +79096,75 @@ var Paint = function () {
         */
 
     }, {
-        key: 'addToBkgLib',
+        key: "addToBkgLib",
         value: function addToBkgLib(fcn) {
             var dataurl = _IO2.default.getThumbnail(svgdata, 480, 360, 120, 90);
-            var pngBase64 = dataurl.split(',')[1];
-            _OS2.default.setmedia(pngBase64, 'png', setBkgRecord);
+            var pngBase64 = dataurl.split(",")[1];
+            _OS2.default.setmedia(pngBase64, "png", setBkgRecord);
             function setBkgRecord(pngmd5) {
                 var json = {};
-                var keylist = ['md5', 'altmd5', 'version', 'width', 'height', 'ext'];
-                var values = '?,?,?,?,?,?';
-                json.values = [saveMD5, pngmd5, _ScratchJr2.default.version, '480', '360', 'svg'];
-                json.stmt = 'insert into userbkgs (' + keylist.toString() + ') values (' + values + ')';
+                var keylist = ["md5", "altmd5", "version", "width", "height", "ext"];
+                var values = "?,?,?,?,?,?";
+                json.values = [saveMD5, pngmd5, _ScratchJr2.default.version, "480", "360", "svg"];
+                json.stmt = "insert into userbkgs (" + keylist.toString() + ") values (" + values + ")";
                 _OS2.default.stmt(json, fcn);
             }
         }
     }, {
-        key: 'changePage',
+        key: "changePage",
         value: function changePage() {
             _ScratchJr2.default.stage.currentPage.setBackground(saveMD5, _ScratchJr2.default.stage.currentPage.updateBkg);
             Paint.close();
         }
     }, {
-        key: 'saveSprite',
+        key: "saveSprite",
         value: function saveSprite(fcn) {
-            console.log('saveSprite');
+            console.log("saveSprite");
             var cname = document.forms.spriteform.name.value;
-            var worthsaving = (0, _lib.gn)('layer1').childElementCount > 0 && _PaintUndo2.default.index > 0;
+            var worthsaving = (0, _lib.gn)("layer1").childElementCount > 0 && _PaintUndo2.default.index > 0;
             // Paint.close();
             if (worthsaving) {
                 saving = true;
                 if (fcn) {
-                    _Alert2.default.open(paintFrame, (0, _lib.gn)('donecheck'), 'Saving...', '#28A5DA');
+                    _Alert2.default.open(paintFrame, (0, _lib.gn)("donecheck"), "Saving...", "#28A5DA");
                     _Alert2.default.balloon.style.zIndex = 12000;
                 }
-                svgdata = _SVGTools2.default.saveShape((0, _lib.gn)('layer1'), workspaceWidth, workspaceHeight);
-                _IO2.default.setMedia(svgdata, 'svg', function (str) {
+                svgdata = _SVGTools2.default.saveShape((0, _lib.gn)("layer1"), workspaceWidth, workspaceHeight);
+                _IO2.default.setMedia(svgdata, "svg", function (str) {
                     Paint.addOrModifySprite(str, fcn);
                 });
                 // Paint.close();
             } else {
                 var type = Paint.getLoadType(spriteId, cname);
-                if (cname != currentName && type == 'modify') {
+                if (cname != currentName && type == "modify") {
                     _ScratchJr2.default.stage.currentPage.modifySpriteName(cname, spriteId);
-                } else if (currentMd5 && type == 'add') {
+                } else if (currentMd5 && type == "add") {
                     _ScratchJr2.default.stage.currentPage.addSprite(costumeScale, currentMd5, cname);
                 }
                 Paint.close();
             }
         }
     }, {
-        key: 'addOrModifySprite',
+        key: "addOrModifySprite",
         value: function addOrModifySprite(str, fcn) {
             // console.log('addOrModifySprite');
             saveMD5 = str;
             var mobj = {};
-            mobj.cond = 'md5 = ? AND version = ?';
-            mobj.items = ['*'];
+            mobj.cond = "md5 = ? AND version = ?";
+            mobj.items = ["*"];
             mobj.values = [saveMD5, _ScratchJr2.default.version];
-            _IO2.default.query('usershapes', mobj, function (str) {
+            _IO2.default.query("usershapes", mobj, function (str) {
                 Paint.checkDuplicate(str, fcn);
             });
         }
     }, {
-        key: 'checkDuplicate',
+        key: "checkDuplicate",
         value: function checkDuplicate(str, fcn) {
             // console.log('checkDuplicate');
             var list = JSON.parse(str);
             if (list.length > 0) {
                 if (fcn) {
-                    fcn('duplicate');
+                    fcn("duplicate");
                 }
             } else {
                 Paint.addToLib(fcn);
@@ -79163,40 +79186,40 @@ var Paint = function () {
          */
 
     }, {
-        key: 'addToLib',
+        key: "addToLib",
         value: function addToLib(fcn) {
-            console.log('addToLib');
-            var scale = '0.5'; // always saves with 1/2 the size
+            console.log("addToLib");
+            var scale = "0.5"; // always saves with 1/2 the size
             var cname = document.forms.spriteform.name.value;
-            cname = unescape(cname).replace(/[0-9]/g, '').replace(/\s*/g, '');
-            var box = _SVGTools2.default.getBox((0, _lib.gn)('layer1')).rounded();
+            cname = unescape(cname).replace(/[0-9]/g, "").replace(/\s*/g, "");
+            var box = _SVGTools2.default.getBox((0, _lib.gn)("layer1")).rounded();
             box = box.expandBy(20);
             var w = box.width.toString();
             var h = box.height.toString();
             var dataurl = _IO2.default.getThumbnail(svgdata, w, h, 120, 90);
-            var pngBase64 = dataurl.split(',')[1];
-            _OS2.default.setmedia(pngBase64, 'png', setCostumeRecord);
+            var pngBase64 = dataurl.split(",")[1];
+            _OS2.default.setmedia(pngBase64, "png", setCostumeRecord);
             function setCostumeRecord(pngmd5) {
                 var json = {};
-                var keylist = ['scale', 'md5', 'altmd5', 'version', 'width', 'height', 'ext', 'name'];
-                var values = '?,?,?,?,?,?,?,?';
-                json.values = [scale, saveMD5, pngmd5, _ScratchJr2.default.version, w, h, 'svg', cname];
-                json.stmt = 'insert into usershapes (' + keylist.toString() + ') values (' + values + ')';
+                var keylist = ["scale", "md5", "altmd5", "version", "width", "height", "ext", "name"];
+                var values = "?,?,?,?,?,?,?,?";
+                json.values = [scale, saveMD5, pngmd5, _ScratchJr2.default.version, w, h, "svg", cname];
+                json.stmt = "insert into usershapes (" + keylist.toString() + ") values (" + values + ")";
                 _OS2.default.stmt(json, fcn);
             }
         }
     }, {
-        key: 'changePageSprite',
+        key: "changePageSprite",
         value: function changePageSprite() {
             // console.log('changePageSprite (where the Paint closes)');
             Paint.close();
             var cname = document.forms.spriteform.name.value;
             var type = Paint.getLoadType(spriteId, cname);
             switch (type) {
-                case 'modify':
+                case "modify":
                     _ScratchJr2.default.stage.currentPage.modifySprite(saveMD5, cname, spriteId);
                     break;
-                case 'add':
+                case "add":
                     _ScratchJr2.default.stage.currentPage.addSprite(costumeScale, saveMD5, cname);
                     break;
                 default:
@@ -79205,15 +79228,15 @@ var Paint = function () {
             }
         }
     }, {
-        key: 'getLoadType',
+        key: "getLoadType",
         value: function getLoadType(sid, cid) {
             if (!cid) {
-                return 'none';
+                return "none";
             }
             if (sid && cid) {
-                return 'modify';
+                return "modify";
             }
-            return 'add';
+            return "add";
         }
 
         ///////////////////////////
@@ -79221,26 +79244,26 @@ var Paint = function () {
         ///////////////////////////
 
     }, {
-        key: 'skipUnwantedElements',
+        key: "skipUnwantedElements",
         value: function skipUnwantedElements(p, res) {
             for (var i = 0; i < p.childNodes.length; i++) {
                 var elem = p.childNodes[i];
-                if (elem.nodeName == 'metadata') {
+                if (elem.nodeName == "metadata") {
                     continue;
                 }
-                if (elem.nodeName == 'defs') {
+                if (elem.nodeName == "defs") {
                     continue;
                 }
-                if (elem.nodeName == 'sodipodi:namedview') {
+                if (elem.nodeName == "sodipodi:namedview") {
                     continue;
                 }
-                if (elem.nodeName == '#comment') {
+                if (elem.nodeName == "#comment") {
                     continue;
                 }
-                if (elem.nodeName == 'g' && elem.id == 'layer1') {
+                if (elem.nodeName == "g" && elem.id == "layer1") {
                     Paint.skipUnwantedElements(elem, res);
-                    if (elem.removeAttribute('id')) {
-                        elem.removeAttribute('id');
+                    if (elem.removeAttribute("id")) {
+                        elem.removeAttribute("id");
                     }
                 } else {
                     res.push(elem);
@@ -79249,26 +79272,26 @@ var Paint = function () {
             return res;
         }
     }, {
-        key: 'reassingIds',
+        key: "reassingIds",
         value: function reassingIds(p) {
             for (var i = 0; i < p.childNodes.length; i++) {
                 var elem = p.childNodes[i];
-                if (elem.parentNode.getAttribute('fixed') == 'yes') {
-                    elem.setAttribute('fixed', 'yes');
+                if (elem.parentNode.getAttribute("fixed") == "yes") {
+                    elem.setAttribute("fixed", "yes");
                 }
-                var id = elem.getAttribute('id');
+                var id = elem.getAttribute("id");
                 if (!id) {
-                    elem.setAttribute('id', (0, _lib.getIdFor)(elem.nodeName));
+                    elem.setAttribute("id", (0, _lib.getIdFor)(elem.nodeName));
                 }
-                if (elem.nodeName == 'g') {
+                if (elem.nodeName == "g") {
                     Paint.reassingIds(elem);
                 }
             }
         }
     }, {
-        key: 'createCharFromXML',
+        key: "createCharFromXML",
         value: function createCharFromXML(str) {
-            nativeJr = str.indexOf('Scratch Jr') > -1;
+            nativeJr = str.indexOf("Scratch Jr") > -1;
             var dx = workspaceWidth < 432 ? Math.floor((432 - workspaceWidth) / 2) : 0;
             var dy = workspaceHeight < 384 ? Math.floor((384 - workspaceHeight) / 2) : 0;
             if (workspaceWidth < 432) {
@@ -79278,18 +79301,18 @@ var Paint = function () {
                 workspaceHeight = 384;
             }
             Paint.setUpCanvasArea();
-            str = str.replace(/>\s*</g, '><');
+            str = str.replace(/>\s*</g, "><");
             console.log(str);
-            var xmlDoc = new DOMParser().parseFromString(str, 'text/xml');
+            var xmlDoc = new DOMParser().parseFromString(str, "text/xml");
             var extxml = document.importNode(xmlDoc.documentElement, true);
             var flat = Paint.skipUnwantedElements(extxml, []);
             for (var i = 0; i < flat.length; i++) {
-                (0, _lib.gn)('layer1').appendChild(flat[i]);
+                (0, _lib.gn)("layer1").appendChild(flat[i]);
             }
-            Paint.doAbsolute((0, _lib.gn)('layer1'));
+            Paint.doAbsolute((0, _lib.gn)("layer1"));
             Paint.adjustShapePosition(dx, dy);
             if (!nativeJr) {
-                Paint.reassingIds((0, _lib.gn)('layer1'));
+                Paint.reassingIds((0, _lib.gn)("layer1"));
             } // make sure there are unique mask names
             Paint.scaleToFit();
             minZoom = currentZoom < 1 ? currentZoom / 2 : 1;
@@ -79301,43 +79324,43 @@ var Paint = function () {
             }
             _PaintUndo2.default.record(true);
             if (!nativeJr) {
-                Paint.selectButton('paintbucket');
+                Paint.selectButton("paintbucket");
             }
         }
     }, {
-        key: 'doAbsolute',
+        key: "doAbsolute",
         value: function doAbsolute(div) {
             for (var i = 0; i < div.childElementCount; i++) {
                 var elem = div.childNodes[i];
-                if (elem.tagName == 'path') {
+                if (elem.tagName == "path") {
                     _SVG2Canvas2.default.setAbsolutePath(elem);
                 }
-                if (elem.tagName == 'g') {
+                if (elem.tagName == "g") {
                     Paint.doAbsolute(div.childNodes[i]);
                 }
             }
         }
     }, {
-        key: 'getComponents',
+        key: "getComponents",
         value: function getComponents(p, res) {
             for (var i = 0; i < p.childNodes.length; i++) {
                 var elem = p.childNodes[i];
-                if (elem.nodeName == 'metadata') {
+                if (elem.nodeName == "metadata") {
                     continue;
                 }
-                if (elem.nodeName == 'defs') {
+                if (elem.nodeName == "defs") {
                     continue;
                 }
-                if (elem.nodeName == 'sodipodi:namedview') {
+                if (elem.nodeName == "sodipodi:namedview") {
                     continue;
                 }
-                if (elem.nodeName == '#comment') {
+                if (elem.nodeName == "#comment") {
                     continue;
                 }
-                if (elem.nodeName == 'g') {
+                if (elem.nodeName == "g") {
                     Paint.getComponents(elem, res);
-                    if (elem.getAttribute('id')) {
-                        elem.removeAttribute('id');
+                    if (elem.getAttribute("id")) {
+                        elem.removeAttribute("id");
                     }
                 } else {
                     res.push(elem);
@@ -79346,32 +79369,32 @@ var Paint = function () {
             return res;
         }
     }, {
-        key: 'xmlns',
+        key: "xmlns",
         get: function get() {
             return xmlns;
         }
     }, {
-        key: 'xmlnslink',
+        key: "xmlnslink",
         get: function get() {
             return xmlnslink;
         }
     }, {
-        key: 'fillcolor',
+        key: "fillcolor",
         get: function get() {
             return fillcolor;
         }
     }, {
-        key: 'workspaceWidth',
+        key: "workspaceWidth",
         get: function get() {
             return workspaceWidth;
         }
     }, {
-        key: 'workspaceHeight',
+        key: "workspaceHeight",
         get: function get() {
             return workspaceHeight;
         }
     }, {
-        key: 'mode',
+        key: "mode",
         get: function get() {
             return mode;
         },
@@ -79379,12 +79402,12 @@ var Paint = function () {
             mode = newMode;
         }
     }, {
-        key: 'strokewidth',
+        key: "strokewidth",
         get: function get() {
             return strokewidth;
         }
     }, {
-        key: 'currentZoom',
+        key: "currentZoom",
         get: function get() {
             return currentZoom;
         },
@@ -79392,32 +79415,32 @@ var Paint = function () {
             currentZoom = newCurrentZoom;
         }
     }, {
-        key: 'root',
+        key: "root",
         get: function get() {
             return root;
         }
     }, {
-        key: 'saving',
+        key: "saving",
         get: function get() {
             return saving;
         }
     }, {
-        key: 'frame',
+        key: "frame",
         get: function get() {
             return paintFrame;
         }
     }, {
-        key: 'splash',
+        key: "splash",
         get: function get() {
             return splash;
         }
     }, {
-        key: 'splashshade',
+        key: "splashshade",
         get: function get() {
             return splashshade;
         }
     }, {
-        key: 'initialPoint',
+        key: "initialPoint",
         get: function get() {
             return initialPoint;
         },
@@ -79425,7 +79448,7 @@ var Paint = function () {
             initialPoint = newInitialPoint;
         }
     }, {
-        key: 'deltaPoint',
+        key: "deltaPoint",
         get: function get() {
             return deltaPoint;
         },
