@@ -423,15 +423,19 @@ export default class Stage {
     setEvents () {
         var me = this;
         window.ontouchmove = function (evt) {
+            console.log('touchmove stage');
             me.mouseMove(evt);
         };
         window.ontouchend = function (evt) {
+            console.log('touchend stage');
             me.mouseUp(evt);
         };
         window.onmousemove = function (evt) {
+            console.log('mousemove stage');
             me.mouseMove(evt);
         };
         window.onmouseup = function (evt) {
+            console.log('mouseup stage');
             me.mouseUp(evt);
         };
     }
