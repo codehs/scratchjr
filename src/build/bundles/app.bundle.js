@@ -77760,18 +77760,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// function clearWindowEvents() {
-//     const allListeners = window.getEventListeners();
-
-//     // Iterate over all registered event listeners and remove them
-//     Object.keys(allListeners).forEach((eventName) => {
-//         if (eve)
-//         allListeners[eventName].forEach((listener) => {
-//             window.removeEventListener(eventName, listener.listener);
-//         });
-//     });
-// }
-
 // Originally several files (Paint.js, PaintIO.js, PaintLayout.js)
 // were all contributing utility functions to the Paint object.
 // To consolidate it into a single module, I've combined these below.
@@ -77811,6 +77799,35 @@ var deltaPoint = {
     x: 0,
     y: 0
 };
+
+function onTouchPinchStart(e) {
+    console.log("touchmove paint pinch");
+    Paint.gestureStart(e);
+}
+
+function onMousePinchStart(e) {
+    console.log("mousemove paint pinch");
+    Paint.gestureStart(e);
+}
+
+function onTouchMoveScroll(e) {
+    console.log("touchmove paint bg");
+    Paint.dragBackground(e);
+}
+
+function onTouchEndScroll(e) {
+    console.log("touchend paint bg");
+    Paint.bounceBack();
+    Paint.setCanvasTransform(currentZoom);
+    _PaintAction2.default.clearEvents();
+}
+
+function _clearEvents() {
+    window.removeEventListener('touchmove', onTouchPinchStart);
+    window.removeEventListener('touchmove', onMousePinchStart);
+    window.removeEventListener('touchmove', onTouchMoveScroll);
+    window.removeEventListener('touchmove', onTouchEndScroll);
+}
 
 var Paint = function () {
     function Paint() {
@@ -77933,7 +77950,6 @@ var Paint = function () {
         value: function clearEvents(e) {
             window.ontouchmove = undefined;
             window.ontouchend = undefined;
-            // clearWindowEvents();
             window.onmousemove = undefined;
             window.onmouseup = undefined;
             if (_PaintAction2.default.currentshape) {
@@ -77941,6 +77957,7 @@ var Paint = function () {
             }
             _Events2.default.clearEvents();
             _PaintAction2.default.clearEvents();
+            _clearEvents();
         }
     }, {
         key: "ignore",
@@ -77958,26 +77975,8 @@ var Paint = function () {
             }
             _Ghost2.default.clearLayer();
             initialPoint = _PaintAction2.default.getScreenPt(e);
-            // window.ontouchmove = function (evt) {
-            //     console.log("touchmove paint bg");
-            //     Paint.dragBackground(evt);
-            // };
-            window.addEventListener("touchmove", function (evt) {
-                console.log("touchmove paint bg");
-                Paint.dragBackground(evt);
-            });
-            // window.ontouchend = function () {
-            //     console.log("touchend paint bg");
-            //     Paint.bounceBack();
-            //     Paint.setCanvasTransform(currentZoom);
-            //     PaintAction.clearEvents();
-            // };
-            window.addEventListener("touchend", function () {
-                console.log("touchend paint bg");
-                Paint.bounceBack();
-                Paint.setCanvasTransform(currentZoom);
-                _PaintAction2.default.clearEvents();
-            });
+            window.addEventListener("touchmove", onTouchMoveScroll);
+            window.addEventListener("touchend", onTouchEndScroll);
             window.onmousemove = function (evt) {
                 console.log("mousemove paint bg");
                 Paint.dragBackground(evt);
@@ -77997,18 +77996,8 @@ var Paint = function () {
             if (_PaintAction2.default.currentshape) {
                 return;
             }
-            // window.ontouchmove = function () {
-            //     console.log("touchmove paint pinch");
-            //     Paint.gestureStart(e);
-            // };
-            window.addEventListener("touchmove", function () {
-                console.log("touchmove paint pinch");
-                Paint.gestureStart(e);
-            });
-            window.onmousemove = function () {
-                console.log("test3");
-                Paint.gestureStart(e);
-            };
+            window.addEventListener("touchmove", onTouchPinchStart);
+            window.onmousemove = onMousePinchStart;
         }
     }, {
         key: "gestureStart",
@@ -78027,9 +78016,7 @@ var Paint = function () {
             initialPoint = _PaintAction2.default.zoomPt(_Events2.default.pinchcenter);
             _Events2.default.clearEvents();
             _Events2.default.clearDragAndDrop();
-            // window.ontouchmove = Paint.gestureChange;
             window.addEventListener("touchmove", Paint.gestureChange);
-            // window.ontouchend = Paint.gestureEnd;
             window.addEventListener("touchend", Paint.gestureEnd);
             window.onmousemove = Paint.gestureChange;
             window.onmouseup = Paint.gestureEnd;
@@ -78058,10 +78045,8 @@ var Paint = function () {
         value: function gestureEnd(e) {
             e.preventDefault();
             console.log("gestureChange");
-            window.ontouchmove = undefined;
-            window.ontouchend = undefined;
-            window.onmousemove = undefined;
-            window.onmouseup = undefined;
+            window.removeEventListener("touchmove", Paint.gestureChange);
+            window.removeEventListener("touchend", Paint.gestureEnd);
             var scale = Math.min(maxZoom, _Events2.default.scaleStartsAt * _Events2.default.zoomScale(e));
             scale = Math.max(minZoom, scale);
             Paint.updateZoomScale(scale);
@@ -78108,6 +78093,7 @@ var Paint = function () {
             _lib.frame.style.display = "block";
             _ScratchJr2.default.editorEvents();
             window.removeEventListener("touchstart", Paint.detectGesture);
+            window.removeEventListener("mousedown", Paint.detectGesture);
             window.ontouchmove = undefined;
             window.ontouchend = undefined;
             window.onmousemove = undefined;
@@ -78496,8 +78482,8 @@ var Paint = function () {
                     strokewidth = pensizes[Number(this.key)];
                     Paint.selectPenSize(n);
                 };
-                ps.addEventListener('touchstart', setSize);
-                ps.addEventListener('mousedown', setSize);
+                ps.addEventListener("touchstart", setSize);
+                ps.addEventListener("mousedown", setSize);
                 var c = (0, _lib.newHTML)("div", "line t" + i, ps);
                 Paint.drawPenSizeInColor(c);
             }
@@ -78561,8 +78547,8 @@ var Paint = function () {
                 var but = (0, _lib.newHTML)("div", "element off", pal);
                 var icon = (0, _lib.newHTML)("div", "tool " + list[i] + " off", but);
                 icon.setAttribute("key", list[i]);
-                icon.addEventListener('touchstart', Paint.setMode);
-                icon.addEventListener('mousedown', Paint.setMode);
+                icon.addEventListener("touchstart", Paint.setMode);
+                icon.addEventListener("mousedown", Paint.setMode);
             }
         }
     }, {
@@ -78583,19 +78569,19 @@ var Paint = function () {
                 fc.style.display = "none";
             }
 
-            fc.addEventListener('touchstart', Paint.setMode);
-            fc.addEventListener('mousedown', Paint.setMode);
+            fc.addEventListener("touchstart", Paint.setMode);
+            fc.addEventListener("mousedown", Paint.setMode);
             var captureContainer = (0, _lib.newHTML)("div", "snapshot-container", (0, _lib.gn)("backdrop"));
             captureContainer.setAttribute("id", "capture-container");
             var capture = (0, _lib.newHTML)("div", "snapshot", captureContainer);
             capture.setAttribute("id", "capture");
             capture.setAttribute("key", "camerasnap");
-            capture.addEventListener('touchstart', Paint.setMode);
-            capture.addEventListener('mousedown', Paint.setMode);
+            capture.addEventListener("touchstart", Paint.setMode);
+            capture.addEventListener("mousedown", Paint.setMode);
             var cc = (0, _lib.newHTML)("div", "cameraclose", topbar);
             cc.setAttribute("id", "cameraclose");
-            cc.addEventListener('touchstart', Paint.closeCameraMode);
-            cc.addEventListener('mousedown', Paint.closeCameraMode);
+            cc.addEventListener("touchstart", Paint.closeCameraMode);
+            cc.addEventListener("mousedown", Paint.closeCameraMode);
         }
     }, {
         key: "closeCameraMode",

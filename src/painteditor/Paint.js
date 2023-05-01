@@ -28,18 +28,6 @@ import {
     frame,
 } from "../utils/lib";
 
-// function clearWindowEvents() {
-//     const allListeners = window.getEventListeners();
-
-//     // Iterate over all registered event listeners and remove them
-//     Object.keys(allListeners).forEach((eventName) => {
-//         if (eve)
-//         allListeners[eventName].forEach((listener) => {
-//             window.removeEventListener(eventName, listener.listener);
-//         });
-//     });
-// }
-
 // Originally several files (Paint.js, PaintIO.js, PaintLayout.js)
 // were all contributing utility functions to the Paint object.
 // To consolidate it into a single module, I've combined these below.
@@ -79,6 +67,35 @@ let deltaPoint = {
     x: 0,
     y: 0,
 };
+
+function onTouchPinchStart(e) {
+    console.log("touchmove paint pinch");
+    Paint.gestureStart(e);
+}
+
+function onMousePinchStart(e) {
+    console.log("mousemove paint pinch");
+    Paint.gestureStart(e);
+}
+
+function onTouchMoveScroll(e) {
+    console.log("touchmove paint bg");
+    Paint.dragBackground(e);
+}
+
+function onTouchEndScroll(e) {
+    console.log("touchend paint bg");
+    Paint.bounceBack();
+    Paint.setCanvasTransform(currentZoom);
+    PaintAction.clearEvents();
+}
+
+function clearEvents() {
+    window.removeEventListener('touchmove', onTouchPinchStart);
+    window.removeEventListener('touchmove', onMousePinchStart);
+    window.removeEventListener('touchmove', onTouchMoveScroll);
+    window.removeEventListener('touchmove', onTouchEndScroll);
+}
 
 export default class Paint {
     static get xmlns() {
@@ -270,7 +287,6 @@ export default class Paint {
     static clearEvents(e) {
         window.ontouchmove = undefined;
         window.ontouchend = undefined;
-        // clearWindowEvents();
         window.onmousemove = undefined;
         window.onmouseup = undefined;
         if (PaintAction.currentshape) {
@@ -278,6 +294,7 @@ export default class Paint {
         }
         Events.clearEvents();
         PaintAction.clearEvents();
+        clearEvents();
     }
 
     static ignore(e) {
@@ -293,26 +310,8 @@ export default class Paint {
         }
         Ghost.clearLayer();
         initialPoint = PaintAction.getScreenPt(e);
-        // window.ontouchmove = function (evt) {
-        //     console.log("touchmove paint bg");
-        //     Paint.dragBackground(evt);
-        // };
-        window.addEventListener("touchmove", function (evt) {
-            console.log("touchmove paint bg");
-            Paint.dragBackground(evt);
-        });
-        // window.ontouchend = function () {
-        //     console.log("touchend paint bg");
-        //     Paint.bounceBack();
-        //     Paint.setCanvasTransform(currentZoom);
-        //     PaintAction.clearEvents();
-        // };
-        window.addEventListener("touchend", function () {
-            console.log("touchend paint bg");
-            Paint.bounceBack();
-            Paint.setCanvasTransform(currentZoom);
-            PaintAction.clearEvents();
-        });
+        window.addEventListener("touchmove", onTouchMoveScroll);
+        window.addEventListener("touchend", onTouchEndScroll);
         window.onmousemove = function (evt) {
             console.log("mousemove paint bg");
             Paint.dragBackground(evt);
@@ -331,18 +330,8 @@ export default class Paint {
         if (PaintAction.currentshape) {
             return;
         }
-        // window.ontouchmove = function () {
-        //     console.log("touchmove paint pinch");
-        //     Paint.gestureStart(e);
-        // };
-        window.addEventListener("touchmove", function () {
-            console.log("touchmove paint pinch");
-            Paint.gestureStart(e);
-        });
-        window.onmousemove = function () {
-            console.log("test3");
-            Paint.gestureStart(e);
-        };
+        window.addEventListener("touchmove", onTouchPinchStart);
+        window.onmousemove = onMousePinchStart;
     }
 
     static gestureStart(e) {
@@ -365,9 +354,7 @@ export default class Paint {
         initialPoint = PaintAction.zoomPt(Events.pinchcenter);
         Events.clearEvents();
         Events.clearDragAndDrop();
-        // window.ontouchmove = Paint.gestureChange;
         window.addEventListener("touchmove", Paint.gestureChange);
-        // window.ontouchend = Paint.gestureEnd;
         window.addEventListener("touchend", Paint.gestureEnd);
         window.onmousemove = Paint.gestureChange;
         window.onmouseup = Paint.gestureEnd;
@@ -397,10 +384,8 @@ export default class Paint {
     static gestureEnd(e) {
         e.preventDefault();
         console.log("gestureChange");
-        window.ontouchmove = undefined;
-        window.ontouchend = undefined;
-        window.onmousemove = undefined;
-        window.onmouseup = undefined;
+        window.removeEventListener("touchmove", Paint.gestureChange);
+        window.removeEventListener("touchend", Paint.gestureEnd);
         var scale = Math.min(
             maxZoom,
             Events.scaleStartsAt * Events.zoomScale(e)
@@ -452,6 +437,7 @@ export default class Paint {
         frame.style.display = "block";
         ScratchJr.editorEvents();
         window.removeEventListener("touchstart", Paint.detectGesture);
+        window.removeEventListener("mousedown", Paint.detectGesture);
         window.ontouchmove = undefined;
         window.ontouchend = undefined;
         window.onmousemove = undefined;
@@ -859,8 +845,8 @@ export default class Paint {
                 strokewidth = pensizes[Number(this.key)];
                 Paint.selectPenSize(n);
             };
-            ps.addEventListener('touchstart', setSize);
-            ps.addEventListener('mousedown', setSize);
+            ps.addEventListener("touchstart", setSize);
+            ps.addEventListener("mousedown", setSize);
             var c = newHTML("div", "line t" + i, ps);
             Paint.drawPenSizeInColor(c);
         }
@@ -923,8 +909,8 @@ export default class Paint {
             var but = newHTML("div", "element off", pal);
             var icon = newHTML("div", "tool " + list[i] + " off", but);
             icon.setAttribute("key", list[i]);
-            icon.addEventListener('touchstart', Paint.setMode);
-            icon.addEventListener('mousedown', Paint.setMode);
+            icon.addEventListener("touchstart", Paint.setMode);
+            icon.addEventListener("mousedown", Paint.setMode);
         }
     }
 
@@ -944,8 +930,8 @@ export default class Paint {
             fc.style.display = "none";
         }
 
-        fc.addEventListener('touchstart', Paint.setMode);
-        fc.addEventListener('mousedown', Paint.setMode);
+        fc.addEventListener("touchstart", Paint.setMode);
+        fc.addEventListener("mousedown", Paint.setMode);
         var captureContainer = newHTML(
             "div",
             "snapshot-container",
@@ -955,12 +941,12 @@ export default class Paint {
         var capture = newHTML("div", "snapshot", captureContainer);
         capture.setAttribute("id", "capture");
         capture.setAttribute("key", "camerasnap");
-        capture.addEventListener('touchstart', Paint.setMode);
-        capture.addEventListener('mousedown', Paint.setMode);
+        capture.addEventListener("touchstart", Paint.setMode);
+        capture.addEventListener("mousedown", Paint.setMode);
         var cc = newHTML("div", "cameraclose", topbar);
         cc.setAttribute("id", "cameraclose");
-        cc.addEventListener('touchstart', Paint.closeCameraMode);
-        cc.addEventListener('mousedown', Paint.closeCameraMode);
+        cc.addEventListener("touchstart", Paint.closeCameraMode);
+        cc.addEventListener("mousedown", Paint.closeCameraMode);
     }
 
     static closeCameraMode(evt) {
