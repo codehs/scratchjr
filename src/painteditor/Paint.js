@@ -200,7 +200,8 @@ export default class Paint {
         } else {
             Paint.initSprite(sw, sh);
         }
-        window.ontouchstart = Paint.detectGesture;
+        // window.ontouchstart = Paint.detectGesture;
+        window.addEventListener('touchstart', Paint.detectGesture);
         window.onmousedown = Paint.detectGesture;
         window.ondevicemotion = undefined;
 
@@ -392,6 +393,7 @@ export default class Paint {
         paintFrame.className = 'paintframe disappear';
         frame.style.display = 'block';
         ScratchJr.editorEvents();
+        window.removeEventListener('touchstart', Paint.detectGesture);
         window.ontouchmove = undefined;
         window.ontouchend = undefined;
         window.onmousemove = undefined;

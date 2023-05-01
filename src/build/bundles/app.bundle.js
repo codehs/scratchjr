@@ -77886,7 +77886,8 @@ var Paint = function () {
             } else {
                 Paint.initSprite(sw, sh);
             }
-            window.ontouchstart = Paint.detectGesture;
+            // window.ontouchstart = Paint.detectGesture;
+            window.addEventListener('touchstart', Paint.detectGesture);
             window.onmousedown = Paint.detectGesture;
             window.ondevicemotion = undefined;
 
@@ -78089,6 +78090,7 @@ var Paint = function () {
             paintFrame.className = 'paintframe disappear';
             _lib.frame.style.display = 'block';
             _ScratchJr2.default.editorEvents();
+            window.removeEventListener('touchstart', Paint.detectGesture);
             window.ontouchmove = undefined;
             window.ontouchend = undefined;
             window.onmousemove = undefined;
