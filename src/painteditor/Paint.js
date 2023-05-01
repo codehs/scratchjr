@@ -371,15 +371,18 @@ export default class Paint {
         // if ((isTablet && e.target.ontouchstart) || e.target.ontouchstart) {
         //     return;
         // }
+        console.log('Paint.mouseDown');
+        console.log(e);
         var pt = Events.getTargetPoint(e);
         if (hitRect(gn('donecheck'), pt)) {
             Paint.backToProject(e);
         } else {
-            if (e.target.parentNode && e.target.parentNode.getAttribute('key')) {
-                return;
-            } else {
-                PaintAction.mouseDown(e);
-            }
+            PaintAction.mouseDown(e);
+            // if (e.target.parentNode && e.target.parentNode.getAttribute('key')) {
+            //     return;
+            // } else {
+            //     PaintAction.mouseDown(e);
+            // }
         }
     }
 
