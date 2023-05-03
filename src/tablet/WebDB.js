@@ -148,6 +148,7 @@ export function saveDB() {
     localStorage.setItem(baseKey, stringData);
     saveToFirebase(firebasePath + "/timestamp", timestamp);
     saveToFirebase(firebasePath + "/db", stringData);
+    if (!window.student_assignment_id) setStarterCode();
 }
 
 async function getDBDataString() {
