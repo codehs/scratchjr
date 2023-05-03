@@ -1,5 +1,13 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, child, get } from "firebase/database";
+import {
+    getDatabase,
+    ref,
+    set,
+    child,
+    get,
+    increment,
+    update,
+} from "firebase/database";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAcr6VbVUx839a942VOHFeXoqBPME67GDA",
@@ -44,4 +52,9 @@ export async function getFromFirebase(location) {
     } else {
         return null;
     }
+}
+
+export async function updateTimeSpentOnProject(location) {
+    const path = pathPrefix + location + "/timeSpent";
+    set(child(rootRef, path), increment(5));
 }

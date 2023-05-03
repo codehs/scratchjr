@@ -5,6 +5,7 @@ import OS from "../tablet/OS";
 import IO from "../tablet/IO";
 import MediaLib from "../tablet/MediaLib";
 import * as db from "../tablet/WebDB.js";
+import { updateTimeSpentOnProject } from "../tablet/Firebase.js";
 
 import { indexMain } from "./index";
 import { homeMain } from "./home";
@@ -18,7 +19,6 @@ import {
     inappPrivacyPolicy,
 } from "./inapp";
 
-
 /* This function replicates the behavior of the `.on<event>` properties but is
  * implemented using `addEventListener` and `removeEventListener`. This allows
  * only one handler to be registered for each event. Touch events in ScratchJr
@@ -29,7 +29,7 @@ import {
  * which is depended on by some parts of ScratchJr (e.g. various handlers are
  * attached to the window at different times based on the state of the app,
  * but only one handler should be active at any time).
- * 
+ *
  * Params
  * ------
  * event: string
@@ -40,7 +40,7 @@ import {
  * target: object
  *   The object to register the event handler on. Defaults to `window` if not
  *   provided.
- * 
+ *
  */
 window.setEventHandler = function (event, handler, target) {
     if (target === undefined) {
@@ -83,6 +83,20 @@ window.onload = async () => {
     if (!window.item_id) window.item_id = params.get("item_id", "");
     if (!window.student_assignment_id)
         window.student_assignment_id = params.get("student_assignment_id", "");
+    if (!window.teacher_mode)
+        window.teacher_mode = params.get("teacher_mode", "");
+
+    console.log("set interval");
+    setInterval(() => {
+        if (!window.teacher_mode && window.student_assignment_id) {
+            console.log("huh");
+            setInterval(() => {
+                updateTimeSpentOnProject(
+                    "project-sa-" + window.student_assignment_id
+                );
+            }, 5000);
+        }
+    });
 
     console.log("waitin for db");
     const shouldCreateNewProject = await db.initDB();
