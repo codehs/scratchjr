@@ -15,6 +15,7 @@
 .manualsave:active {
     background:  url('../assets/ui/saveCheckPressed.svg');
     background-size: 100.5%;  /* webview pixelates the image unless we do this */
+    transform: scale(0.9);
 }
 
 .fullscreen#full {
