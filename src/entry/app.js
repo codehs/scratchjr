@@ -18,7 +18,17 @@ import {
     inappPrivacyPolicy,
 } from "./inapp";
 
-window.addEventListener("contextmenu", (e) => e.preventDefault(), {passive: false});
+window.eventHandlers = {};
+window.setEventHandler = function (event, handler) {
+    const existingHandler = window.eventHandlers[event];
+    if (existingHandler === undefined) {
+        window.removeEventListener(event, existingHandler);
+    }
+    if (handler !== undefined) {
+        window.addEventListener(event, handler);
+        window.eventHandlers[event] = handler;
+    }
+};
 
 function loadSettings(settingsRoot, whenDone) {
     IO.requestFromServer(settingsRoot + "settings.json", (result) => {

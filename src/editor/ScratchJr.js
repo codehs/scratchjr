@@ -26,7 +26,7 @@ import {
     getUrlVars,
     CSSTransition3D,
     frame,
-    mTime
+    mTime,
 } from "../utils/lib";
 
 let workingCanvas = document.createElement("canvas");
@@ -252,9 +252,9 @@ export default class ScratchJr {
 
     static editorEvents() {
         document.ongesturestart = undefined;
-        window.ontouchstart = ScratchJr.unfocus;
+        window.addEventListener("touchstart", ScratchJr.unfocus);
         window.onmousedown = ScratchJr.unfocus;
-        window.ontouchend = undefined;
+        window.setEventHandler('touchend', undefined);
         window.onmouseup = undefined;
     }
 

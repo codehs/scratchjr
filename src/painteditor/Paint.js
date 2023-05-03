@@ -91,10 +91,10 @@ function onTouchEndScroll(e) {
 }
 
 function clearEvents() {
-    window.removeEventListener('touchmove', onTouchPinchStart);
-    window.removeEventListener('mousemove', onMousePinchStart);
-    window.removeEventListener('touchmove', onTouchMoveScroll);
-    window.removeEventListener('touchend', onTouchEndScroll);
+    window.removeEventListener("touchmove", onTouchPinchStart);
+    window.removeEventListener("mousemove", onMousePinchStart);
+    window.removeEventListener("touchmove", onTouchMoveScroll);
+    window.removeEventListener("touchend", onTouchEndScroll);
 }
 
 export default class Paint {
@@ -285,8 +285,8 @@ export default class Paint {
     }
 
     static clearEvents(e) {
-        window.ontouchmove = undefined;
-        window.ontouchend = undefined;
+        window.setEventHandler("touchmove", undefined);
+        window.setEventHandler("touchend", undefined);
         window.onmousemove = undefined;
         window.onmouseup = undefined;
         if (PaintAction.currentshape) {
@@ -335,8 +335,8 @@ export default class Paint {
     }
 
     static gestureStart(e) {
-        window.ontouchmove = undefined;
-        window.onmousemove = undefined;
+        window.setEventHandler("touchmove", undefined);
+        window.setEventHandler("mousemove", undefined);
         var skipmodes = ["path", "ellipse", "rect"];
         if (skipmodes.indexOf(mode) > -1) {
             if (
@@ -438,8 +438,8 @@ export default class Paint {
         ScratchJr.editorEvents();
         window.removeEventListener("touchstart", Paint.detectGesture);
         window.removeEventListener("mousedown", Paint.detectGesture);
-        window.ontouchmove = undefined;
-        window.ontouchend = undefined;
+        window.setEventHandler('touchmove', undefined);
+        window.setEventHandler('touchend', undefined);
         window.onmousemove = undefined;
         window.onmouseup = undefined;
         Alert.close();

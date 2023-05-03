@@ -120,23 +120,23 @@ export default class Events {
         updatefcn = atdrag;
         if (isTablet) { // startDrag event setting
             delta = 10 * scaleMultiplier;
-            window.ontouchleave = function (evt) {
+            window.setEventHandler('touchleave', function (evt) {
                 Events.mouseUp(evt);
-            };
-            window.ontouchcancel = function (evt) {
+            });
+            window.setEventHandler('touchcancel', function (evt) {
                 Events.mouseUp(evt);
-            };
+            });
         } else {
             delta = 7;
         }
-        window.ontouchmove = function (evt) {
+        window.setEventHandler('touchmove', function (evt) {
             console.log('touchmove events');
             Events.mouseMove(evt);
-        };
-        window.ontouchend = function (evt) {
+        });
+        window.setEventHandler('touchend', function (evt) {
             console.log('touchend events');
             Events.mouseUp(evt);
-        };
+        });
         window.onmousemove = function (evt) {
             console.log('mousemove events');
             Events.mouseMove(evt);
@@ -218,8 +218,8 @@ export default class Events {
     }
 
     static clearEvents () {
-        window.ontouchmove = undefined;
-        window.ontouchend = undefined;
+        window.setEventHandler('touchmove', undefined);
+        window.setEventHandler('touchend', undefined);
         window.onmousemove = function (e) {
             e.preventDefault();
         };
