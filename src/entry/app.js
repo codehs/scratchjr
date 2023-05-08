@@ -18,15 +18,44 @@ import {
     inappPrivacyPolicy,
 } from "./inapp";
 
-window.eventHandlers = {};
-window.setEventHandler = function (event, handler) {
-    const existingHandler = window.eventHandlers[event];
-    if (existingHandler === undefined) {
-        window.removeEventListener(event, existingHandler);
+
+/* This function replicates the behavior of the `.on<event>` properties but is
+ * implemented using `addEventListener` and `removeEventListener`. This allows
+ * only one handler to be registered for each event. Touch events in ScratchJr
+ * were previously implemented using the `.on<event>` properties, but these
+ * are apparently not implemented correctly on all devices (more specifically,
+ * all the `ontouch*` properties do not work on touchscreen chromebooks). We
+ * maintain the same behavior by only allowing one handler to be registered,
+ * which is depended on by some parts of ScratchJr (e.g. various handlers are
+ * attached to the window at different times based on the state of the app,
+ * but only one handler should be active at any time).
+ * 
+ * Params
+ * ------
+ * event: string
+ *   The name of the event to register a handler for.
+ * handler: function
+ *   The event handler to register. If undefined, the existing handler for the
+ *   event will be removed.
+ * target: object
+ *   The object to register the event handler on. Defaults to `window` if not
+ *   provided.
+ * 
+ */
+window.setEventHandler = function (event, handler, target) {
+    if (target === undefined) {
+        target = window;
+    }
+    if (!Object.hasOwn(target, "_scratchJrEventHandlers")) {
+        target._scratchJrEventHandlers = {};
+    }
+    const existingHandler = target._scratchJrEventHandlers[event];
+    if (existingHandler !== undefined) {
+        target.removeEventListener(event, existingHandler);
     }
     if (handler !== undefined) {
-        window.addEventListener(event, handler);
-        window.eventHandlers[event] = handler;
+        target.addEventListener(event, handler);
+        target._scratchJrEventHandlers[event] = handler;
     }
 };
 

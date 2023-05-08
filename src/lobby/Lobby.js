@@ -143,7 +143,7 @@ export default class Lobby {
     }
 
     static loadProjects(p) {
-        document.ontouchmove = undefined;
+        window.setEventHandler("touchmove", undefined, document);
         document.onmousemove = undefined;
         gn("topsection").className = "topsection home";
         gn("tabheader").textContent = Localization.localize("MY_PROJECTS");
@@ -165,9 +165,9 @@ export default class Lobby {
         gn("wrapc").className = "contentwrap noscroll";
         var div = newHTML("div", "htmlcontents help", p);
         div.setAttribute("id", "htmlcontents");
-        document.ontouchmove = function (e) {
+        window.setEventHandler("touchmove", function (e) {
             e.preventDefault();
-        };
+        }, document);
         document.onmousemove = function (e) {
             e.preventDefault();
         };
@@ -230,7 +230,7 @@ export default class Lobby {
         if (busy) {
             return;
         }
-        document.ontouchmove = undefined;
+        window.setEventHandler("touchmove", undefined, document);
         document.onmousemove = undefined;
         busy = true;
         ScratchAudio.sndFX("tap.wav");
@@ -253,9 +253,9 @@ export default class Lobby {
                 );
                 break;
             case "interface":
-                document.ontouchmove = function (e) {
+                window.setEventHandler("touchmove", function (e) {
                     e.preventDefault();
-                };
+                }, document);
                 document.onmousemove = function (e) {
                     e.preventDefault();
                 };
@@ -268,9 +268,9 @@ export default class Lobby {
                 );
                 break;
             case "paint":
-                document.ontouchmove = function (e) {
+                window.setEventHandler("touchmove", function (e) {
                     e.preventDefault();
-                };
+                }, document);
                 document.onmousemove = function (e) {
                     e.preventDefault();
                 };

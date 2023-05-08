@@ -234,9 +234,9 @@ export default class BlockArg {
         this.button = this.addPressButton();
         if (!this.daddy.inpalette) {
             var ba = this;
-            ba.button.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 ba.pressDropDown(evt, fcn);
-            };
+            }, ba.button);
             ba.button.onmousedown = function (evt) {
                 ba.pressDropDown(evt, fcn);
             };

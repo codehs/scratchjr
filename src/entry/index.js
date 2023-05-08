@@ -126,9 +126,9 @@ function indexLoadStart() {
 
     indexSetAnalyticsPrefs();
 
-    document.ontouchmove = function (e) {
+    window.setEventHandler("touchmove", function (e) {
         e.preventDefault();
-    };
+    }, document);
     document.onmousemove = function (e) {
         e.preventDefault();
     };

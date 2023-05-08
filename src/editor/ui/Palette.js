@@ -48,9 +48,9 @@ export default class Palette {
         Palette.createCategorySelectors(parent);
         var div = newHTML('div', 'palette', parent);
         div.setAttribute('id', 'palette');
-        div.ontouchstart = function (evt) {
+        window.setEventHandler("touchstart", function (evt) {
             Palette.paletteMouseDown(evt);
-        };
+        }, div);
         div.onmousedown = function (evt) {
             Palette.paletteMouseDown(evt);
         };
@@ -322,9 +322,9 @@ export default class Palette {
             zIndex: 8,
             visibility: 'hidden'
         });
-        div.ontouchstart = function (evt) {
+        window.setEventHandler("touchstart", function (evt) {
             Palette.clickOnCategory(evt);
-        };
+        }, div);
         div.onmousedown = function (evt) {
             Palette.clickOnCategory(evt);
         };
@@ -471,7 +471,7 @@ export default class Palette {
                 drawScaled(BlockSpecs.mic, cnv);
             };
         }
-        div.ontouchstart = Palette.recordSound;
+        window.setEventHandler("touchstart", Palette.recordSound, div);
         div.onmousedown = Palette.recordSound;
     }
 

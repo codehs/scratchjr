@@ -272,9 +272,9 @@ export default class Page {
         var pq = newHTML('p', undefined, num);
         pq.textContent = this.num;
         newHTML('div', 'deletethumb', tb);
-        tb.ontouchstart = function (evt) {
+        window.setEventHandler("touchstart", function (evt) {
             Thumbs.pageMouseDown(evt);
-        };
+        }, tb);
         tb.onmousedown = function (evt) {
             Thumbs.pageMouseDown(evt);
         };

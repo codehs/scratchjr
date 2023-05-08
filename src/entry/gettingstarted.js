@@ -4,7 +4,7 @@ let place;
 
 export function gettingStartedMain() {
     gn("closeHelp").onclick = gettingStartedCloseMe;
-    gn("closeHelp").ontouchstart = gettingStartedCloseMe;
+    window.setEventHandler("touchstart", gettingStartedCloseMe, gn("closeHelp"));
     var videoObj = gn("myVideo");
     videoObj.poster = "assets/lobby/poster.png";
     var image = document.createElement("img");
@@ -25,9 +25,9 @@ export function gettingStartedMain() {
     }
     var urlvars = getUrlVars();
     place = urlvars["place"];
-    document.ontouchmove = function (e) {
+    window.setEventHandler("touchmove", function (e) {
         e.preventDefault();
-    };
+    }, document);
 }
 
 function gettingStartedCloseMe() {

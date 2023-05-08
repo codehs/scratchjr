@@ -35,9 +35,9 @@ export default class Stage {
             position: "absolute",
         });
         var me = this;
-        this.div.ontouchstart = function (evt) {
+        window.setEventHandler("touchstart", function (evt) {
             me.mouseDown(evt);
-        };
+        }, this.div);
         this.div.onmousedown = function (evt) {
             me.mouseDown(evt);
         };

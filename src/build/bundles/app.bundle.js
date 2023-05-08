@@ -59845,9 +59845,9 @@ var ScratchJr = function () {
         key: "editorEvents",
         value: function editorEvents() {
             document.ongesturestart = undefined;
-            window.addEventListener("touchstart", ScratchJr.unfocus);
+            window.setEventHandler("touchstart", ScratchJr.unfocus);
             window.onmousedown = ScratchJr.unfocus;
-            window.setEventHandler('touchend', undefined);
+            window.setEventHandler("touchend", undefined);
             window.onmouseup = undefined;
         }
     }, {
@@ -60357,7 +60357,7 @@ var ScratchJr = function () {
         key: "setupKeypad",
         value: function setupKeypad() {
             keypad = (0, _lib.newHTML)("div", "picokeyboard", _lib.frame);
-            keypad.ontouchstart = ScratchJr.eatEvent;
+            window.setEventHandler("touchstart", ScratchJr.eatEvent, keypad);
             keypad.onmousedown = ScratchJr.eatEvent;
             var pad = (0, _lib.newHTML)("div", "insidekeyboard", keypad);
             for (var i = 1; i < 10; i++) {
@@ -60381,7 +60381,7 @@ var ScratchJr = function () {
             var keym = (0, _lib.newHTML)("div", c, p);
             var mk = (0, _lib.newHTML)("span", undefined, keym);
             mk.textContent = str ? str : "";
-            keym.ontouchstart = ScratchJr.numEditKey;
+            window.setEventHandler("touchstart", ScratchJr.numEditKey, keym);
             keym.onmousedown = ScratchJr.numEditKey;
         }
 
@@ -61658,9 +61658,9 @@ var BlockArg = function () {
             this.button = this.addPressButton();
             if (!this.daddy.inpalette) {
                 var ba = this;
-                ba.button.ontouchstart = function (evt) {
+                window.setEventHandler("touchstart", function (evt) {
                     ba.pressDropDown(evt, fcn);
-                };
+                }, ba.button);
                 ba.button.onmousedown = function (evt) {
                     ba.pressDropDown(evt, fcn);
                 };
@@ -62282,9 +62282,9 @@ var Menu = function () {
             } else {
                 (0, _lib.drawThumbnail)(img, micon);
             }
-            cs.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 handleTouchStart(evt);
-            };
+            }, cs);
             cs.onmouseover = function (evt) {
                 Menu.highlightdot(evt);
             };
@@ -62673,9 +62673,9 @@ var Page = function () {
             var pq = (0, _lib.newHTML)('p', undefined, num);
             pq.textContent = this.num;
             (0, _lib.newHTML)('div', 'deletethumb', tb);
-            tb.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 _Thumbs2.default.pageMouseDown(evt);
-            };
+            }, tb);
             tb.onmousedown = function (evt) {
                 _Thumbs2.default.pageMouseDown(evt);
             };
@@ -65391,9 +65391,9 @@ var Stage = function () {
             position: "absolute"
         });
         var me = this;
-        this.div.ontouchstart = function (evt) {
+        window.setEventHandler("touchstart", function (evt) {
             me.mouseDown(evt);
-        };
+        }, this.div);
         this.div.onmousedown = function (evt) {
             me.mouseDown(evt);
         };
@@ -66577,9 +66577,9 @@ var Grid = function () {
                 ctx.stroke();
                 dy += size;
             }
-            cnv.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 _ScratchJr2.default.stage.mouseDown(evt);
-            };
+            }, cnv);
             cnv.onmousedown = function (evt) {
                 _ScratchJr2.default.stage.mouseDown(evt);
             };
@@ -66662,9 +66662,9 @@ var Grid = function () {
             var cnv = (0, _lib.newCanvas)(gc, 0, 0, size + 2, size + 2, {
                 position: 'absolute'
             });
-            cnv.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 Grid.mouseDownOnCursor(evt);
-            };
+            }, cnv);
             cnv.onmousedown = function (evt) {
                 Grid.mouseDownOnCursor(evt);
             };
@@ -66675,7 +66675,7 @@ var Grid = function () {
             ctx.lineWidth = 3;
             ctx.strokeRect(3, 3, size - 6, size - 6);
             ctx.fillRect(3, 3, size - 6, size - 6);
-            gc.ontouchstart = Grid.mouseDownOnCursor;
+            window.setEventHandler("touchstart", Grid.mouseDownOnCursor, gc);
             gc.onmousedown = Grid.mouseDownOnCursor;
         }
     }, {
@@ -66905,8 +66905,8 @@ var Library = function () {
             Library.clean();
             Library.createScrollPanel();
             Library.addThumbnails(type);
-            window.ontouchstart = undefined;
-            window.ontouchend = undefined;
+            window.setEventHandler('touchstart', undefined);
+            window.setEventHandler('touchend', undefined);
             window.onmousedown = undefined;
             window.onmouseup = undefined;
             document.ontouchmove = undefined;
@@ -67085,9 +67085,9 @@ var Library = function () {
             function drawMe(dataurl) {
                 img.src = dataurl;
             }
-            tb.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 fcn(evt, tb);
-            };
+            }, tb);
             tb.onmousedown = function (evt) {
                 fcn(evt, tb);
             };
@@ -67118,9 +67118,9 @@ var Library = function () {
             var pngPath = _MediaLib2.default.path.replace('svg', 'png');
             img.src = pngPath + _IO2.default.getFilename(md5) + '.png';
 
-            tb.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 fcn(evt, tb);
-            };
+            }, tb);
             tb.onmousedown = function (evt) {
                 fcn(evt, tb);
             };
@@ -67152,9 +67152,9 @@ var Library = function () {
             ctx.fillStyle = _ScratchJr2.default.stagecolor;
             ctx.fillRect(0, 0, w, h);
             parent.appendChild(tb);
-            tb.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 Library.selectAsset(evt, tb);
-            };
+            }, tb);
             tb.onmousedown = function (evt) {
                 Library.selectAsset(evt, tb);
             };
@@ -67184,9 +67184,9 @@ var Library = function () {
             if (tb.byme && tb.id != 'none') {
                 holdit(tb);
             }
-            tb.ontouchend = function (evt) {
+            window.setEventHandler("touchend", function (evt) {
                 clickMe(evt, tb);
-            };
+            }, tb);
             window.onmouseup = function (evt) {
                 clickMe(evt, tb);
             };
@@ -67195,7 +67195,7 @@ var Library = function () {
             };
             function holdit() {
                 var repeat = function repeat() {
-                    tb.ontouchend = undefined;
+                    window.setEventHandler("touchend", undefined, tb);
                     window.onmouseup = undefined;
                     window.onmousemove = undefined;
                     timeoutEvent = undefined;
@@ -67220,7 +67220,7 @@ var Library = function () {
                     Library.unSelect(clickThumb);
                 }
                 timeoutEvent = undefined;
-                tb.ontouchend = undefined;
+                window.setEventHandler("touchend", undefined, tb);
                 window.onmousemove = undefined;
                 window.onmouseup = undefined;
             }
@@ -67230,7 +67230,7 @@ var Library = function () {
                 }
                 Library.selectThisAsset(e, tb);
                 timeoutEvent = undefined;
-                tb.ontouchend = undefined;
+                window.setEventHandler("touchend", undefined, tb);
                 tb.onmouseup = undefined;
                 window.onmousemove = undefined;
                 window.onmouseup = undefined;
@@ -67576,9 +67576,9 @@ var Palette = function () {
             Palette.createCategorySelectors(parent);
             var div = (0, _lib.newHTML)('div', 'palette', parent);
             div.setAttribute('id', 'palette');
-            div.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 Palette.paletteMouseDown(evt);
-            };
+            }, div);
             div.onmousedown = function (evt) {
                 Palette.paletteMouseDown(evt);
             };
@@ -67858,9 +67858,9 @@ var Palette = function () {
                 zIndex: 8,
                 visibility: 'hidden'
             });
-            div.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 Palette.clickOnCategory(evt);
-            };
+            }, div);
             div.onmousedown = function (evt) {
                 Palette.clickOnCategory(evt);
             };
@@ -68006,7 +68006,7 @@ var Palette = function () {
                     (0, _lib.drawScaled)(_BlockSpecs2.default.mic, cnv);
                 };
             }
-            div.ontouchstart = Palette.recordSound;
+            window.setEventHandler("touchstart", Palette.recordSound, div);
             div.onmousedown = Palette.recordSound;
         }
     }, {
@@ -70270,10 +70270,10 @@ var ScriptsPane = function () {
             }
             _ScratchJr2.default.stage.currentPage.setCurrentSprite((0, _lib.gn)(sprname).owner);
             currentsc.owner.activate();
-            currentsc.parentNode.ontouchstart = function (evt) {
+            window.setEventHandler("touchstart", function (evt) {
                 console.log("touchstart script block");
                 currentsc.owner.scriptsMouseDown(evt);
-            };
+            }, currentsc.parentNode);
             currentsc.parentNode.onmousedown = function (evt) {
                 console.log("mousedown script block");
                 currentsc.owner.scriptsMouseDown(evt);
@@ -70696,9 +70696,9 @@ var Scroll = function () {
 
             var me = this;
             if (_lib.isTablet) {
-                this.aup.ontouchstart = function (e) {
+                window.setEventHandler("touchstart", function (e) {
                     me.scrolldown(e);
-                };
+                }, this.aup);
             } else {
                 this.aup.onmousedown = function (e) {
                     me.scrolldown(e);
@@ -70706,9 +70706,9 @@ var Scroll = function () {
             }
 
             if (_lib.isTablet) {
-                this.adown.ontouchstart = function (e) {
+                window.setEventHandler("touchstart", function (e) {
                     me.scrollup(e);
-                };
+                }, this.adown);
             } else {
                 this.adown.onmousedown = function (e) {
                     me.scrollup(e);
@@ -70716,9 +70716,9 @@ var Scroll = function () {
             }
 
             if (_lib.isTablet) {
-                this.aleft.ontouchstart = function (e) {
+                window.setEventHandler("touchstart", function (e) {
                     me.scrollright(e);
-                };
+                }, this.aleft);
             } else {
                 this.aleft.onmousedown = function (e) {
                     me.scrollright(e);
@@ -70726,9 +70726,9 @@ var Scroll = function () {
             }
 
             if (_lib.isTablet) {
-                this.aright.ontouchstart = function (e) {
+                window.setEventHandler("touchstart", function (e) {
                     me.scrollleft(e);
-                };
+                }, this.aright);
             } else {
                 this.aright.onmousedown = function (e) {
                     me.scrollleft(e);
@@ -72460,7 +72460,7 @@ var UI = function () {
             var p = (0, _lib.newHTML)('div', 'spritethumbs', sprites);
             var div = (0, _lib.newHTML)('div', 'spritecc', p);
             div.setAttribute('id', 'spritecc');
-            div.ontouchstart = UI.spriteThumbsActions;
+            window.setEventHandler("touchstart", UI.spriteThumbsActions, div);
             div.onmousedown = UI.spriteThumbsActions;
 
             // scrollbar
@@ -72968,7 +72968,7 @@ var UI = function () {
                 e.stopPropagation();
                 e.preventDefault();
             };
-            tf.ontouchstart = eatEvent;
+            window.setEventHandler("touchstart", eatEvent, tf);
             tf.onmousedown = eatEvent;
             var activetb = (0, _lib.newHTML)('form', 'pageform', tf);
             activetb.name = 'activetextbox';
@@ -72986,12 +72986,12 @@ var UI = function () {
             var ta = (0, _lib.newHTML)('div', 'pagetextactions', tf);
             var clicky = (0, _lib.newHTML)('div', 'fontsizeText off', ta);
             clicky.setAttribute('id', 'fontsizebutton');
-            clicky.ontouchstart = UI.openFontSizeMenu;
+            window.setEventHandler("touchstart", UI.openFontSizeMenu, clicky);
             clicky.onmousedown = UI.openFontSizeMenu;
             var col = (0, _lib.newHTML)('div', 'changecolorText off', ta);
             col.setAttribute('id', 'fontcolorbutton');
 
-            col.ontouchstart = UI.topLevelColor;
+            window.setEventHandler("touchstart", UI.topLevelColor, col);
             col.onmousedown = UI.topLevelColor;
             UI.createColorMenu(tf);
             UI.createTextSizeMenu(tf);
@@ -73012,7 +73012,7 @@ var UI = function () {
                 sf = (0, _lib.newHTML)('div', 'splasharea off', colour);
                 _Paint2.default.setSplashColor(sf, _Paint2.default.splash, swatchlist[i]);
                 _Paint2.default.addImageUrl(sf, _Paint2.default.splashshade);
-                colour.ontouchstart = UI.setTextColor;
+                window.setEventHandler("touchstart", UI.setTextColor, colour);
                 colour.onmousedown = UI.setTextColor;
             }
             UI.setMenuTextColor((0, _lib.gn)('textcolormenu').childNodes[9]);
@@ -73028,7 +73028,7 @@ var UI = function () {
                 textuisize.fs = sizes[i];
                 var sf = (0, _lib.newHTML)('span', undefined, textuisize);
                 sf.textContent = 'A';
-                textuisize.ontouchstart = UI.setTextSize;
+                window.setEventHandler("touchstart", UI.setTextSize, textuisize);
                 textuisize.onmousedown = UI.setTextSize;
             }
             UI.setMenuTextSize((0, _lib.gn)('textfontsizes').childNodes[5]);
@@ -73289,9 +73289,9 @@ var Undo = function () {
             div.setAttribute('type', 'toggleclicky');
             div.setAttribute('id', prefix + key);
             if (fcn) {
-                div.ontouchstart = function (evt) {
+                window.setEventHandler("touchstart", function (evt) {
                     fcn(evt);
-                };
+                }, div);
                 div.onmousedown = function (evt) {
                     fcn(evt);
                 };
@@ -73761,15 +73761,43 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-window.eventHandlers = {};
-window.setEventHandler = function (event, handler) {
-    var existingHandler = window.eventHandlers[event];
-    if (existingHandler === undefined) {
-        window.removeEventListener(event, existingHandler);
+/* This function replicates the behavior of the `.on<event>` properties but is
+ * implemented using `addEventListener` and `removeEventListener`. This allows
+ * only one handler to be registered for each event. Touch events in ScratchJr
+ * were previously implemented using the `.on<event>` properties, but these
+ * are apparently not implemented correctly on all devices (more specifically,
+ * all the `ontouch*` properties do not work on touchscreen chromebooks). We
+ * maintain the same behavior by only allowing one handler to be registered,
+ * which is depended on by some parts of ScratchJr (e.g. various handlers are
+ * attached to the window at different times based on the state of the app,
+ * but only one handler should be active at any time).
+ * 
+ * Params
+ * ------
+ * event: string
+ *   The name of the event to register a handler for.
+ * handler: function
+ *   The event handler to register. If undefined, the existing handler for the
+ *   event will be removed.
+ * target: object
+ *   The object to register the event handler on. Defaults to `window` if not
+ *   provided.
+ * 
+ */
+window.setEventHandler = function (event, handler, target) {
+    if (target === undefined) {
+        target = window;
+    }
+    if (!Object.hasOwn(target, "_scratchJrEventHandlers")) {
+        target._scratchJrEventHandlers = {};
+    }
+    var existingHandler = target._scratchJrEventHandlers[event];
+    if (existingHandler !== undefined) {
+        target.removeEventListener(event, existingHandler);
     }
     if (handler !== undefined) {
-        window.addEventListener(event, handler);
-        window.eventHandlers[event] = handler;
+        target.addEventListener(event, handler);
+        target._scratchJrEventHandlers[event] = handler;
     }
 };
 
@@ -74026,7 +74054,7 @@ var place = void 0;
 
 function gettingStartedMain() {
     (0, _lib.gn)("closeHelp").onclick = gettingStartedCloseMe;
-    (0, _lib.gn)("closeHelp").ontouchstart = gettingStartedCloseMe;
+    window.setEventHandler("touchstart", gettingStartedCloseMe, (0, _lib.gn)("closeHelp"));
     var videoObj = (0, _lib.gn)("myVideo");
     videoObj.poster = "assets/lobby/poster.png";
     var image = document.createElement("img");
@@ -74046,9 +74074,9 @@ function gettingStartedMain() {
     }
     var urlvars = (0, _lib.getUrlVars)();
     place = urlvars["place"];
-    document.ontouchmove = function (e) {
+    window.setEventHandler("touchmove", function (e) {
         e.preventDefault();
-    };
+    }, document);
 }
 
 function gettingStartedCloseMe() {
@@ -74419,9 +74447,9 @@ function indexLoadStart() {
 
     indexSetAnalyticsPrefs();
 
-    document.ontouchmove = function (e) {
+    window.setEventHandler("touchmove", function (e) {
         e.preventDefault();
-    };
+    }, document);
     document.onmousemove = function (e) {
         e.preventDefault();
     };
@@ -75307,7 +75335,7 @@ var Home = function () {
                 holdit(Home.actionTarget);
             }
             function holdit() {
-                frame.ontouchmove = Home.handleMove;
+                window.setEventHandler("touchmove", Home.handleMove, frame);
                 frame.onmousemove = Home.handleMove;
                 var repeat = function repeat() {
                     if (Home.actionTarget && Home.actionTarget.childElementCount > 2) {
@@ -75359,7 +75387,7 @@ var Home = function () {
             if (e.touches && e.touches.length > 1) {
                 return;
             }
-            frame.ontouchmove = undefined;
+            window.setEventHandler("touchmove", undefined, frame);
             frame.onmousemove = undefined;
             if (timeoutEvent) {
                 clearTimeout(timeoutEvent);
@@ -75805,7 +75833,7 @@ var Lobby = function () {
     }, {
         key: "loadProjects",
         value: function loadProjects(p) {
-            document.ontouchmove = undefined;
+            window.setEventHandler("touchmove", undefined, document);
             document.onmousemove = undefined;
             (0, _lib.gn)("topsection").className = "topsection home";
             (0, _lib.gn)("tabheader").textContent = _Localization2.default.localize("MY_PROJECTS");
@@ -75828,9 +75856,9 @@ var Lobby = function () {
             (0, _lib.gn)("wrapc").className = "contentwrap noscroll";
             var div = (0, _lib.newHTML)("div", "htmlcontents help", p);
             div.setAttribute("id", "htmlcontents");
-            document.ontouchmove = function (e) {
+            window.setEventHandler("touchmove", function (e) {
                 e.preventDefault();
-            };
+            }, document);
             document.onmousemove = function (e) {
                 e.preventDefault();
             };
@@ -75888,7 +75916,7 @@ var Lobby = function () {
             if (busy) {
                 return;
             }
-            document.ontouchmove = undefined;
+            window.setEventHandler("touchmove", undefined, document);
             document.onmousemove = undefined;
             busy = true;
             _ScratchAudio2.default.sndFX("tap.wav");
@@ -75906,9 +75934,9 @@ var Lobby = function () {
                     Lobby.loadLink(div, url, "contentwrap scroll", "htmlcontents scrolled");
                     break;
                 case "interface":
-                    document.ontouchmove = function (e) {
+                    window.setEventHandler("touchmove", function (e) {
                         e.preventDefault();
-                    };
+                    }, document);
                     document.onmousemove = function (e) {
                         e.preventDefault();
                     };
@@ -75916,9 +75944,9 @@ var Lobby = function () {
                     Lobby.loadLink(div, url, "contentwrap noscroll", "htmlcontents fixed");
                     break;
                 case "paint":
-                    document.ontouchmove = function (e) {
+                    window.setEventHandler("touchmove", function (e) {
                         e.preventDefault();
-                    };
+                    }, document);
                     document.onmousemove = function (e) {
                         e.preventDefault();
                     };
@@ -76129,7 +76157,7 @@ var Samples = function () {
         key: "init",
         value: function init() {
             frame = (0, _lib.gn)("htmlcontents");
-            (0, _lib.gn)("tabicon").ontouchstart = Samples.playHowTo;
+            window.setEventHandler("touchstart", Samples.playHowTo, (0, _lib.gn)("tabicon"));
             (0, _lib.gn)("tabicon").onclick = Samples.playHowTo;
             var div = (0, _lib.newHTML)("div", "samples off", frame);
             div.setAttribute("id", "samples");
@@ -80887,9 +80915,9 @@ var PaintUndo = function () {
             button.setAttribute('type', 'toggleclicky');
             button.setAttribute('id', prefix + key);
             if (fcn) {
-                button.ontouchstart = function (evt) {
+                window.setEventHandler("touchstart", function (evt) {
                     fcn(evt);
-                };
+                }, button);
                 button.onmousedown = function (evt) {
                     fcn(evt);
                 };
