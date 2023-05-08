@@ -483,7 +483,7 @@ export default class UI {
         var p = newHTML('div', 'spritethumbs', sprites);
         var div = newHTML('div', 'spritecc', p);
         div.setAttribute('id', 'spritecc');
-        div.ontouchstart = UI.spriteThumbsActions;
+        window.setEventHandler("touchstart", UI.spriteThumbsActions, div);
         div.onmousedown = UI.spriteThumbsActions;
 
         // scrollbar
@@ -962,7 +962,7 @@ export default class UI {
             e.stopPropagation();
             e.preventDefault();
         };
-        tf.ontouchstart = eatEvent;
+        window.setEventHandler("touchstart", eatEvent, tf);
         tf.onmousedown = eatEvent;
         var activetb = newHTML('form', 'pageform', tf);
         activetb.name = 'activetextbox';
@@ -980,12 +980,12 @@ export default class UI {
         var ta = newHTML('div', 'pagetextactions', tf);
         var clicky = newHTML('div', 'fontsizeText off', ta);
         clicky.setAttribute('id', 'fontsizebutton');
-        clicky.ontouchstart = UI.openFontSizeMenu;
+        window.setEventHandler("touchstart", UI.openFontSizeMenu, clicky);
         clicky.onmousedown = UI.openFontSizeMenu;
         var col = newHTML('div', 'changecolorText off', ta);
         col.setAttribute('id', 'fontcolorbutton');
 
-        col.ontouchstart = UI.topLevelColor;
+        window.setEventHandler("touchstart", UI.topLevelColor, col);
         col.onmousedown = UI.topLevelColor;
         UI.createColorMenu(tf);
         UI.createTextSizeMenu(tf);
@@ -1005,7 +1005,7 @@ export default class UI {
             sf = newHTML('div', 'splasharea off', colour);
             Paint.setSplashColor(sf, Paint.splash, swatchlist[i]);
             Paint.addImageUrl(sf, Paint.splashshade);
-            colour.ontouchstart = UI.setTextColor;
+            window.setEventHandler("touchstart", UI.setTextColor, colour);
             colour.onmousedown = UI.setTextColor;
         }
         UI.setMenuTextColor(gn('textcolormenu').childNodes[9]);
@@ -1020,7 +1020,7 @@ export default class UI {
             textuisize.fs = sizes[i];
             var sf = newHTML('span', undefined, textuisize);
             sf.textContent = 'A';
-            textuisize.ontouchstart = UI.setTextSize;
+            window.setEventHandler("touchstart", UI.setTextSize, textuisize);
             textuisize.onmousedown = UI.setTextSize;
         }
         UI.setMenuTextSize(gn('textfontsizes').childNodes[5]);

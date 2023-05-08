@@ -69,9 +69,9 @@ export default class Menu {
         } else {
             drawThumbnail(img, micon);
         }
-        cs.ontouchstart = function (evt) {
+        window.setEventHandler("touchstart", function (evt) {
             handleTouchStart(evt);
-        };
+        }, cs);
         cs.onmouseover = function (evt) {
             Menu.highlightdot(evt);
         };

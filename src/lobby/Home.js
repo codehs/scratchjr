@@ -116,7 +116,7 @@ export default class Home {
             holdit(Home.actionTarget);
         }
         function holdit() {
-            frame.ontouchmove = Home.handleMove;
+            window.setEventHandler("touchmove", Home.handleMove, frame);
             frame.onmousemove = Home.handleMove;
             var repeat = function () {
                 if (
@@ -174,7 +174,7 @@ export default class Home {
         if (e.touches && e.touches.length > 1) {
             return;
         }
-        frame.ontouchmove = undefined;
+        window.setEventHandler("touchmove", undefined, frame);
         frame.onmousemove = undefined;
         if (timeoutEvent) {
             clearTimeout(timeoutEvent);

@@ -56,10 +56,10 @@ export default class ScriptsPane {
         }
         ScratchJr.stage.currentPage.setCurrentSprite(gn(sprname).owner);
         currentsc.owner.activate();
-        currentsc.parentNode.ontouchstart = function (evt) {
+        window.setEventHandler("touchstart", function (evt) {
             console.log("touchstart script block");
             currentsc.owner.scriptsMouseDown(evt);
-        };
+        }, currentsc.parentNode);
         currentsc.parentNode.onmousedown = function (evt) {
             console.log("mousedown script block");
             currentsc.owner.scriptsMouseDown(evt);

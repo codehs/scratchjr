@@ -69,9 +69,9 @@ export default class Grid {
             ctx.stroke();
             dy += size;
         }
-        cnv.ontouchstart = function (evt) {
+        window.setEventHandler("touchstart", function (evt) {
             ScratchJr.stage.mouseDown(evt);
-        };
+        }, cnv);
         cnv.onmousedown = function (evt) {
             ScratchJr.stage.mouseDown(evt);
         };
@@ -150,9 +150,9 @@ export default class Grid {
         var cnv = newCanvas(gc, 0, 0, size + 2, size + 2, {
             position: 'absolute'
         });
-        cnv.ontouchstart = function (evt) {
+        window.setEventHandler("touchstart", function (evt) {
             Grid.mouseDownOnCursor(evt);
-        };
+        }, cnv);
         cnv.onmousedown = function (evt) {
             Grid.mouseDownOnCursor(evt);
         };
@@ -163,7 +163,7 @@ export default class Grid {
         ctx.lineWidth = 3;
         ctx.strokeRect(3, 3, size - 6, size - 6);
         ctx.fillRect(3, 3, size - 6, size - 6);
-        gc.ontouchstart = Grid.mouseDownOnCursor;
+        window.setEventHandler("touchstart", Grid.mouseDownOnCursor, gc);
         gc.onmousedown = Grid.mouseDownOnCursor;
     }
 
