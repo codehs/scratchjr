@@ -86,17 +86,13 @@ window.onload = async () => {
     if (!window.teacher_mode)
         window.teacher_mode = params.get("teacher_mode", "");
 
-    console.log("set interval");
-    setInterval(() => {
-        if (!window.teacher_mode && window.student_assignment_id) {
-            console.log("huh");
-            setInterval(() => {
-                updateTimeSpentOnProject(
-                    "project-sa-" + window.student_assignment_id
-                );
-            }, 5000);
-        }
-    });
+    if (!window.teacher_mode && window.student_assignment_id) {
+        setInterval(() => {
+            updateTimeSpentOnProject(
+                "project-sa-" + window.student_assignment_id
+            );
+        }, 5000);
+    }
 
     console.log("waitin for db");
     const shouldCreateNewProject = await db.initDB();
