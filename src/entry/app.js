@@ -86,17 +86,30 @@ window.onload = async () => {
     if (!window.teacher_mode)
         window.teacher_mode = params.get("teacher_mode", "");
 
+    // time tracking
+    let active = false;
+    var timer = null;
+    function setActive() {
+        active = true;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+            active = false;
+        }, 30000);
+    }
+    document.addEventListener("mousemove", setActive);
+    document.addEventListener("touchstart", setActive);
+    document.addEventListener("keydown", setActive);
+
     if (!window.teacher_mode && window.student_assignment_id) {
         setInterval(() => {
-            updateTimeSpentOnProject(
-                "project-sa-" + window.student_assignment_id
-            );
+            if (active)
+                updateTimeSpentOnProject(
+                    "project-sa-" + window.student_assignment_id
+                );
         }, 5000);
     }
 
-    console.log("waitin for db");
     const shouldCreateNewProject = await db.initDB();
-    console.log("done waitin for db");
 
     // Load CSS and set root/entryFunction for all pages
     switch (page) {
