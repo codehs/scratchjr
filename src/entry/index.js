@@ -4,6 +4,7 @@ import OS from "../tablet/OS";
 import UI from "../editor/ui/UI";
 import Localization from "../utils/Localization";
 import InitialOptions from "../utils/InitialOptions";
+import { getItemID, getStudentAssignmentID } from "../utils/CodeHS";
 
 /*
 When this code starts up, there are several scenarios:
@@ -342,14 +343,14 @@ function indexGohome() {
     });
     function doNext() {
         const params = new URLSearchParams();
-        if (window.student_assignment_id) {
+        if (getStudentAssignmentID()) {
             params.append(
                 "student_assignment_id",
-                window.student_assignment_id
+                getStudentAssignmentID()
             );
         }
-        if (window.item_id) {
-            params.append("item_id", window.item_id);
+        if (getItemID()) {
+            params.append("item_id", getItemID());
         }
 
         const url = "home.html?" + params.toString();
@@ -362,11 +363,11 @@ function indexGoSettings() {
     // Triggered by tapping the gear icon in the top right
     ScratchAudio.sndFX("tap.wav");
     const params = new URLSearchParams();
-    if (window.student_assignment_id) {
-        params.append("student_assignment_id", window.student_assignment_id);
+    if (getStudentAssignmentID()) {
+        params.append("student_assignment_id", getStudentAssignmentID());
     }
-    if (window.item_id) {
-        params.append("item_id", window.item_id);
+    if (getItemID()) {
+        params.append("item_id", getItemID());
     }
 
     const url = "home.html?place=gear&" + params.toString();
@@ -376,11 +377,11 @@ function indexGoSettings() {
 function indexGettingstarted() {
     ScratchAudio.sndFX("tap.wav");
     const params = new URLSearchParams();
-    if (window.student_assignment_id) {
-        params.append("student_assignment_id", window.student_assignment_id);
+    if (getStudentAssignmentID()) {
+        params.append("student_assignment_id", getStudentAssignmentID());
     }
-    if (window.item_id) {
-        params.append("item_id", window.item_id);
+    if (getItemID()) {
+        params.append("item_id", getItemID());
     }
 
     const url = "gettingstarted.html?place=home&" + params.toString();
@@ -391,11 +392,11 @@ function indexGettingstarted() {
 function indexInfo() {
     ScratchAudio.sndFX("tap.wav");
     const params = new URLSearchParams();
-    if (window.student_assignment_id) {
-        params.append("student_assignment_id", window.student_assignment_id);
+    if (getStudentAssignmentID()) {
+        params.append("student_assignment_id", getStudentAssignmentID());
     }
-    if (window.item_id) {
-        params.append("item_id", window.item_id);
+    if (getItemID()) {
+        params.append("item_id", getItemID());
     }
 
     const url = "home.html?place=book&" + params.toString();

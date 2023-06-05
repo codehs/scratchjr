@@ -10,6 +10,7 @@ import Cookie from "../utils/Cookie";
 
 import Home from "./Home";
 import Samples from "./Samples";
+import { getItemID, getStudentAssignmentID } from "../utils/CodeHS";
 
 let version = undefined;
 let busy = false;
@@ -378,14 +379,14 @@ export default class Lobby {
     static goHome() {
         if (currentPage === "home") {
             const params = new URLSearchParams(window.location.search);
-            if (window.student_assignment_id) {
+            if (getStudentAssignmentID()) {
                 params.append(
                     "student_assignment_id",
-                    window.student_assignment_id
+                    getStudentAssignmentID()
                 );
             }
-            if (window.item_id) {
-                params.append("item_id", window.item_id);
+            if (getItemID()) {
+                params.append("item_id", getItemID());
             }
 
             const url = "index.html?back=true&" + params.toString();

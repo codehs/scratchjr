@@ -8,6 +8,7 @@ import {
     saveToFirebase,
 } from "./Firebase.js";
 import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
+import { getItemID, getStudentAssignmentID } from "../utils/CodeHS";
 
 // see https://github.com/sql-js/sql.js/#usage
 
@@ -35,7 +36,7 @@ function setStarterCode(id) {
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
     if (id) saveToFirebase("chs-" + id + "-starter", stringData);
-    else saveToFirebase("chs-" + window.item_id + "-starter", stringData);
+    else saveToFirebase("chs-" + getItemID() + "-starter", stringData);
 }
 
 window.downloadDB = downloadDB;
@@ -132,13 +133,13 @@ export function saveDB() {
 
     // update the thumbnail for the current project in the database
     // NOTE: this assumes that we are only ever working with the first project in the sql db
-    if (window.student_assignment_id) {
+    if (getStudentAssignmentID()) {
         getFirstProjectThumbnail(function (thumbnail) {
-            setSAThumbnail(window.student_assignment_id, thumbnail);
+            setSAThumbnail(getStudentAssignmentID(), thumbnail);
         });
     } else {
         getFirstProjectThumbnail(function (thumbnail) {
-            setItemThumbnail(window.item_id, thumbnail);
+            setItemThumbnail(getItemID(), thumbnail);
         });
     }
 
@@ -148,7 +149,7 @@ export function saveDB() {
     localStorage.setItem(baseKey, stringData);
     saveToFirebase(firebasePath + "/timestamp", timestamp);
     saveToFirebase(firebasePath + "/db", stringData);
-    if (!window.student_assignment_id) setStarterCode();
+    if (!getStudentAssignmentID()) setStarterCode();
 }
 
 async function getDBDataString() {
@@ -179,7 +180,7 @@ async function getDBDataString() {
         console.log(
             "not in localstorage, loading starter code db data from firebase"
         );
-        const starterCodePath = `chs-${window.item_id}-starter`;
+        const starterCodePath = `chs-${getItemID()}-starter`;
         dbData = await getFromFirebase(starterCodePath);
         if (dbData) {
             localStorage.setItem("loadFromFirebase", "true");
@@ -207,11 +208,11 @@ export async function initDB() {
 
         // get saved data from localStorage, then initialize the database with it if it exists.
         // otherwise, create a new database and initialize the tables and run migrations.
-        if (window.student_assignment_id) {
-            const id = window.student_assignment_id;
+        if (getStudentAssignmentID()) {
+            const id = getStudentAssignmentID();
             baseKey = "sa-" + id;
-        } else if (window.item_id) {
-            const id = window.item_id;
+        } else if (getItemID()) {
+            const id = getItemID();
             baseKey = "item-" + id;
         } else if (window.scratchJrPage === "editor") {
             alert("No IDs found. DB will not be loaded or saved.");
