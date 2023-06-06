@@ -4,9 +4,22 @@ let studentAssignmentID = null;
 const regexWithItem = /^\/scratchjr\/(\d+)\/test\/?$/;
 const regexWithStudentAssignment = /^\/scratchjr\/(\d+)\/(\d+)\/test\/?$/;
 
+const elemRegexWithItem = /^\/elementary\/(\d+)\/scratchjr\/?$/;
+const elemRegexWithStudentAssignment =
+    /^\/elementary\/(\d+)\/(\d+)\/scratchjr\/?$/;
+
 function setIDs() {
-    const matchesWithItem = window.location.pathname.match(regexWithItem);
-    const matchesWithStudentAssignment = window.location.pathname.match(regexWithStudentAssignment);
+    const matchesWithItem = window.location.pathname.match(elemRegexWithItem);
+    const matchesWithStudentAssignment = window.location.pathname.match(
+        elemRegexWithStudentAssignment
+    );
+    console.log(
+        "\n\n\n>>>>>>>>>>>>>>>>\n",
+        matchesWithItem,
+        "\n",
+        matchesWithStudentAssignment,
+        "\n\n\n"
+    );
     if (matchesWithItem) {
         itemID = matchesWithItem[1];
     } else if (matchesWithStudentAssignment) {
@@ -32,4 +45,3 @@ export function getStudentAssignmentID() {
     }
     return studentAssignmentID;
 }
-
