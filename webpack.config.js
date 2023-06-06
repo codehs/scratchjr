@@ -47,5 +47,13 @@ module.exports = {
     },
     devServer: {
         disableHostCheck: true,
-    }
+        // https://stackoverflow.com/questions/31602697/webpack-dev-server-cors-issue
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods":
+                "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+            "Access-Control-Allow-Headers":
+                "X-Requested-With, content-type, Authorization",
+        },
+    },
 };
