@@ -83,6 +83,13 @@ window.onload = async () => {
         window.student_assignment_id = getStudentAssignmentID();
     }
 
+    if (window.setupTimeTracking && window.setActive) {
+        window.setupTimeTracking();
+        window.addEventListener('mousemove', window.setActive);
+        window.addEventListener('touchstart', window.setActive);
+        window.addEventListener('keydown', window.setActive);
+    }
+
     console.log("waitin for db");
     const shouldCreateNewProject = await db.initDB();
     console.log("done waitin for db");
