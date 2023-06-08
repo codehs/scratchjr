@@ -84,6 +84,71 @@ function UTF16StringToBinaryData(string) {
     return binaryData;
 }
 
+function UTF16StringToUTF8String(utf16String) {
+    const utf8Bytes = [];
+    for (let i = 0; i < utf16String.length; i++) {
+        let charCode = utf16String.charCodeAt(i);
+
+        if (charCode < 0x80) {
+            utf8Bytes.push(charCode);
+        } else if (charCode < 0x800) {
+            utf8Bytes.push((charCode >> 6) | 0xc0);
+            utf8Bytes.push((charCode & 0x3f) | 0x80);
+        } else {
+            utf8Bytes.push((charCode >> 12) | 0xe0);
+            utf8Bytes.push(((charCode >> 6) & 0x3f) | 0x80);
+            utf8Bytes.push((charCode & 0x3f) | 0x80);
+        }
+    }
+
+    const chunkSize = 0xffff;
+    const stringChunks = [];
+    for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
+        stringChunks.push(
+            String.fromCharCode.apply(
+                null,
+                utf8Bytes.slice(i, i + chunkSize)
+            )
+        );
+    }
+    return stringChunks.join("");
+}
+
+function UTF8StringToUTF16String(utf8String) {
+    let utf16String = "";
+    let index = 0;
+
+    while (index < utf8String.length) {
+        let codePoint;
+
+        const byte1 = utf8String.charCodeAt(index++);
+        if ((byte1 & 0x80) === 0) {
+            codePoint = byte1;
+        } else if ((byte1 & 0xe0) === 0xc0) {
+            const byte2 = utf8String.charCodeAt(index++);
+            codePoint = ((byte1 & 0x1f) << 6) | (byte2 & 0x3f);
+        } else if ((byte1 & 0xf0) === 0xe0) {
+            const byte2 = utf8String.charCodeAt(index++);
+            const byte3 = utf8String.charCodeAt(index++);
+            codePoint =
+                ((byte1 & 0x0f) << 12) | ((byte2 & 0x3f) << 6) | (byte3 & 0x3f);
+        } else {
+            const byte2 = utf8String.charCodeAt(index++);
+            const byte3 = utf8String.charCodeAt(index++);
+            const byte4 = utf8String.charCodeAt(index++);
+            codePoint =
+                ((byte1 & 0x07) << 18) |
+                ((byte2 & 0x3f) << 12) |
+                ((byte3 & 0x3f) << 6) |
+                (byte4 & 0x3f);
+        }
+
+        utf16String += String.fromCharCode(codePoint);
+    }
+
+    return utf16String;
+}
+
 // see https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L674
 function initTables() {
     // TODO: maybe handle errors manually?
@@ -131,6 +196,15 @@ export function saveDB() {
         console.log("changes detected, saving");
     }
 
+    if (window.saveScratchJrProject) {
+        window.saveScratchJrProject(
+            getStudentAssignmentID(),
+            UTF16StringToUTF8String(stringData)
+        );
+        localStorage.setItem(baseKey, stringData);
+        return;
+    }
+
     // update the thumbnail for the current project in the database
     // NOTE: this assumes that we are only ever working with the first project in the sql db
     if (getStudentAssignmentID()) {
@@ -153,20 +227,24 @@ export function saveDB() {
 }
 
 async function getDBDataString() {
-    // determine the base key for the project
-    // all other  keys/paths are derived from this
     let dbData = null;
 
-    // compare local and firebase timestamp,
-    // get the data from the place with the greater timestamp
-    const localTime =
-        parseInt(localStorage.getItem(baseKey + "-timestamp")) || 0;
-    const firebaseTime =
-        parseInt(await getFromFirebase(firebasePath + "/timestamp")) || 0;
-    // try to load from firebase, then if there is no data there try from localstorage
-    console.log("loading db data from firebase", firebasePath);
-    dbData = await getFromFirebase(firebasePath + "/db");
+    // try to load from CodeHS DB
+    if (window.loadScratchJrProject) {
+        dbData = await window.loadScratchJrProject(getStudentAssignmentID());
+        if (dbData) {
+            dbData = UTF8StringToUTF16String(dbData);
+        }
+        return dbData;
+    }
 
+    // try to load from firebase
+    if (!dbData) {
+        console.log("loading db data from firebase", firebasePath);
+        dbData = await getFromFirebase(firebasePath + "/db");
+    }
+
+    // try to load from localstorage
     if (!dbData) {
         console.log(
             "not in firebase, loading db data from localstorage",
@@ -175,7 +253,7 @@ async function getDBDataString() {
         dbData = localStorage.getItem(baseKey);
     }
 
-    // if there's no data, try to get the starter code from firebase
+    // try to get the starter code from firebase
     if (!dbData) {
         console.log(
             "not in localstorage, loading starter code db data from firebase"
@@ -222,7 +300,7 @@ export async function initDB() {
         // get saved data from localStorage or firebase, then initialize the database with it if it
         // exists. otherwise, create a new database and initialize the tables and run migrations.
         const dbDataString = await getDBDataString();
-        if (dbDataString !== null) {
+        if (dbDataString) {
             const binaryData = UTF16StringToBinaryData(dbDataString);
             db = new SQL.Database(binaryData);
         } else {
