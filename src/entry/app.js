@@ -17,7 +17,7 @@ import {
     inappPaintEditorGuide,
     inappPrivacyPolicy,
 } from "./inapp";
-
+import { getStudentAssignmentID } from "../utils/CodeHS";
 
 /* This function replicates the behavior of the `.on<event>` properties but is
  * implemented using `addEventListener` and `removeEventListener`. This allows
@@ -29,7 +29,7 @@ import {
  * which is depended on by some parts of ScratchJr (e.g. various handlers are
  * attached to the window at different times based on the state of the app,
  * but only one handler should be active at any time).
- * 
+ *
  * Params
  * ------
  * event: string
@@ -40,7 +40,7 @@ import {
  * target: object
  *   The object to register the event handler on. Defaults to `window` if not
  *   provided.
- * 
+ *
  */
 window.setEventHandler = function (event, handler, target) {
     if (target === undefined) {
@@ -79,10 +79,9 @@ window.onload = async () => {
     // scratchJrPage is defined in the HTML pages
     let page = window.scratchJrPage;
 
-    const params = new URLSearchParams(window.location.search);
-    if (!window.item_id) window.item_id = params.get("item_id", "");
-    if (!window.student_assignment_id)
-        window.student_assignment_id = params.get("student_assignment_id", "");
+    if (!window.student_assignment_id) {
+        window.student_assignment_id = getStudentAssignmentID();
+    }
 
     console.log("waitin for db");
     const shouldCreateNewProject = await db.initDB();
