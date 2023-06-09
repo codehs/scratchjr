@@ -17,7 +17,6 @@ import {
     inappPaintEditorGuide,
     inappPrivacyPolicy,
 } from "./inapp";
-import { getStudentAssignmentID } from "../utils/CodeHS";
 
 /* This function replicates the behavior of the `.on<event>` properties but is
  * implemented using `addEventListener` and `removeEventListener`. This allows
@@ -79,8 +78,12 @@ window.onload = async () => {
     // scratchJrPage is defined in the HTML pages
     let page = window.scratchJrPage;
 
-    if (!window.student_assignment_id) {
-        window.student_assignment_id = getStudentAssignmentID();
+    const params = new URLSearchParams(window.location.search);
+    if (!window.studentAssignmentID) {
+        window.studentAssignmentID = params.get("student_assignment_id", null);
+    }
+    if (!window.itemID) {
+        window.itemID = params.get("item_id", null);
     }
 
     if (window.setupTimeTracking && window.setActive) {

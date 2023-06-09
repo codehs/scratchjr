@@ -10,7 +10,6 @@ import Localization from "../utils/Localization";
 import ScratchAudio from "../utils/ScratchAudio";
 import Vector from "../geom/Vector";
 import { gn, newHTML, isTablet, mTime } from "../utils/lib";
-import { getItemID, getStudentAssignmentID } from "../utils/CodeHS";
 
 let frame;
 let scrollvalue;
@@ -33,14 +32,14 @@ export default class Home {
         // if (localStorage.getItem("loadFromFirebase")) {
         //     Home.gotoEditor(1);
         // } else {
-        //     if (getStudentAssignmentID()) {
+        //     if (window.studentAssignmentID) {
         //         if (
         //             !localStorage.getItem(
-        //                 "sa-" + getStudentAssignmentID() + "-initialized"
+        //                 "sa-" + window.studentAssignmentID + "-initialized"
         //             )
         //         ) {
         //             localStorage.setItem(
-        //                 "sa-" + getStudentAssignmentID() + "-initialized",
+        //                 "sa-" + window.studentAssignmentID + "-initialized",
         //                 "true"
         //             );
         //             console.log("creating new project (SA)");
@@ -53,11 +52,11 @@ export default class Home {
         //     } else {
         //         if (
         //             !localStorage.getItem(
-        //                 "item-" + getItemID() + "-initialized"
+        //                 "item-" + window.itemID + "-initialized"
         //             )
         //         ) {
         //             localStorage.setItem(
-        //                 "item-" + getItemID() + "-initialized",
+        //                 "item-" + window.itemID + "-initialized",
         //                 "true"
         //             );
         //             console.log("creating new project (item)");
@@ -245,14 +244,14 @@ export default class Home {
         function doNext() {
             OS.analyticsEvent("lobby", "existing_project_edited");
             const params = new URLSearchParams();
-            if (getStudentAssignmentID()) {
+            if (window.studentAssignmentID) {
                 params.append(
                     "student_assignment_id",
-                    getStudentAssignmentID()
+                    window.studentAssignmentID
                 );
             }
-            if (getItemID()) {
-                params.append("item_id", getItemID());
+            if (window.itemID) {
+                params.append("item_id", window.itemID);
             }
 
             const url =
@@ -280,14 +279,14 @@ export default class Home {
         });
         function doNext(md5) {
             const params = new URLSearchParams();
-            if (getStudentAssignmentID()) {
+            if (window.studentAssignmentID) {
                 params.append(
                     "student_assignment_id",
-                    getStudentAssignmentID()
+                    window.studentAssignmentID
                 );
             }
-            if (getItemID()) {
-                params.append("item_id", getItemID());
+            if (window.itemID) {
+                params.append("item_id", window.itemID);
             }
 
             const url =

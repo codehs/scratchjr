@@ -59738,8 +59738,6 @@ var _Localization2 = _interopRequireDefault(_Localization);
 
 var _lib = __webpack_require__(/*! ../utils/lib */ "./src/utils/lib.js");
 
-var _CodeHS = __webpack_require__(/*! ../utils/CodeHS */ "./src/utils/CodeHS.js");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -60052,11 +60050,11 @@ var ScratchJr = function () {
         key: "getGotoLink",
         value: function getGotoLink() {
             var params = new URLSearchParams();
-            if ((0, _CodeHS.getStudentAssignmentID)()) {
-                params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+            if (window.studentAssignmentID) {
+                params.append("student_assignment_id", window.studentAssignmentID);
             }
-            if ((0, _CodeHS.getItemID)()) {
-                params.append("item_id", (0, _CodeHS.getItemID)());
+            if (window.itemID) {
+                params.append("item_id", window.itemID);
             }
 
             if (editmode == "storyStarter") {
@@ -73757,8 +73755,6 @@ var _gettingstarted = __webpack_require__(/*! ./gettingstarted */ "./src/entry/g
 
 var _inapp = __webpack_require__(/*! ./inapp */ "./src/entry/inapp.js");
 
-var _CodeHS = __webpack_require__(/*! ../utils/CodeHS */ "./src/utils/CodeHS.js");
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -73814,7 +73810,7 @@ function loadSettings(settingsRoot, whenDone) {
 
 // App-wide entry-point
 window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-    var entryFunction, root, page, shouldCreateNewProject;
+    var entryFunction, root, page, params, shouldCreateNewProject;
     return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
             switch (_context.prev = _context.next) {
@@ -73832,10 +73828,13 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                     // scratchJrPage is defined in the HTML pages
 
                     page = window.scratchJrPage;
+                    params = new URLSearchParams(window.location.search);
 
-
-                    if (!window.student_assignment_id) {
-                        window.student_assignment_id = (0, _CodeHS.getStudentAssignmentID)();
+                    if (!window.studentAssignmentID) {
+                        window.studentAssignmentID = params.get("student_assignment_id", null);
+                    }
+                    if (!window.itemID) {
+                        window.itemID = params.get("item_id", null);
                     }
 
                     if (window.setupTimeTracking && window.setActive) {
@@ -73846,20 +73845,20 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                     }
 
                     console.log("waitin for db");
-                    _context.next = 8;
+                    _context.next = 10;
                     return db.initDB();
 
-                case 8:
+                case 10:
                     shouldCreateNewProject = _context.sent;
 
                     console.log("done waitin for db");
 
                     // Load CSS and set root/entryFunction for all pages
                     _context.t0 = page;
-                    _context.next = _context.t0 === "index" ? 13 : _context.t0 === "home" ? 20 : _context.t0 === "editor" ? 26 : _context.t0 === "gettingStarted" ? 36 : _context.t0 === "inappAbout" ? 41 : _context.t0 === "inappInterfaceGuide" ? 45 : _context.t0 === "inappPaintEditorGuide" ? 50 : _context.t0 === "inappBlocksGuide" ? 55 : _context.t0 === "inappPrivacyPolicy" ? 60 : 65;
+                    _context.next = _context.t0 === "index" ? 15 : _context.t0 === "home" ? 22 : _context.t0 === "editor" ? 28 : _context.t0 === "gettingStarted" ? 38 : _context.t0 === "inappAbout" ? 43 : _context.t0 === "inappInterfaceGuide" ? 47 : _context.t0 === "inappPaintEditorGuide" ? 52 : _context.t0 === "inappBlocksGuide" ? 57 : _context.t0 === "inappPrivacyPolicy" ? 62 : 67;
                     break;
 
-                case 13:
+                case 15:
                     // Index page (splash screen)
                     (0, _lib.preprocessAndLoadCss)("css", "css/font.css");
                     (0, _lib.preprocessAndLoadCss)("css", "css/base.css");
@@ -73873,9 +73872,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                             _OS2.default.registerLibraryAssets(_MediaLib2.default.version, assets, _index.indexMain);
                         });
                     };
-                    return _context.abrupt("break", 65);
+                    return _context.abrupt("break", 67);
 
-                case 20:
+                case 22:
                     // Lobby pages
                     (0, _lib.preprocessAndLoadCss)("css", "css/font.css");
                     (0, _lib.preprocessAndLoadCss)("css", "css/base.css");
@@ -73884,9 +73883,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                     entryFunction = function entryFunction() {
                         return _OS2.default.waitForInterface(_home.homeMain);
                     };
-                    return _context.abrupt("break", 65);
+                    return _context.abrupt("break", 67);
 
-                case 26:
+                case 28:
                     // Editor pages
                     (0, _lib.preprocessAndLoadCss)("css", "css/font.css");
                     (0, _lib.preprocessAndLoadCss)("css", "css/base.css");
@@ -73907,9 +73906,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                             } else (0, _editor.editorMain)();
                         });
                     };
-                    return _context.abrupt("break", 65);
+                    return _context.abrupt("break", 67);
 
-                case 36:
+                case 38:
                     // Getting started video page
                     (0, _lib.preprocessAndLoadCss)("css", "css/font.css");
                     (0, _lib.preprocessAndLoadCss)("css", "css/base.css");
@@ -73917,18 +73916,18 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                     entryFunction = function entryFunction() {
                         return _OS2.default.waitForInterface(_gettingstarted.gettingStartedMain);
                     };
-                    return _context.abrupt("break", 65);
+                    return _context.abrupt("break", 67);
 
-                case 41:
+                case 43:
                     // About ScratchJr in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/about.css");
                     entryFunction = function entryFunction() {
                         return (0, _inapp.inappAbout)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 65);
+                    return _context.abrupt("break", 67);
 
-                case 45:
+                case 47:
                     // Interface guide in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/style.css");
                     (0, _lib.preprocessAndLoadCss)("style", "style/interface.css");
@@ -73936,9 +73935,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         return (0, _inapp.inappInterfaceGuide)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 65);
+                    return _context.abrupt("break", 67);
 
-                case 50:
+                case 52:
                     // Paint editor guide in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/style.css");
                     (0, _lib.preprocessAndLoadCss)("style", "style/paint.css");
@@ -73946,9 +73945,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         return (0, _inapp.inappPaintEditorGuide)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 65);
+                    return _context.abrupt("break", 67);
 
-                case 55:
+                case 57:
                     // Blocks guide in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/style.css");
                     (0, _lib.preprocessAndLoadCss)("style", "style/blocks.css");
@@ -73956,9 +73955,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         return (0, _inapp.inappBlocksGuide)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 65);
+                    return _context.abrupt("break", 67);
 
-                case 60:
+                case 62:
                     // Blocks guide in-app help frame
                     (0, _lib.preprocessAndLoadCss)("style", "style/style.css");
                     (0, _lib.preprocessAndLoadCss)("style", "style/privacy.css");
@@ -73966,9 +73965,9 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         return (0, _inapp.inappPrivacyPolicy)();
                     };
                     root = "../";
-                    return _context.abrupt("break", 65);
+                    return _context.abrupt("break", 67);
 
-                case 65:
+                case 67:
 
                     // Start up sequence
                     // Load settings from JSON
@@ -73984,7 +73983,7 @@ window.onload = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function
                         _InitialOptions2.default.initWithSettings(window.Settings.initialOptions);
                     });
 
-                case 66:
+                case 68:
                 case "end":
                     return _context.stop();
             }
@@ -74062,8 +74061,6 @@ exports.gettingStartedMain = gettingStartedMain;
 
 var _lib = __webpack_require__(/*! ../utils/lib */ "./src/utils/lib.js");
 
-var _CodeHS = __webpack_require__(/*! ../utils/CodeHS */ "./src/utils/CodeHS.js");
-
 var place = void 0;
 
 function gettingStartedMain() {
@@ -74095,11 +74092,11 @@ function gettingStartedMain() {
 
 function gettingStartedCloseMe() {
     var params = new URLSearchParams();
-    if ((0, _CodeHS.getStudentAssignmentID)()) {
-        params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+    if (window.studentAssignmentID) {
+        params.append("student_assignment_id", window.studentAssignmentID);
     }
-    if ((0, _CodeHS.getItemID)()) {
-        params.append("item_id", (0, _CodeHS.getItemID)());
+    if (window.itemID) {
+        params.append("item_id", window.itemID);
     }
 
     var url = "home.html?place=" + place + "&" + params.toString();
@@ -74137,8 +74134,6 @@ var _Lobby = __webpack_require__(/*! ../lobby/Lobby */ "./src/lobby/Lobby.js");
 
 var _Lobby2 = _interopRequireDefault(_Lobby);
 
-var _CodeHS = __webpack_require__(/*! ../utils/CodeHS */ "./src/utils/CodeHS.js");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function homeMain() {
@@ -74154,11 +74149,11 @@ function homeMain() {
 
 function homeGoBack() {
     var params = new URLSearchParams();
-    if ((0, _CodeHS.getStudentAssignmentID)()) {
-        params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+    if (window.studentAssignmentID) {
+        params.append("student_assignment_id", window.studentAssignmentID);
     }
-    if ((0, _CodeHS.getItemID)()) {
-        params.append("item_id", (0, _CodeHS.getItemID)());
+    if (window.itemID) {
+        params.append("item_id", window.itemID);
     }
 
     var url = "index.html?back=yes&" + params.toString();
@@ -74348,8 +74343,6 @@ var _Localization2 = _interopRequireDefault(_Localization);
 var _InitialOptions = __webpack_require__(/*! ../utils/InitialOptions */ "./src/utils/InitialOptions.js");
 
 var _InitialOptions2 = _interopRequireDefault(_InitialOptions);
-
-var _CodeHS = __webpack_require__(/*! ../utils/CodeHS */ "./src/utils/CodeHS.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -74673,11 +74666,11 @@ function indexGohome() {
     });
     function doNext() {
         var params = new URLSearchParams();
-        if ((0, _CodeHS.getStudentAssignmentID)()) {
-            params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+        if (window.studentAssignmentID) {
+            params.append("student_assignment_id", window.studentAssignmentID);
         }
-        if ((0, _CodeHS.getItemID)()) {
-            params.append("item_id", (0, _CodeHS.getItemID)());
+        if (window.itemID) {
+            params.append("item_id", window.itemID);
         }
 
         var url = "home.html?" + params.toString();
@@ -74690,11 +74683,11 @@ function indexGoSettings() {
     // Triggered by tapping the gear icon in the top right
     _ScratchAudio2.default.sndFX("tap.wav");
     var params = new URLSearchParams();
-    if ((0, _CodeHS.getStudentAssignmentID)()) {
-        params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+    if (window.studentAssignmentID) {
+        params.append("student_assignment_id", window.studentAssignmentID);
     }
-    if ((0, _CodeHS.getItemID)()) {
-        params.append("item_id", (0, _CodeHS.getItemID)());
+    if (window.itemID) {
+        params.append("item_id", window.itemID);
     }
 
     var url = "home.html?place=gear&" + params.toString();
@@ -74704,11 +74697,11 @@ function indexGoSettings() {
 function indexGettingstarted() {
     _ScratchAudio2.default.sndFX("tap.wav");
     var params = new URLSearchParams();
-    if ((0, _CodeHS.getStudentAssignmentID)()) {
-        params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+    if (window.studentAssignmentID) {
+        params.append("student_assignment_id", window.studentAssignmentID);
     }
-    if ((0, _CodeHS.getItemID)()) {
-        params.append("item_id", (0, _CodeHS.getItemID)());
+    if (window.itemID) {
+        params.append("item_id", window.itemID);
     }
 
     var url = "gettingstarted.html?place=home&" + params.toString();
@@ -74719,11 +74712,11 @@ function indexGettingstarted() {
 function indexInfo() {
     _ScratchAudio2.default.sndFX("tap.wav");
     var params = new URLSearchParams();
-    if ((0, _CodeHS.getStudentAssignmentID)()) {
-        params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+    if (window.studentAssignmentID) {
+        params.append("student_assignment_id", window.studentAssignmentID);
     }
-    if ((0, _CodeHS.getItemID)()) {
-        params.append("item_id", (0, _CodeHS.getItemID)());
+    if (window.itemID) {
+        params.append("item_id", window.itemID);
     }
 
     var url = "home.html?place=book&" + params.toString();
@@ -75240,8 +75233,6 @@ var _Vector2 = _interopRequireDefault(_Vector);
 
 var _lib = __webpack_require__(/*! ../utils/lib */ "./src/utils/lib.js");
 
-var _CodeHS = __webpack_require__(/*! ../utils/CodeHS */ "./src/utils/CodeHS.js");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -75273,14 +75264,14 @@ var Home = function () {
             // if (localStorage.getItem("loadFromFirebase")) {
             //     Home.gotoEditor(1);
             // } else {
-            //     if (getStudentAssignmentID()) {
+            //     if (window.studentAssignmentID) {
             //         if (
             //             !localStorage.getItem(
-            //                 "sa-" + getStudentAssignmentID() + "-initialized"
+            //                 "sa-" + window.studentAssignmentID + "-initialized"
             //             )
             //         ) {
             //             localStorage.setItem(
-            //                 "sa-" + getStudentAssignmentID() + "-initialized",
+            //                 "sa-" + window.studentAssignmentID + "-initialized",
             //                 "true"
             //             );
             //             console.log("creating new project (SA)");
@@ -75293,11 +75284,11 @@ var Home = function () {
             //     } else {
             //         if (
             //             !localStorage.getItem(
-            //                 "item-" + getItemID() + "-initialized"
+            //                 "item-" + window.itemID + "-initialized"
             //             )
             //         ) {
             //             localStorage.setItem(
-            //                 "item-" + getItemID() + "-initialized",
+            //                 "item-" + window.itemID + "-initialized",
             //                 "true"
             //             );
             //             console.log("creating new project (item)");
@@ -75459,11 +75450,11 @@ var Home = function () {
             function doNext() {
                 _OS2.default.analyticsEvent("lobby", "existing_project_edited");
                 var params = new URLSearchParams();
-                if ((0, _CodeHS.getStudentAssignmentID)()) {
-                    params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+                if (window.studentAssignmentID) {
+                    params.append("student_assignment_id", window.studentAssignmentID);
                 }
-                if ((0, _CodeHS.getItemID)()) {
-                    params.append("item_id", (0, _CodeHS.getItemID)());
+                if (window.itemID) {
+                    params.append("item_id", window.itemID);
                 }
 
                 var url = "editor.html?pmd5=" + md5 + "&mode=edit&" + params.toString();
@@ -75490,11 +75481,11 @@ var Home = function () {
             });
             function doNext(md5) {
                 var params = new URLSearchParams();
-                if ((0, _CodeHS.getStudentAssignmentID)()) {
-                    params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+                if (window.studentAssignmentID) {
+                    params.append("student_assignment_id", window.studentAssignmentID);
                 }
-                if ((0, _CodeHS.getItemID)()) {
-                    params.append("item_id", (0, _CodeHS.getItemID)());
+                if (window.itemID) {
+                    params.append("item_id", window.itemID);
                 }
 
                 var url = "editor.html?pmd5=" + md5 + "&mode=edit&" + params.toString();
@@ -75720,8 +75711,6 @@ var _Home2 = _interopRequireDefault(_Home);
 var _Samples = __webpack_require__(/*! ./Samples */ "./src/lobby/Samples.js");
 
 var _Samples2 = _interopRequireDefault(_Samples);
-
-var _CodeHS = __webpack_require__(/*! ../utils/CodeHS */ "./src/utils/CodeHS.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -76067,11 +76056,11 @@ var Lobby = function () {
         value: function goHome() {
             if (currentPage === "home") {
                 var params = new URLSearchParams(window.location.search);
-                if ((0, _CodeHS.getStudentAssignmentID)()) {
-                    params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+                if (window.studentAssignmentID) {
+                    params.append("student_assignment_id", window.studentAssignmentID);
                 }
-                if ((0, _CodeHS.getItemID)()) {
-                    params.append("item_id", (0, _CodeHS.getItemID)());
+                if (window.itemID) {
+                    params.append("item_id", window.itemID);
                 }
 
                 var url = "index.html?back=true&" + params.toString();
@@ -76161,8 +76150,6 @@ var _Localization2 = _interopRequireDefault(_Localization);
 
 var _lib = __webpack_require__(/*! ../utils/lib */ "./src/utils/lib.js");
 
-var _CodeHS = __webpack_require__(/*! ../utils/CodeHS */ "./src/utils/CodeHS.js");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -76199,11 +76186,11 @@ var Samples = function () {
             e.stopPropagation();
             _ScratchAudio2.default.sndFX("tap.wav");
             var params = new URLSearchParams();
-            if ((0, _CodeHS.getStudentAssignmentID)()) {
-                params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+            if (window.studentAssignmentID) {
+                params.append("student_assignment_id", window.studentAssignmentID);
             }
-            if ((0, _CodeHS.getItemID)()) {
-                params.append("item_id", (0, _CodeHS.getItemID)());
+            if (window.itemID) {
+                params.append("item_id", window.itemID);
             }
 
             var url = "gettingstarted.html?place=help&" + params.toString();
@@ -76254,11 +76241,11 @@ var Samples = function () {
             _OS2.default.analyticsEvent("samples", "sample_opened", mt.textContent);
             var md5 = mt.md5;
             var params = new URLSearchParams();
-            if ((0, _CodeHS.getStudentAssignmentID)()) {
-                params.append("student_assignment_id", (0, _CodeHS.getStudentAssignmentID)());
+            if (window.studentAssignmentID) {
+                params.append("student_assignment_id", window.studentAssignmentID);
             }
-            if ((0, _CodeHS.getItemID)()) {
-                params.append("item_id", (0, _CodeHS.getItemID)());
+            if (window.itemID) {
+                params.append("item_id", window.itemID);
             }
 
             var url = "editor.html?pmd5=" + md5 + "&mode=" + (window.Settings.useStoryStarters ? "storyStarter" : "look") + "&" + params.toString();
@@ -87588,7 +87575,7 @@ var getDBDataString = function () {
                         }
 
                         _context2.next = 4;
-                        return window.loadScratchJrProject((0, _CodeHS.getStudentAssignmentID)());
+                        return window.loadScratchJrProject();
 
                     case 4:
                         dbData = _context2.sent;
@@ -87627,7 +87614,7 @@ var getDBDataString = function () {
                         }
 
                         console.log("not in localstorage, loading starter code db data from firebase");
-                        starterCodePath = "chs-" + (0, _CodeHS.getItemID)() + "-starter";
+                        starterCodePath = "chs-" + window.itemID + "-starter";
                         _context2.next = 18;
                         return (0, _Firebase.getFromFirebase)(starterCodePath);
 
@@ -87680,7 +87667,7 @@ var initDB = exports.initDB = function () {
                         // create a new project once it's initialized
                         initPromise = new Promise(function () {
                             var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(resolve) {
-                                var shouldCreateNewProject, SQL, id, _id, dbDataString, binaryData;
+                                var shouldCreateNewProject, SQL, id, _id, _id2, dbDataString, binaryData;
 
                                 return regeneratorRuntime.wrap(function _callee3$(_context3) {
                                     while (1) {
@@ -87700,14 +87687,18 @@ var initDB = exports.initDB = function () {
 
                                                 // get saved data from localStorage, then initialize the database with it if it exists.
                                                 // otherwise, create a new database and initialize the tables and run migrations.
-                                                if ((0, _CodeHS.getStudentAssignmentID)()) {
-                                                    id = (0, _CodeHS.getStudentAssignmentID)();
+                                                if (window.sharedProgramID) {
+                                                    id = window.sharedProgramID;
 
-                                                    baseKey = "sa-" + id;
-                                                } else if ((0, _CodeHS.getItemID)()) {
-                                                    _id = (0, _CodeHS.getItemID)();
+                                                    baseKey = "sp-" + id;
+                                                } else if (window.studentAssignmentID) {
+                                                    _id = window.studentAssignmentID;
 
-                                                    baseKey = "item-" + _id;
+                                                    baseKey = "sa-" + _id;
+                                                } else if (window.itemID) {
+                                                    _id2 = window.itemID;
+
+                                                    baseKey = "item-" + _id2;
                                                 } else if (window.scratchJrPage === "editor") {
                                                     alert("No IDs found. DB will not be loaded or saved.");
                                                 }
@@ -88006,8 +87997,6 @@ var _Firebase = __webpack_require__(/*! ./Firebase.js */ "./src/tablet/Firebase.
 
 var _Project = __webpack_require__(/*! ../editor/ui/Project.js */ "./src/editor/ui/Project.js");
 
-var _CodeHS = __webpack_require__(/*! ../utils/CodeHS */ "./src/utils/CodeHS.js");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; } // Required to let webpack 4 know it needs to copy the wasm file to our assets
@@ -88038,7 +88027,7 @@ window.setStarterCode = setStarterCode;
 function setStarterCode(id) {
     var binaryData = db.export();
     var stringData = binaryDataToUTF16String(binaryData);
-    if (id) (0, _Firebase.saveToFirebase)("chs-" + id + "-starter", stringData);else (0, _Firebase.saveToFirebase)("chs-" + (0, _CodeHS.getItemID)() + "-starter", stringData);
+    if (id) (0, _Firebase.saveToFirebase)("chs-" + id + "-starter", stringData);else (0, _Firebase.saveToFirebase)("chs-" + window.itemID + "-starter", stringData);
 }
 
 window.downloadDB = downloadDB;
@@ -88160,20 +88149,20 @@ function saveDB() {
     }
 
     if (window.saveScratchJrProject) {
-        window.saveScratchJrProject((0, _CodeHS.getStudentAssignmentID)(), UTF16StringToUTF8String(stringData));
+        window.saveScratchJrProject(UTF16StringToUTF8String(stringData));
         localStorage.setItem(baseKey, stringData);
         return;
     }
 
     // update the thumbnail for the current project in the database
     // NOTE: this assumes that we are only ever working with the first project in the sql db
-    if ((0, _CodeHS.getStudentAssignmentID)()) {
+    if (window.studentAssignmentID) {
         (0, _Project.getFirstProjectThumbnail)(function (thumbnail) {
-            (0, _Firebase.setSAThumbnail)((0, _CodeHS.getStudentAssignmentID)(), thumbnail);
+            (0, _Firebase.setSAThumbnail)(window.studentAssignmentID, thumbnail);
         });
     } else {
         (0, _Project.getFirstProjectThumbnail)(function (thumbnail) {
-            (0, _Firebase.setItemThumbnail)((0, _CodeHS.getItemID)(), thumbnail);
+            (0, _Firebase.setItemThumbnail)(window.itemID, thumbnail);
         });
     }
 
@@ -88183,7 +88172,7 @@ function saveDB() {
     localStorage.setItem(baseKey, stringData);
     (0, _Firebase.saveToFirebase)(firebasePath + "/timestamp", timestamp);
     (0, _Firebase.saveToFirebase)(firebasePath + "/db", stringData);
-    if (!(0, _CodeHS.getStudentAssignmentID)()) setStarterCode();
+    if (!window.sharedProgramID && !window.studentAssignmentID) setStarterCode();
 }
 
 /***/ }),
@@ -89244,62 +89233,6 @@ var iOS = function () {
 
 exports.default = iOS;
 window.iOS = iOS;
-
-/***/ }),
-
-/***/ "./src/utils/CodeHS.js":
-/*!*****************************!*\
-  !*** ./src/utils/CodeHS.js ***!
-  \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.getItemID = getItemID;
-exports.getStudentAssignmentID = getStudentAssignmentID;
-var itemID = null;
-var studentAssignmentID = null;
-
-var regexWithItem = /^\/scratchjr\/(\d+)\/test\/?$/;
-var regexWithStudentAssignment = /^\/scratchjr\/(\d+)\/(\d+)\/test\/?$/;
-
-var elemRegexWithItem = /^\/elementary\/(\d+)\/scratchjr\/?$/;
-var elemRegexWithStudentAssignment = /^\/elementary\/(\d+)\/(\d+)\/scratchjr\/?$/;
-
-function setIDs() {
-    var matchesWithItem = window.location.pathname.match(elemRegexWithItem);
-    var matchesWithStudentAssignment = window.location.pathname.match(elemRegexWithStudentAssignment);
-    console.log("\n\n\n>>>>>>>>>>>>>>>>\n", matchesWithItem, "\n", matchesWithStudentAssignment, "\n\n\n");
-    if (matchesWithItem) {
-        itemID = matchesWithItem[1];
-    } else if (matchesWithStudentAssignment) {
-        itemID = matchesWithStudentAssignment[1];
-        studentAssignmentID = matchesWithStudentAssignment[2];
-    } else {
-        var params = new URLSearchParams(window.location.search);
-        itemID = params.get("item_id", null);
-        studentAssignmentID = params.get("student_assignment_id", null);
-    }
-}
-
-function getItemID() {
-    if (itemID === null) {
-        setIDs();
-    }
-    return itemID;
-}
-
-function getStudentAssignmentID() {
-    if (studentAssignmentID === null) {
-        setIDs();
-    }
-    return studentAssignmentID;
-}
 
 /***/ }),
 
