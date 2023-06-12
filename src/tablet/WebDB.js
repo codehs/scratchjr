@@ -193,8 +193,13 @@ export function saveDB() {
     }
 
     if (window.saveScratchJrProject) {
-        window.saveScratchJrProject(UTF16StringToUTF8String(stringData));
-        localStorage.setItem(baseKey, stringData);
+        getFirstProjectThumbnail(function (thumbnail) {
+            window.saveScratchJrProject(
+                UTF16StringToUTF8String(stringData),
+                thumbnail
+            );
+            localStorage.setItem(baseKey, stringData);
+        });
         return;
     }
 
