@@ -2,7 +2,6 @@ import { gn } from "../utils/lib";
 import Localization from "../utils/Localization";
 import OS from "../tablet/OS";
 import Lobby from "../lobby/Lobby";
-import { getItemID, getStudentAssignmentID } from "../utils/CodeHS";
 
 export function homeMain() {
     gn("logotab").onclick = homeGoBack;
@@ -17,11 +16,11 @@ export function homeMain() {
 
 function homeGoBack() {
     const params = new URLSearchParams();
-    if (getStudentAssignmentID()) {
-        params.append("student_assignment_id", getStudentAssignmentID());
+    if (window.studentAssignmentID) {
+        params.append("student_assignment_id", window.studentAssignmentID);
     }
-    if (getItemID()) {
-        params.append("item_id", getItemID());
+    if (window.itemID) {
+        params.append("item_id", window.itemID);
     }
 
     const url = "index.html?back=yes&" + params.toString();

@@ -1,5 +1,4 @@
 import { gn, isiOS, getUrlVars } from "../utils/lib";
-import { getItemID, getStudentAssignmentID } from "../utils/CodeHS";
 
 let place;
 
@@ -33,11 +32,11 @@ export function gettingStartedMain() {
 
 function gettingStartedCloseMe() {
     const params = new URLSearchParams();
-    if (getStudentAssignmentID()) {
-        params.append("student_assignment_id", getStudentAssignmentID());
+    if (window.studentAssignmentID) {
+        params.append("student_assignment_id", window.studentAssignmentID);
     }
-    if (getItemID()) {
-        params.append("item_id", getItemID());
+    if (window.itemID) {
+        params.append("item_id", window.itemID);
     }
 
     const url = "home.html?place=" + place + "&" + params.toString();

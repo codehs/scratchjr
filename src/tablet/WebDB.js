@@ -8,7 +8,6 @@ import {
     saveToFirebase,
 } from "./Firebase.js";
 import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
-import { getItemID, getStudentAssignmentID } from "../utils/CodeHS";
 
 // see https://github.com/sql-js/sql.js/#usage
 
@@ -36,7 +35,7 @@ function setStarterCode(id) {
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
     if (id) saveToFirebase("chs-" + id + "-starter", stringData);
-    else saveToFirebase("chs-" + getItemID() + "-starter", stringData);
+    else saveToFirebase("chs-" + window.itemID + "-starter", stringData);
 }
 
 window.downloadDB = downloadDB;
@@ -105,10 +104,7 @@ function UTF16StringToUTF8String(utf16String) {
     const stringChunks = [];
     for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
         stringChunks.push(
-            String.fromCharCode.apply(
-                null,
-                utf8Bytes.slice(i, i + chunkSize)
-            )
+            String.fromCharCode.apply(null, utf8Bytes.slice(i, i + chunkSize))
         );
     }
     return stringChunks.join("");
@@ -197,23 +193,25 @@ export function saveDB() {
     }
 
     if (window.saveScratchJrProject) {
-        window.saveScratchJrProject(
-            getStudentAssignmentID(),
-            UTF16StringToUTF8String(stringData)
-        );
-        localStorage.setItem(baseKey, stringData);
+        getFirstProjectThumbnail(function (thumbnail) {
+            window.saveScratchJrProject(
+                UTF16StringToUTF8String(stringData),
+                thumbnail
+            );
+            localStorage.setItem(baseKey, stringData);
+        });
         return;
     }
 
     // update the thumbnail for the current project in the database
     // NOTE: this assumes that we are only ever working with the first project in the sql db
-    if (getStudentAssignmentID()) {
+    if (window.studentAssignmentID) {
         getFirstProjectThumbnail(function (thumbnail) {
-            setSAThumbnail(getStudentAssignmentID(), thumbnail);
+            setSAThumbnail(window.studentAssignmentID, thumbnail);
         });
     } else {
         getFirstProjectThumbnail(function (thumbnail) {
-            setItemThumbnail(getItemID(), thumbnail);
+            setItemThumbnail(window.itemID, thumbnail);
         });
     }
 
@@ -223,7 +221,8 @@ export function saveDB() {
     localStorage.setItem(baseKey, stringData);
     saveToFirebase(firebasePath + "/timestamp", timestamp);
     saveToFirebase(firebasePath + "/db", stringData);
-    if (!getStudentAssignmentID()) setStarterCode();
+    if (!window.sharedProgramID && !window.studentAssignmentID)
+        setStarterCode();
 }
 
 async function getDBDataString() {
@@ -231,7 +230,7 @@ async function getDBDataString() {
 
     // try to load from CodeHS DB
     if (window.loadScratchJrProject) {
-        dbData = await window.loadScratchJrProject(getStudentAssignmentID());
+        dbData = await window.loadScratchJrProject();
         if (dbData) {
             dbData = UTF8StringToUTF16String(dbData);
         }
@@ -258,7 +257,7 @@ async function getDBDataString() {
         console.log(
             "not in localstorage, loading starter code db data from firebase"
         );
-        const starterCodePath = `chs-${getItemID()}-starter`;
+        const starterCodePath = `chs-${window.itemID}-starter`;
         dbData = await getFromFirebase(starterCodePath);
         if (dbData) {
             localStorage.setItem("loadFromFirebase", "true");
@@ -286,11 +285,14 @@ export async function initDB() {
 
         // get saved data from localStorage, then initialize the database with it if it exists.
         // otherwise, create a new database and initialize the tables and run migrations.
-        if (getStudentAssignmentID()) {
-            const id = getStudentAssignmentID();
+        if (window.sharedProgramID) {
+            const id = window.sharedProgramID;
+            baseKey = "sp-" + id;
+        } else if (window.studentAssignmentID) {
+            const id = window.studentAssignmentID;
             baseKey = "sa-" + id;
-        } else if (getItemID()) {
-            const id = getItemID();
+        } else if (window.itemID) {
+            const id = window.itemID;
             baseKey = "item-" + id;
         } else if (window.scratchJrPage === "editor") {
             alert("No IDs found. DB will not be loaded or saved.");

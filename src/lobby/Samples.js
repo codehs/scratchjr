@@ -9,7 +9,6 @@ import MediaLib from "../tablet/MediaLib";
 import ScratchAudio from "../utils/ScratchAudio";
 import Localization from "../utils/Localization";
 import { gn, newHTML } from "../utils/lib";
-import { getItemID, getStudentAssignmentID } from "../utils/CodeHS";
 
 let frame;
 // Should ScratchJr projects be saved when the sample project is changed?
@@ -35,14 +34,14 @@ export default class Samples {
         e.stopPropagation();
         ScratchAudio.sndFX("tap.wav");
         const params = new URLSearchParams();
-        if (getStudentAssignmentID()) {
+        if (window.studentAssignmentID) {
             params.append(
                 "student_assignment_id",
-                getStudentAssignmentID()
+                window.studentAssignmentID
             );
         }
-        if (getItemID()) {
-            params.append("item_id", getItemID());
+        if (window.itemID) {
+            params.append("item_id", window.itemID);
         }
 
         const url = "gettingstarted.html?place=help&" + params.toString();
@@ -89,14 +88,14 @@ export default class Samples {
         OS.analyticsEvent("samples", "sample_opened", mt.textContent);
         var md5 = mt.md5;
         const params = new URLSearchParams();
-        if (getStudentAssignmentID()) {
+        if (window.studentAssignmentID) {
             params.append(
                 "student_assignment_id",
-                getStudentAssignmentID()
+                window.studentAssignmentID
             );
         }
-        if (getItemID()) {
-            params.append("item_id", getItemID());
+        if (window.itemID) {
+            params.append("item_id", window.itemID);
         }
 
         const url =
