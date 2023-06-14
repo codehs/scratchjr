@@ -1,12 +1,6 @@
 // Required to let webpack 4 know it needs to copy the wasm file to our assets
 import sqlWasm from "!!file-loader?name=sql-wasm-[contenthash].wasm!sql.js/dist/sql-wasm.wasm";
 import initSqlJs from "sql.js";
-import {
-    setItemThumbnail,
-    setSAThumbnail,
-    getFromFirebase,
-    saveToFirebase,
-} from "./Firebase.js";
 import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 
 // see https://github.com/sql-js/sql.js/#usage
@@ -16,26 +10,15 @@ let initPromise;
 
 // data store locations
 let baseKey = null;
-let firebasePath = null;
 
 window.getStringDB = getStringDB;
 
 // function to easily get the string db from console
 function getStringDB() {
     const binaryData = db.export();
-    const stringData = binaryDataToUTF16String(binaryData);
+    let stringData = binaryDataToUTF16String(binaryData);
+    stringData = UTF16StringToUTF8String(stringData);
     return stringData;
-}
-
-window.setStarterCode = setStarterCode;
-
-// key should be the project key in firebase
-// either project-sa-<studentAssignmentID> or project-item-<itemID>
-function setStarterCode(id) {
-    const binaryData = db.export();
-    const stringData = binaryDataToUTF16String(binaryData);
-    if (id) saveToFirebase("chs-" + id + "-starter", stringData);
-    else saveToFirebase("chs-" + window.itemID + "-starter", stringData);
 }
 
 window.downloadDB = downloadDB;
@@ -203,26 +186,15 @@ export function saveDB() {
         return;
     }
 
-    // update the thumbnail for the current project in the database
-    // NOTE: this assumes that we are only ever working with the first project in the sql db
-    if (window.studentAssignmentID) {
-        getFirstProjectThumbnail(function (thumbnail) {
-            setSAThumbnail(window.studentAssignmentID, thumbnail);
-        });
-    } else {
-        getFirstProjectThumbnail(function (thumbnail) {
-            setItemThumbnail(window.itemID, thumbnail);
-        });
-    }
-
-    // save the db string to firebase
     const timestamp = new Date().getTime();
     localStorage.setItem(baseKey + "-timestamp", timestamp);
     localStorage.setItem(baseKey, stringData);
-    saveToFirebase(firebasePath + "/timestamp", timestamp);
-    saveToFirebase(firebasePath + "/db", stringData);
+
+    // save starter code if we are on an item only
+    // TODO: make a way to distinguish if this is a sandbox
+    // item because we don't want to save starter code for those
     if (!window.sharedProgramID && !window.studentAssignmentID)
-        setStarterCode();
+        window.setStarterCode(UTF16StringToUTF8String(stringData));
 }
 
 async function getDBDataString() {
@@ -234,37 +206,8 @@ async function getDBDataString() {
         if (dbData) {
             dbData = UTF8StringToUTF16String(dbData);
         }
-        return dbData;
     }
 
-    // try to load from firebase
-    if (!dbData) {
-        console.log("loading db data from firebase", firebasePath);
-        dbData = await getFromFirebase(firebasePath + "/db");
-    }
-
-    // try to load from localstorage
-    if (!dbData) {
-        console.log(
-            "not in firebase, loading db data from localstorage",
-            baseKey
-        );
-        dbData = localStorage.getItem(baseKey);
-    }
-
-    // try to get the starter code from firebase
-    if (!dbData) {
-        console.log(
-            "not in localstorage, loading starter code db data from firebase"
-        );
-        const starterCodePath = `chs-${window.itemID}-starter`;
-        dbData = await getFromFirebase(starterCodePath);
-        if (dbData) {
-            localStorage.setItem("loadFromFirebase", "true");
-        } else {
-            console.log("no starter code found in firebase");
-        }
-    }
     return dbData;
 }
 
@@ -283,8 +226,6 @@ export async function initDB() {
             locateFile: () => sqlWasm,
         });
 
-        // get saved data from localStorage, then initialize the database with it if it exists.
-        // otherwise, create a new database and initialize the tables and run migrations.
         if (window.sharedProgramID) {
             const id = window.sharedProgramID;
             baseKey = "sp-" + id;
@@ -297,9 +238,8 @@ export async function initDB() {
         } else if (window.scratchJrPage === "editor") {
             alert("No IDs found. DB will not be loaded or saved.");
         }
-        firebasePath = "project-" + baseKey;
 
-        // get saved data from localStorage or firebase, then initialize the database with it if it
+        // get saved data from codehs, then initialize the database with it if it
         // exists. otherwise, create a new database and initialize the tables and run migrations.
         const dbDataString = await getDBDataString();
         if (dbDataString) {
