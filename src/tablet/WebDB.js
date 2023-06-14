@@ -15,10 +15,7 @@ window.getStringDB = getStringDB;
 
 // function to easily get the string db from console
 function getStringDB() {
-    const binaryData = db.export();
-    let stringData = binaryDataToUTF16String(binaryData);
-    stringData = UTF16StringToUTF8String(stringData);
-    return stringData;
+    return UTF16StringToUTF8String(saveDB());
 }
 
 window.downloadDB = downloadDB;
@@ -163,14 +160,14 @@ window.addEventListener("beforeunload", function () {
 
 export function saveDB() {
     console.log("savedb");
-    if (db === null) return;
+    if (db === null) return null;
 
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
     // early return if no changes were made to the db string
     if (stringData === localStorage.getItem(baseKey)) {
         console.log("no changes to save, skipping");
-        return;
+        return stringData;
     } else {
         console.log("changes detected, saving");
     }
@@ -183,18 +180,14 @@ export function saveDB() {
             );
             localStorage.setItem(baseKey, stringData);
         });
-        return;
+        return stringData;
     }
 
     const timestamp = new Date().getTime();
     localStorage.setItem(baseKey + "-timestamp", timestamp);
     localStorage.setItem(baseKey, stringData);
 
-    // save starter code if we are on an item only
-    // TODO: make a way to distinguish if this is a sandbox
-    // item because we don't want to save starter code for those
-    if (!window.sharedProgramID && !window.studentAssignmentID)
-        window.setStarterCode(UTF16StringToUTF8String(stringData));
+    return stringData;
 }
 
 async function getDBDataString() {
