@@ -2,15 +2,108 @@
 //  Web interface functions
 //////////////////////////////////////////////////
 
-import OS from "./OS.js";
 import * as db from "./WebDB.js";
+import Record from "../editor/ui/Record";
 
-let mediacounter = 0;
-let callbacks = {};
+// MediaRecorder node which records audio
+let audioRecorder = null;
+// AudioAnalyser node which gives us data to calculate volume
+let audioAnalyser = null;
+// stores latest audio recording URL
+let latestAudioURL = null;
+// stores latest recorded audio data to be converted to a blob
+const latestAudioChunks = [];
+// buffers audio data to calculate volume
+let audioBuffer = null;
+
+let videoRecorder = null;
 
 const audioContext = new AudioContext();
 const audioBuffers = {};
 const audioSources = {};
+
+function calculateVolumeLevel(audioData) {
+    let sum = 0;
+    for (let i = 0; i < audioData.length; i++) {
+        sum += audioData[i];
+    }
+    const average = sum / audioData.length;
+
+    // Map to range 0.0 to 1.0
+    const volume = average / 255;
+    return volume;
+}
+
+export async function setupMediaRecording() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        console.log("Media recording unsupported!");
+        return;
+    }
+
+    try {
+        const audioStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+        });
+        const recorderAudioContext = new AudioContext();
+        const audioStreamSource =
+            recorderAudioContext.createMediaStreamSource(audioStream);
+        audioAnalyser = recorderAudioContext.createAnalyser();
+        audioStreamSource.connect(audioAnalyser);
+        audioRecorder = new MediaRecorder(audioStream);
+        audioRecorder.addEventListener("dataavailable", (e) =>
+            latestAudioChunks.push(e.data)
+        );
+        audioRecorder.addEventListener("stop", () => {
+            const audioBlob = new Blob(latestAudioChunks, {
+                type: "audio/webm",
+            });
+            latestAudioURL = URL.createObjectURL(audioBlob);
+            Record.soundname = latestAudioURL;
+
+            // Create a FileReader to read the Blob as an ArrayBuffer
+            const reader = new FileReader();
+
+            reader.addEventListener("loadend", async () => {
+                audioBuffer = await audioContext.decodeAudioData(reader.result);
+                audioBuffers["__recording__"] = audioBuffer;
+            });
+
+            // Read the Blob as an ArrayBuffer
+            reader.readAsArrayBuffer(audioBlob);
+        });
+
+        const bufferLength = audioAnalyser.frequencyBinCount;
+        audioBuffer = new Uint8Array(bufferLength);
+    } catch (err) {
+        console.log("Audio recording error!", err);
+    }
+
+    try {
+        const videoStream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+        });
+        videoRecorder = new MediaRecorder(videoStream);
+    } catch (err) {
+        console.log("Video recording error!", err);
+    }
+}
+
+export function audioRecorderAvailable() {
+    return audioRecorder !== null;
+}
+
+export function videoRecorderAvailable() {
+    return videoRecorder !== null;
+}
+
+function stopRecording() {
+    if (audioRecorder.state !== "inactive") {
+        audioRecorder.stop();
+    }
+    if (latestAudioURL !== null) {
+        latestAudioURL = null;
+    }
+}
 
 export default class Web {
     // Database functions
@@ -166,26 +259,56 @@ export default class Web {
 
     static sndrecord(fcn) {
         console.log("sndrecord");
-        if (fcn) fcn();
+        if (audioRecorder === null) {
+            console.log("Audio recorder not available");
+            if (fcn) fcn(false);
+            return;
+        }
+
+        stopRecording();
+
+        latestAudioChunks.length = 0;
+
+        audioRecorder.start();
+        if (fcn) fcn(true);
     }
 
     static recordstop(fcn) {
         console.log("recordstop");
-        if (fcn) fcn();
+        if (audioRecorder === null) {
+            console.log("Audio recorder not available");
+            if (fcn) fcn(false);
+            return;
+        }
+
+        stopRecording();
+
+        if (fcn) fcn(true);
     }
 
     static volume(fcn) {
         console.log("volume");
-        if (fcn) fcn();
+        if (audioBuffer === null) {
+            console.log("Audio volume not available");
+            if (fcn) fcn(0);
+            return;
+        }
+
+        audioAnalyser.getByteFrequencyData(audioBuffer);
+        const volume = calculateVolumeLevel(audioBuffer);
+
+        if (fcn) fcn(volume);
     }
 
     static startplay(fcn) {
         console.log("startplay");
+        Web.playSound("__recording__");
         if (fcn) fcn();
     }
 
     static stopplay(fcn) {
         console.log("stopplay");
+        Web.stopSound("__recording__");
         if (fcn) fcn();
     }
 
@@ -203,6 +326,7 @@ export default class Web {
 
     static hascamera() {
         console.log("hascamera");
+        return videoRecorderAvailable();
     }
 
     static startfeed(data, fcn) {
