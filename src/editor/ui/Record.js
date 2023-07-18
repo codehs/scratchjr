@@ -336,7 +336,7 @@ export default class Record {
             Record.tearDownRecorder();
             Palette.selectCategory(3);
         }
-        ScratchAudio.loadFromLocal("", Record.soundname, whenDone);
+        ScratchAudio.loadFromLocal('https://codehs.com/uploads/', Record.soundname, whenDone);
     }
 
     // Called on error - remove everything and hide the recorder

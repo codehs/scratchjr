@@ -743,11 +743,14 @@ export default class UI {
         UI.createTopBarClicky(div, 'go', 'go on', UI.toggleRun);
         UI.createTopBarClicky(div, 'resetall', 'resetall', UI.resetAllSprites);
         UI.createTopBarClicky(div, 'full', 'fullscreen', ScratchJr.fullScreen);
-        UI.createTopBarClicky(div, 'save', 'manualsave', function (evt) {
-            ScratchJr.saveProject(evt, function () {
-                Alert.close();
+        if (window.canSave) {
+            UI.createTopBarClicky(div, 'save', 'manualsave', function (evt) {
+                ScratchJr.saveProject(evt, function () {
+                    Alert.close();
+                });
             });
-        });
+        }
+
         UI.setShowGrid(false);
     }
 

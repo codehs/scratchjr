@@ -50970,7 +50970,7 @@ var Record = function () {
                 Record.tearDownRecorder();
                 _Palette2.default.selectCategory(3);
             }
-            _ScratchAudio2.default.loadFromLocal("", Record.soundname, whenDone);
+            _ScratchAudio2.default.loadFromLocal('https://codehs.com/uploads/', Record.soundname, whenDone);
         }
 
         // Called on error - remove everything and hide the recorder
@@ -54377,11 +54377,14 @@ var UI = function () {
             UI.createTopBarClicky(div, 'go', 'go on', UI.toggleRun);
             UI.createTopBarClicky(div, 'resetall', 'resetall', UI.resetAllSprites);
             UI.createTopBarClicky(div, 'full', 'fullscreen', _ScratchJr2.default.fullScreen);
-            UI.createTopBarClicky(div, 'save', 'manualsave', function (evt) {
-                _ScratchJr2.default.saveProject(evt, function () {
-                    _Alert2.default.close();
+            if (window.canSave) {
+                UI.createTopBarClicky(div, 'save', 'manualsave', function (evt) {
+                    _ScratchJr2.default.saveProject(evt, function () {
+                        _Alert2.default.close();
+                    });
                 });
-            });
+            }
+
             UI.setShowGrid(false);
         }
     }, {
@@ -68556,31 +68559,31 @@ exports.setupMediaRecording = undefined;
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var setupMediaRecording = exports.setupMediaRecording = function () {
-    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+    var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
         var _this = this;
 
-        var audioStream, recorderAudioContext, audioStreamSource, bufferLength, videoStream;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        var audioStream, recorderAudioContext, audioStreamSource, bufferLength;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
             while (1) {
-                switch (_context2.prev = _context2.next) {
+                switch (_context3.prev = _context3.next) {
                     case 0:
                         if (!(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia)) {
-                            _context2.next = 3;
+                            _context3.next = 3;
                             break;
                         }
 
                         console.log("Media recording unsupported!");
-                        return _context2.abrupt("return");
+                        return _context3.abrupt("return");
 
                     case 3:
-                        _context2.prev = 3;
-                        _context2.next = 6;
+                        _context3.prev = 3;
+                        _context3.next = 6;
                         return navigator.mediaDevices.getUserMedia({
                             audio: true
                         });
 
                     case 6:
-                        audioStream = _context2.sent;
+                        audioStream = _context3.sent;
                         recorderAudioContext = new AudioContext();
                         audioStreamSource = recorderAudioContext.createMediaStreamSource(audioStream);
 
@@ -68590,79 +68593,91 @@ var setupMediaRecording = exports.setupMediaRecording = function () {
                         audioRecorder.addEventListener("dataavailable", function (e) {
                             return latestAudioChunks.push(e.data);
                         });
-                        audioRecorder.addEventListener("stop", function () {
-                            var audioBlob = new Blob(latestAudioChunks, {
-                                type: "audio/webm"
-                            });
-                            latestAudioURL = URL.createObjectURL(audioBlob);
-                            _Record2.default.soundname = latestAudioURL;
+                        audioRecorder.addEventListener("stop", _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+                            var audioBlob, reader;
+                            return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                                while (1) {
+                                    switch (_context2.prev = _context2.next) {
+                                        case 0:
+                                            audioBlob = new Blob(latestAudioChunks, {
+                                                type: "audio/webm"
+                                            });
+                                            _context2.prev = 1;
+                                            _context2.next = 4;
+                                            return window.uploadAudio(audioBlob);
 
-                            // Create a FileReader to read the Blob as an ArrayBuffer
-                            var reader = new FileReader();
+                                        case 4:
+                                            latestAudioURL = _context2.sent;
+                                            _context2.next = 11;
+                                            break;
 
-                            reader.addEventListener("loadend", _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-                                return regeneratorRuntime.wrap(function _callee$(_context) {
-                                    while (1) {
-                                        switch (_context.prev = _context.next) {
-                                            case 0:
-                                                _context.next = 2;
-                                                return audioContext.decodeAudioData(reader.result);
+                                        case 7:
+                                            _context2.prev = 7;
+                                            _context2.t0 = _context2["catch"](1);
 
-                                            case 2:
-                                                audioBuffer = _context.sent;
+                                            console.log("Audio upload error!", _context2.t0);
+                                            return _context2.abrupt("return");
 
-                                                audioBuffers["__recording__"] = audioBuffer;
+                                        case 11:
 
-                                            case 4:
-                                            case "end":
-                                                return _context.stop();
-                                        }
+                                            _Record2.default.soundname = latestAudioURL;
+
+                                            // Create a FileReader to read the Blob as an ArrayBuffer
+                                            // We need to do this to decode the audio data and save it
+                                            // as a buffer in our sound management system.
+                                            reader = new FileReader();
+
+
+                                            reader.addEventListener("loadend", _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+                                                var audioBuffer;
+                                                return regeneratorRuntime.wrap(function _callee$(_context) {
+                                                    while (1) {
+                                                        switch (_context.prev = _context.next) {
+                                                            case 0:
+                                                                _context.next = 2;
+                                                                return audioContext.decodeAudioData(reader.result);
+
+                                                            case 2:
+                                                                audioBuffer = _context.sent;
+
+                                                                audioBuffers["__recording__"] = audioBuffer;
+
+                                                            case 4:
+                                                            case "end":
+                                                                return _context.stop();
+                                                        }
+                                                    }
+                                                }, _callee, _this);
+                                            })));
+
+                                            reader.readAsArrayBuffer(audioBlob);
+
+                                        case 15:
+                                        case "end":
+                                            return _context2.stop();
                                     }
-                                }, _callee, _this);
-                            })));
-
-                            // Read the Blob as an ArrayBuffer
-                            reader.readAsArrayBuffer(audioBlob);
-                        });
+                                }
+                            }, _callee2, _this, [[1, 7]]);
+                        })));
 
                         bufferLength = audioAnalyser.frequencyBinCount;
 
-                        audioBuffer = new Uint8Array(bufferLength);
-                        _context2.next = 21;
+                        audioVolumeBuffer = new Uint8Array(bufferLength);
+                        _context3.next = 21;
                         break;
 
                     case 18:
-                        _context2.prev = 18;
-                        _context2.t0 = _context2["catch"](3);
+                        _context3.prev = 18;
+                        _context3.t0 = _context3["catch"](3);
 
-                        console.log("Audio recording error!", _context2.t0);
+                        console.log("Audio recording error!", _context3.t0);
 
                     case 21:
-                        _context2.prev = 21;
-                        _context2.next = 24;
-                        return navigator.mediaDevices.getUserMedia({
-                            video: true
-                        });
-
-                    case 24:
-                        videoStream = _context2.sent;
-
-                        videoRecorder = new MediaRecorder(videoStream);
-                        _context2.next = 31;
-                        break;
-
-                    case 28:
-                        _context2.prev = 28;
-                        _context2.t1 = _context2["catch"](21);
-
-                        console.log("Video recording error!", _context2.t1);
-
-                    case 31:
                     case "end":
-                        return _context2.stop();
+                        return _context3.stop();
                 }
             }
-        }, _callee2, this, [[3, 18], [21, 28]]);
+        }, _callee3, this, [[3, 18]]);
     }));
 
     return function setupMediaRecording() {
@@ -68700,7 +68715,7 @@ var latestAudioURL = null;
 // stores latest recorded audio data to be converted to a blob
 var latestAudioChunks = [];
 // buffers audio data to calculate volume
-var audioBuffer = null;
+var audioVolumeBuffer = null;
 
 var videoRecorder = null;
 
@@ -68708,6 +68723,8 @@ var audioContext = new AudioContext();
 var audioBuffers = {};
 var audioSources = {};
 
+// calculates the volume level of a given audio data array buffer
+// used to display volume level preview in the audio recorder
 function calculateVolumeLevel(audioData) {
     var sum = 0;
     for (var i = 0; i < audioData.length; i++) {
@@ -68762,17 +68779,17 @@ var Web = function () {
             //     "stmt": "<SQL statement to run with slots for values below>",
             //     "values": [<list of values to be plugged into the statement>],
             // }
-            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
                 var result;
-                return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
-                        switch (_context3.prev = _context3.next) {
+                        switch (_context4.prev = _context4.next) {
                             case 0:
-                                _context3.next = 2;
+                                _context4.next = 2;
                                 return db.executeStatementFromJSON(json);
 
                             case 2:
-                                result = _context3.sent;
+                                result = _context4.sent;
 
                                 console.log("stmt", json, result);
                                 if (fcn) fcn(result);
@@ -68780,10 +68797,10 @@ var Web = function () {
 
                             case 6:
                             case "end":
-                                return _context3.stop();
+                                return _context4.stop();
                         }
                     }
-                }, _callee3, _this2);
+                }, _callee4, _this2);
             }))();
         }
     }, {
@@ -68796,27 +68813,27 @@ var Web = function () {
             //     "stmt": "<SQL statement to run with slots for values below>",
             //     "values": [<list of values to be plugged into the statement>],
             // }
-            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
                 var result;
-                return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                return regeneratorRuntime.wrap(function _callee5$(_context5) {
                     while (1) {
-                        switch (_context4.prev = _context4.next) {
+                        switch (_context5.prev = _context5.next) {
                             case 0:
-                                _context4.next = 2;
+                                _context5.next = 2;
                                 return db.executeQueryFromJSON(json);
 
                             case 2:
-                                result = _context4.sent;
+                                result = _context5.sent;
 
                                 // console.log("query", json, result);
                                 if (fcn) fcn(result);
 
                             case 4:
                             case "end":
-                                return _context4.stop();
+                                return _context5.stop();
                         }
                     }
-                }, _callee4, _this3);
+                }, _callee5, _this3);
             }))();
         }
     }, {
@@ -68840,26 +68857,26 @@ var Web = function () {
             var _this4 = this;
 
             console.log("getmedia");
-            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
                 var content;
-                return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                return regeneratorRuntime.wrap(function _callee6$(_context6) {
                     while (1) {
-                        switch (_context5.prev = _context5.next) {
+                        switch (_context6.prev = _context6.next) {
                             case 0:
-                                _context5.next = 2;
+                                _context6.next = 2;
                                 return db.readProjectFile(file);
 
                             case 2:
-                                content = _context5.sent;
+                                content = _context6.sent;
 
                                 if (fcn) fcn(content);
 
                             case 4:
                             case "end":
-                                return _context5.stop();
+                                return _context6.stop();
                         }
                     }
-                }, _callee5, _this4);
+                }, _callee6, _this4);
             }))();
         }
     }, {
@@ -68892,19 +68909,19 @@ var Web = function () {
             var _this5 = this;
 
             console.log("setmedia");
-            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
                 var name, filename;
-                return regeneratorRuntime.wrap(function _callee6$(_context6) {
+                return regeneratorRuntime.wrap(function _callee7$(_context7) {
                     while (1) {
-                        switch (_context6.prev = _context6.next) {
+                        switch (_context7.prev = _context7.next) {
                             case 0:
-                                _context6.next = 2;
+                                _context7.next = 2;
                                 return db.getMD5(content);
 
                             case 2:
-                                name = _context6.sent;
+                                name = _context7.sent;
                                 filename = name + "." + ext;
-                                _context6.next = 6;
+                                _context7.next = 6;
                                 return db.saveToProjectFiles(filename, content, {
                                     encoding: "base64"
                                 });
@@ -68914,10 +68931,10 @@ var Web = function () {
 
                             case 7:
                             case "end":
-                                return _context6.stop();
+                                return _context7.stop();
                         }
                     }
-                }, _callee6, _this5);
+                }, _callee7, _this5);
             }))();
         }
     }, {
@@ -68934,26 +68951,26 @@ var Web = function () {
             var _this6 = this;
 
             console.log("getmd5");
-            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
                 var name;
-                return regeneratorRuntime.wrap(function _callee7$(_context7) {
+                return regeneratorRuntime.wrap(function _callee8$(_context8) {
                     while (1) {
-                        switch (_context7.prev = _context7.next) {
+                        switch (_context8.prev = _context8.next) {
                             case 0:
-                                _context7.next = 2;
+                                _context8.next = 2;
                                 return db.getMD5(str);
 
                             case 2:
-                                name = _context7.sent;
+                                name = _context8.sent;
 
                                 if (fcn) fcn(name);
 
                             case 4:
                             case "end":
-                                return _context7.stop();
+                                return _context8.stop();
                         }
                     }
-                }, _callee7, _this6);
+                }, _callee8, _this6);
             }))();
         }
     }, {
@@ -68982,38 +68999,38 @@ var Web = function () {
         value: function registerSound(dir, name, fcn) {
             var _this7 = this;
 
-            console.log("registerSound", dir, name, fcn);
-            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
+            console.log("registerSound", dir, name);
+            _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
                 var response, arrayBuffer, audioBuffer;
-                return regeneratorRuntime.wrap(function _callee8$(_context8) {
+                return regeneratorRuntime.wrap(function _callee9$(_context9) {
                     while (1) {
-                        switch (_context8.prev = _context8.next) {
+                        switch (_context9.prev = _context9.next) {
                             case 0:
-                                _context8.next = 2;
+                                _context9.next = 2;
                                 return fetch(dir + name);
 
                             case 2:
-                                response = _context8.sent;
-                                _context8.next = 5;
+                                response = _context9.sent;
+                                _context9.next = 5;
                                 return response.arrayBuffer();
 
                             case 5:
-                                arrayBuffer = _context8.sent;
-                                _context8.next = 8;
+                                arrayBuffer = _context9.sent;
+                                _context9.next = 8;
                                 return audioContext.decodeAudioData(arrayBuffer);
 
                             case 8:
-                                audioBuffer = _context8.sent;
+                                audioBuffer = _context9.sent;
 
                                 audioBuffers[name] = audioBuffer;
                                 if (fcn) fcn();
 
                             case 11:
                             case "end":
-                                return _context8.stop();
+                                return _context9.stop();
                         }
                     }
-                }, _callee8, _this7);
+                }, _callee9, _this7);
             }))();
         }
     }, {
@@ -69082,14 +69099,14 @@ var Web = function () {
         key: "volume",
         value: function volume(fcn) {
             console.log("volume");
-            if (audioBuffer === null) {
+            if (audioVolumeBuffer === null) {
                 console.log("Audio volume not available");
                 if (fcn) fcn(0);
                 return;
             }
 
-            audioAnalyser.getByteFrequencyData(audioBuffer);
-            var volume = calculateVolumeLevel(audioBuffer);
+            audioAnalyser.getByteFrequencyData(audioVolumeBuffer);
+            var volume = calculateVolumeLevel(audioVolumeBuffer);
 
             if (fcn) fcn(volume);
         }
@@ -73109,10 +73126,7 @@ var ScratchAudio = function () {
             if (!md5) {
                 return;
             }
-            var dir = '';
-            if (!_lib.isAndroid) {
-                if (md5.indexOf('/') > -1) dir = 'HTML5/';else if (md5.indexOf('wav') > -1 || md5.indexOf('mp3') > -1) dir = 'Documents';
-            }
+            var dir = 'https://codehs.com/uploads/';
             ScratchAudio.loadFromLocal(dir, md5, fcn);
         }
     }, {

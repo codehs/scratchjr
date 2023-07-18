@@ -14,7 +14,7 @@ let latestAudioURL = null;
 // stores latest recorded audio data to be converted to a blob
 const latestAudioChunks = [];
 // buffers audio data to calculate volume
-let audioBuffer = null;
+let audioVolumeBuffer = null;
 
 let videoRecorder = null;
 
@@ -22,6 +22,8 @@ const audioContext = new AudioContext();
 const audioBuffers = {};
 const audioSources = {};
 
+// calculates the volume level of a given audio data array buffer
+// used to display volume level preview in the audio recorder
 function calculateVolumeLevel(audioData) {
     let sum = 0;
     for (let i = 0; i < audioData.length; i++) {
@@ -53,39 +55,51 @@ export async function setupMediaRecording() {
         audioRecorder.addEventListener("dataavailable", (e) =>
             latestAudioChunks.push(e.data)
         );
-        audioRecorder.addEventListener("stop", () => {
+        audioRecorder.addEventListener("stop", async () => {
             const audioBlob = new Blob(latestAudioChunks, {
                 type: "audio/webm",
             });
-            latestAudioURL = URL.createObjectURL(audioBlob);
+
+            try {
+                latestAudioURL = await window.uploadAudio(audioBlob);
+            } catch (err) {
+                console.log("Audio upload error!", err);
+                return;
+            }
+
             Record.soundname = latestAudioURL;
 
             // Create a FileReader to read the Blob as an ArrayBuffer
+            // We need to do this to decode the audio data and save it
+            // as a buffer in our sound management system.
             const reader = new FileReader();
 
             reader.addEventListener("loadend", async () => {
-                audioBuffer = await audioContext.decodeAudioData(reader.result);
+                const audioBuffer = await audioContext.decodeAudioData(
+                    reader.result
+                );
                 audioBuffers["__recording__"] = audioBuffer;
             });
 
-            // Read the Blob as an ArrayBuffer
             reader.readAsArrayBuffer(audioBlob);
         });
 
         const bufferLength = audioAnalyser.frequencyBinCount;
-        audioBuffer = new Uint8Array(bufferLength);
+        audioVolumeBuffer = new Uint8Array(bufferLength);
     } catch (err) {
         console.log("Audio recording error!", err);
     }
 
-    try {
-        const videoStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-        });
-        videoRecorder = new MediaRecorder(videoStream);
-    } catch (err) {
-        console.log("Video recording error!", err);
-    }
+    // TODO: Maybe implement video recorder?
+    //      Seems like the camera is used somehow in ScratchJr, but not sure where
+    // try {
+    //     const videoStream = await navigator.mediaDevices.getUserMedia({
+    //         video: true,
+    //     });
+    //     videoRecorder = new MediaRecorder(videoStream);
+    // } catch (err) {
+    //     console.log("Video recording error!", err);
+    // }
 }
 
 export function audioRecorderAvailable() {
@@ -219,7 +233,7 @@ export default class Web {
     // Sound functions
 
     static registerSound(dir, name, fcn) {
-        console.log("registerSound", dir, name, fcn);
+        console.log("registerSound", dir, name);
         (async () => {
             const response = await fetch(dir + name);
             const arrayBuffer = await response.arrayBuffer();
@@ -288,14 +302,14 @@ export default class Web {
 
     static volume(fcn) {
         console.log("volume");
-        if (audioBuffer === null) {
+        if (audioVolumeBuffer === null) {
             console.log("Audio volume not available");
             if (fcn) fcn(0);
             return;
         }
 
-        audioAnalyser.getByteFrequencyData(audioBuffer);
-        const volume = calculateVolumeLevel(audioBuffer);
+        audioAnalyser.getByteFrequencyData(audioVolumeBuffer);
+        const volume = calculateVolumeLevel(audioVolumeBuffer);
 
         if (fcn) fcn(volume);
     }
