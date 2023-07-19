@@ -239,11 +239,11 @@ export default class Web {
             const arrayBuffer = await response.arrayBuffer();
             const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
             audioBuffers[name] = audioBuffer;
-            if (fcn) fcn();
+            if (fcn) fcn(name, audioBuffer.duration);
         })();
     }
 
-    static playSound(name, fcn) {
+    static playSound(name, onSoundEnd) {
         console.log("playSound");
         if (audioSources[name]) {
             audioSources[name].stop();
@@ -255,10 +255,9 @@ export default class Web {
         audioSources[name].addEventListener("ended", function () {
             this.stop();
             audioSources[name] = null;
+            if (onSoundEnd) onSoundEnd();
         });
         audioSources[name].start();
-
-        if (fcn) fcn();
     }
 
     static stopSound(name, fcn) {

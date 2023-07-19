@@ -222,6 +222,7 @@ export default class ScratchJr {
         Record.init();
         Prims.init();
         runtime = new Runtime();
+        window.runtime = runtime;
         Undo.init();
         ScratchJr.editorEvents();
         Project.load(currentProject);

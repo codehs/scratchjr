@@ -52,10 +52,9 @@ export default class ScratchAudio {
     static addSound (url, snd, dict, fcn) {
         var name = snd;
         if (!isAndroid) {
-            var whenDone =  function (str) {
-                if (str != 'error') {
-                    var result = snd.split (',');
-                    dict[snd] = new Sound(result[0], result[1]);
+            var whenDone =  function (filename, time) {
+                if (filename != 'error') {
+                    dict[snd] = new Sound(filename, time);
                 } else {
                     name = 'error';
                 }
