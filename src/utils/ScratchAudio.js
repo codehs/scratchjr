@@ -52,10 +52,9 @@ export default class ScratchAudio {
     static addSound (url, snd, dict, fcn) {
         var name = snd;
         if (!isAndroid) {
-            var whenDone =  function (str) {
-                if (str != 'error') {
-                    var result = snd.split (',');
-                    dict[snd] = new Sound(result[0], result[1]);
+            var whenDone =  function (filename, time) {
+                if (filename != 'error') {
+                    dict[snd] = new Sound(filename, time);
                 } else {
                     name = 'error';
                 }
@@ -82,11 +81,7 @@ export default class ScratchAudio {
         if (!md5) {
             return;
         }
-        var dir = '';
-        if (!isAndroid) {
-            if (md5.indexOf('/') > -1) dir = 'HTML5/';
-            else if (md5.indexOf('wav') > -1 || md5.indexOf('mp3') > -1) dir = 'Documents';
-        }
+        var dir = 'https://codehs.com/uploads/';
         ScratchAudio.loadFromLocal(dir, md5, fcn);
     }
 
