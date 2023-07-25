@@ -195,6 +195,7 @@ div.frame {
     margin: ${css_vh(0)};
     padding: ${css_vh(0)};
     z-index: 10;
+    overflow: hidden;
 }
 
 #blockspalette .papercut{
@@ -287,6 +288,11 @@ div.frame {
     font-size:  ${css_vh(1.56)};
     line-height: ${css_vh(1.82)};
     cursor: default;
+}
+
+div#blockspalette > div#palette {
+    width: unset;
+    overflow: visible;
 }
 
 /* Palette animations */
