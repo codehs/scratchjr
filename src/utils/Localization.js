@@ -53,7 +53,15 @@ export default class Localization {
         let defaultLocale = window.Settings.defaultLocale;
         let supportedLocales = window.Settings.supportedLocales;
 
-        var localizationLanguage = window.navigator.userLanguage || window.navigator.language || 'en-us';
+        // Try to get a language from the URL query parameters first.
+        const url = new URL(window.location.href);
+        let queryLang = url.searchParams.get("lang");
+        if (queryLang && queryLang.indexOf("-") < 0) {
+            // Add second part if necessary so that the language is parsed correctly.
+            queryLang += "-xx";
+        }
+
+        var localizationLanguage = queryLang || window.navigator.userLanguage || window.navigator.language || 'en-us';
 
         var localizationLanguageParts = localizationLanguage.split('-');
         // Capitalize last part of localization for includes
