@@ -11,11 +11,15 @@ let initPromise;
 // data store locations
 let baseKey = null;
 
-window.getStringDB = getStringDB;
+window.getStringDBAndThumbnail = getStringDBAndThumbnail;
 
-// function to easily get the string db from console
-function getStringDB() {
-    return UTF16StringToUTF8String(saveDB());
+// function to get the database as a string and the thumbnail
+async function getStringDBAndThumbnail() {
+    return new Promise(function (resolve) {
+        getFirstProjectThumbnail(function (thumbnail) {
+            resolve([UTF16StringToUTF8String(saveDB()), thumbnail]);
+        });
+    });
 }
 
 window.downloadDB = downloadDB;
