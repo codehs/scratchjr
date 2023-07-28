@@ -250,7 +250,7 @@ export default class Record {
             return;
         }
         if (!Record.soundname) {
-            return;
+            Record.soundname = "New Sound";
         }
         Record.flashStopButton();
         if (isRecording) {
