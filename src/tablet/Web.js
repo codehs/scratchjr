@@ -316,7 +316,7 @@ export default class Web {
     static startplay(fcn) {
         console.log("startplay");
         Web.playSound("__recording__");
-        if (fcn) fcn();
+        if (fcn) fcn(); // TODO: Pass in length of audio here.
     }
 
     static stopplay(fcn) {

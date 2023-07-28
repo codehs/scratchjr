@@ -140,7 +140,6 @@ export default class Record {
 
     // On press record button
     static record(e) {
-        console.log(`Record. Is playing: ${isPlaying}, is recording: ${isRecording}.`); // TODO: Delete.
         if (error) {
             Record.killRecorder(e);
             return;
@@ -160,7 +159,6 @@ export default class Record {
     }
 
     static startRecording(startedRecording) {
-        console.log(`Start recording. Started recording: ${startedRecording}, is recording: ${isRecording}.`); // TODO: Delete.
         OS.analyticsEvent("editor", "start_recording");
         volumes = [];
         if (startedRecording) {
@@ -188,13 +186,12 @@ export default class Record {
 
     // Press the play button
     static playSnd(e) {
-        console.log(`Play sound. Is playing: ${isPlaying}, is recording: ${isRecording}.`); // TODO: Delete.
         if (error) {
             Record.killRecorder(e);
             return;
         }
         if (!Record.soundname) {
-            return;
+            Record.soundname = "New Sound";
         }
         if (isPlaying) {
             Record.stopPlayingSound();
@@ -209,7 +206,6 @@ export default class Record {
 
     // Start playing the sound and switch UI appropriately
     static startPlaying() {
-        console.log(`Start playing. Is playing: ${isPlaying}.`); // TODO: Delete.
         OS.startplay(Record.timeOutPlay);
         Record.toggleButtonUI("play", true);
         isPlaying = true;
@@ -227,7 +223,6 @@ export default class Record {
 
     // Gets the sound duration from iOS and changes play UI state after time
     static timeOutPlay(timeout) {
-        // TODO: Highlight the play button until the audio is finished playing.
         if (parseInt(timeout) < 0) {
             timeout = 0.1; // Error - stop playing immediately
         }
@@ -243,8 +238,6 @@ export default class Record {
 
     // Press on stop
     static stopSnd(e) {
-        // TODO: Make the stop sound button work the first time that the record button is clicked.
-        console.log(`Stop sound. Is recording: ${isRecording}, is playing: ${isPlaying}.`); // TODO: Delete.
         if (error) {
             Record.killRecorder(e);
             return;
@@ -269,7 +262,6 @@ export default class Record {
 
     // Stop playing the sound and switch UI appropriately
     static stopPlayingSound(fcn) {
-        console.log(`Stop playing sound. Is playing: ${isPlaying}.`); // TODO: Delete.
         OS.stopplay(fcn);
         Record.toggleButtonUI("play", false);
         isPlaying = false;
@@ -279,7 +271,6 @@ export default class Record {
 
     // Stop the volume monitor and recording
     static stopRecording(fcn) {
-        console.log("Stop recording."); // TODO: Delete.
         OS.analyticsEvent("editor", "stop_recording");
         if (timeLimit != null) {
             clearTimeout(timeLimit);
