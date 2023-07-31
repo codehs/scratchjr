@@ -104,6 +104,7 @@ export default class Record {
     // Set whether buttons are on or off.
     static setButtonsEnabled(enabled = false) {
         buttonsAreEnabled = enabled;
+        document.querySelector("div#soundcontrols").style.filter = `brightness(${enabled ? 100 : 50}%)`;
         // TODO: Update button UI to show that they're disabled (`Record.toggleButtonUI` does not work).
     }
 
