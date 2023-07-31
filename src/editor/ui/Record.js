@@ -13,6 +13,7 @@ let error = false;
 let dialogOpen = false;
 let timeLimit = null;
 let playTimeLimit = null;
+let buttonsAreEnabled = true;
 
 let volumeIndex = 0;
 let volumes = [];
@@ -100,6 +101,12 @@ export default class Record {
         return button;
     }
 
+    // Set whether buttons are on or off.
+    static setButtonsEnabled(enabled = false) {
+        buttonsAreEnabled = enabled;
+        // TODO: Update button UI to show that they're disabled (`Record.toggleButtonUI` does not work).
+    }
+
     // Toggle button appearance on/off
     static toggleButtonUI(button, newState) {
         var element = "id_" + button;
@@ -140,6 +147,10 @@ export default class Record {
 
     // On press record button
     static record(e) {
+        if (!buttonsAreEnabled) {
+            return;
+        }
+
         if (error) {
             Record.killRecorder(e);
             return;
@@ -186,6 +197,10 @@ export default class Record {
 
     // Press the play button
     static playSnd(e) {
+        if (!buttonsAreEnabled) {
+            return;
+        }
+
         if (error) {
             Record.killRecorder(e);
             return;
@@ -238,6 +253,10 @@ export default class Record {
 
     // Press on stop
     static stopSnd(e) {
+        if (!buttonsAreEnabled) {
+            return;
+        }
+
         if (error) {
             Record.killRecorder(e);
             return;

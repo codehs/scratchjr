@@ -60,7 +60,7 @@ export async function setupMediaRecording() {
                 type: "audio/webm",
             });
 
-            // TODO: Disable audio buttons.
+            Record.setButtonsEnabled(false);
 
             try {
                 latestAudioURL = await window.uploadAudio(audioBlob);
@@ -68,7 +68,7 @@ export async function setupMediaRecording() {
                 console.log("Audio upload error!", err);
                 return;
             } finally {
-                // TODO: Enable audio buttons.
+                Record.setButtonsEnabled(true);
             }
 
             Record.soundname = latestAudioURL;
