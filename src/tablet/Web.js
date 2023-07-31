@@ -60,11 +60,15 @@ export async function setupMediaRecording() {
                 type: "audio/webm",
             });
 
+            Record.setButtonsEnabled(false);
+
             try {
                 latestAudioURL = await window.uploadAudio(audioBlob);
             } catch (err) {
                 console.log("Audio upload error!", err);
                 return;
+            } finally {
+                Record.setButtonsEnabled(true);
             }
 
             Record.soundname = latestAudioURL;
@@ -316,7 +320,7 @@ export default class Web {
     static startplay(fcn) {
         console.log("startplay");
         Web.playSound("__recording__");
-        if (fcn) fcn();
+        if (fcn) fcn(audioBuffers["__recording__"].duration);
     }
 
     static stopplay(fcn) {
