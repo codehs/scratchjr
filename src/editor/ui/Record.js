@@ -295,7 +295,6 @@ export default class Record {
 
     // Press OK (check)
     static saveSoundAndClose() {
-        // TODO: Disable buttons until audio upload to S3 is done.
         if (error || !Record.soundname) {
             Record.killRecorder();
         } else {
