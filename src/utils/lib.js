@@ -16,6 +16,18 @@ export const isWeb = !("ontouchstart" in document.documentElement);
 export const isiOS = typeof AndroidInterface == "undefined";
 export const isAndroid = typeof AndroidInterface != "undefined";
 
+export function absoluteURL(url) {
+    // remove leading dot slash
+    if (url.startsWith('./')) {
+        url = url.substring(2);
+    }
+    // remove leading slash
+    if (url.startsWith('/')) {
+        url = url.substring(1);
+    }
+    return ASSET_BASE_URL + url;
+}
+
 export function libInit() {
     frame = document.getElementById("frame");
 }
@@ -54,6 +66,7 @@ export function preprocess(s) {
  * Load the URL synchronously (fine because it's file://), preprocess the result and return the string.
  */
 export function preprocessAndLoad(url) {
+    url = absoluteURL(url);
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", url, false);
     xmlhttp.send();
@@ -66,6 +79,8 @@ export function preprocessAndLoad(url) {
  */
 export function preprocessAndLoadCss(baseUrl, url) {
     var cssData = preprocessAndLoad(url);
+
+    baseUrl = absoluteURL(baseUrl);
     // search for url("../images") pattern
     cssData = cssData.replace(/url\("/g, 'url("' + baseUrl + "/");
     // search for url('../images') pattern
@@ -106,7 +121,7 @@ export function newDiv(parent, x, y, w, h, styles) {
 
 export function newImage(parent, src, styles) {
     var img = document.createElement("img");
-    img.src = src;
+    img.src = absoluteURL(src);
     setProps(img.style, styles);
     if (parent) {
         parent.appendChild(img);

@@ -1,5 +1,6 @@
 import Localization from '../../utils/Localization';
 import IO from '../../tablet/IO';
+import { absoluteURL } from '../../utils/lib';
 
 let loadCount = 0;
 
@@ -116,6 +117,7 @@ export default class BlockSpecs {
     }
 
     static getImageFrom (url, ext) {
+        url = absoluteURL(url);
         var img = document.createElement('img');
         img.src = url + (ext ? '.' + ext : '.png');
         if (!img.complete) {

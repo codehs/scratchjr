@@ -1,4 +1,10 @@
-var WebpackNotifierPlugin = require("webpack-notifier");
+const webpack = require("webpack");
+const WebpackNotifierPlugin = require("webpack-notifier");
+const isProduction = true;
+// const isProduction = process.env.NODE_ENV === "production";
+const assetBaseURL = isProduction
+    ? "https://codehs.com/scratchjr_assets/"
+    : "http://localhost:8000/static/scratchjr_assets/"
 
 module.exports = {
     devtool: "source-map",
@@ -6,6 +12,7 @@ module.exports = {
         app: "./src/entry/app.js",
     },
     output: {
+        publicPath: assetBaseURL,
         path: __dirname + "/src/build/bundles",
         filename: "[name].bundle.js",
     },
@@ -40,6 +47,10 @@ module.exports = {
         new WebpackNotifierPlugin({
             title: "ScratchJr",
             alwaysNotify: true,
+        }),
+        // Define a global constant for asset URLs that can be used anywhere in the code
+        new webpack.DefinePlugin({
+            ASSET_BASE_URL: JSON.stringify(assetBaseURL),
         }),
     ],
     node: {
