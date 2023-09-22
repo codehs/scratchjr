@@ -5,7 +5,7 @@ module.exports = (env, argv) => {
     const isProduction = argv.mode === "production";
     const assetBaseURL = isProduction
         ? "https://codehs.com/scratchjr_assets/"
-        : "http://localhost:8000/static/scratchjr_assets/";
+        : "http://localhost:8000/scratchjr_assets/";
 
     return {
         devtool: "source-map",
