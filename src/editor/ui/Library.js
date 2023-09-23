@@ -7,7 +7,7 @@ import Paint from '../../painteditor/Paint';
 import Events from '../../utils/Events';
 import Localization from '../../utils/Localization';
 import ScratchAudio from '../../utils/ScratchAudio';
-import {gn, newHTML, scaleMultiplier,
+import {gn, newHTML, scaleMultiplier, absoluteURL,
     getDocumentWidth, getDocumentHeight, setProps, newCanvas, frame} from '../../utils/lib';
 
 let selectedOne;
@@ -250,7 +250,7 @@ export default class Library {
         img.style.position = 'relative';
 
         // Cached downsized-thumbnails are in pnglibrary
-        var pngPath = MediaLib.path.replace('svg', 'png');
+        var pngPath = absoluteURL(MediaLib.path.replace('svg', 'png'));
         img.src = pngPath + IO.getFilename(md5) + '.png';
 
         window.setEventHandler("touchstart", function (evt) {

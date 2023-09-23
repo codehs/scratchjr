@@ -1,4 +1,4 @@
-import { gn, isiOS, getUrlVars } from "../utils/lib";
+import { gn, isiOS, getUrlVars, absoluteURL } from "../utils/lib";
 
 let place;
 
@@ -6,7 +6,7 @@ export function gettingStartedMain() {
     gn("closeHelp").onclick = gettingStartedCloseMe;
     window.setEventHandler("touchstart", gettingStartedCloseMe, gn("closeHelp"));
     var videoObj = gn("myVideo");
-    videoObj.poster = "assets/lobby/poster.png";
+    videoObj.poster = absoluteURL("assets/lobby/poster.png");
     var image = document.createElement("img");
     image.src = videoObj.poster;
     image.onload = function () {
@@ -14,7 +14,7 @@ export function gettingStartedMain() {
     };
     if (isiOS) {
         // On iOS we can load from server
-        videoObj.src = "assets/lobby/intro.mp4";
+        videoObj.src = absoluteURL("assets/lobby/intro.mp4");
     } else {
         // On Android we need to copy to a temporary directory first:
         setTimeout(function () {

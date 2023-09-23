@@ -156,6 +156,17 @@ function runMigrations() {
     }
 }
 
+// Hashes a string using SHA-256 and returns it as a base64-encoded string
+async function hashString(inputString) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(inputString);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const base64String = btoa(String.fromCharCode.apply(null, hashArray));
+    return base64String;
+}
+  
+
 // this event will fire whenever the user closes the tab or navigates away from the page
 // see https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event#usage_notes
 window.addEventListener("beforeunload", function () {
@@ -168,8 +179,9 @@ export function saveDB() {
 
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
+    const dbHash = hashString(stringData);
     // early return if no changes were made to the db string
-    if (stringData === localStorage.getItem(baseKey)) {
+    if (dbHash === localStorage.getItem(baseKey)) {
         console.log("no changes to save, skipping");
         return stringData;
     } else {
@@ -182,15 +194,10 @@ export function saveDB() {
                 UTF16StringToUTF8String(stringData),
                 thumbnail
             );
-            localStorage.setItem(baseKey, stringData);
         });
-        return stringData;
     }
 
-    const timestamp = new Date().getTime();
-    localStorage.setItem(baseKey + "-timestamp", timestamp);
-    localStorage.setItem(baseKey, stringData);
-
+    localStorage.setItem(baseKey, dbHash);
     return stringData;
 }
 
