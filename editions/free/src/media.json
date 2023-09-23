@@ -39,6 +39,7 @@
     	{"md5":"MoonBkg.svg","width":480,"height":360,"ext":"svg","name":"Moon"}
     ],
     "sprites": [
+      {"md5":"Scout.svg","width":200,"height":242,"ext":"svg","name":"Scout","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Blue.svg","width":151,"height":253,"ext":"svg","name":"Tic","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Purple.svg","width":161,"height":185,"ext":"svg","name":"Tac","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Red.svg","width":213,"height":198,"ext":"svg","name":"Toc","order":"characters,02 funky","tags":["characters","02 funky"]},
