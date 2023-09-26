@@ -3,7 +3,7 @@
     "scratchJrVersion": "iOSv01",
     "useStoryStarters": false,
     "shareEnabled": true,
-    "defaultSprite": "Scout.svg",
+    "defaultSprite": "Blue.svg",
     "spriteOutlineColor": "white",
     "stageColor": "#F5F2F7",
     "textSpriteFont": "Helvetica",

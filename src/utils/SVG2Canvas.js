@@ -811,7 +811,8 @@ export default class SVG2Canvas {
         var key = cmd[0];
         acurve = curveoptions.indexOf(key) > -1;
         aqcurve = qcurveoptions.indexOf(key) > -1;
-        return dispatchAbsouluteCmd[key](cmd);
+        var result = dispatchAbsouluteCmd[key](cmd);
+        return result;
     }
 
     // moves
