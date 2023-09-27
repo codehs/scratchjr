@@ -1,6 +1,27 @@
 import argparse
+import subprocess
 import xml.etree.ElementTree as ET
 from collections import defaultdict
+
+
+def clean_command_string(command_string):
+    # Run the Node.js script and capture stdout and stderr
+    result = subprocess.run(
+        ['node', 'scripts/clean.js', command_string],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+
+    # Check the return code (0 means success)
+    if result.returncode == 0:
+        # Clean script succeeded
+        return result.stdout
+
+    else:
+        # Clean script failed
+        raise Exception(f'Clean script failed with error:\n{result.stderr}')
+
 
 def apply_css_to_svg(input_file, output_file):
     # Parse the SVG file
@@ -55,6 +76,18 @@ def apply_css_to_svg(input_file, output_file):
                             prop_name, prop_value = prop.split(':', 1)
                             element.set(prop_name.strip(), prop_value.strip())
 
+    # Iterate through all <path> elements
+    for path in root.iter('{http://www.w3.org/2000/svg}path'):
+        if 'd' in path.attrib:
+            # Get the command string value
+            command_string = path.attrib['d']
+
+            # Clean the command string
+            cleaned_command_string = clean_command_string(command_string)
+
+            # Update the 'd' attribute with the cleaned value
+            path.set('d', cleaned_command_string)
+
     # Delete the <defs> tag
     root.remove(defs_tag)
 
@@ -76,14 +109,14 @@ def apply_css_to_svg(input_file, output_file):
     # Save the modified SVG
     tree.write(output_file, encoding='utf-8', xml_declaration=True)
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Extract CSS styles from the defs section of an SVG file and inline them.")
-    parser.add_argument("input_file", help="Relative path to the input SVG file.")
-    parser.add_argument("--output", help="Relative path to the output SVG file (optional).")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Extract CSS styles from the defs section of an SVG file and inline them.')
+    parser.add_argument('input_file', help='Relative path to the input SVG file.')
+    parser.add_argument('--output', help='Relative path to the output SVG file (optional).')
 
     args = parser.parse_args()
     input_svg_file = args.input_file
-    output_svg_file = args.output if args.output else "output.svg"
+    output_svg_file = args.output if args.output else 'output.svg'
 
     apply_css_to_svg(input_svg_file, output_svg_file)
 
