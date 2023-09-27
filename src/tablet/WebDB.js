@@ -38,6 +38,87 @@ async function downloadDB() {
     URL.revokeObjectURL(url);
 }
 
+/**
+ * Allows the user to select a file and asynchronously converts it into a Uint8Array.
+ * Creates a hidden file input element and triggers a click event to open the file dialog.
+ * @returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array containing
+ * the file data or rejects with an error if the file operation fails.
+ */
+async function uploadFileToUint8Array() {
+    return new Promise((resolve, reject) => {
+        // Create a file input element
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        // fileInput.style.display = "none";
+
+        // Add event listener to handle file selection
+        fileInput.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.addEventListener("load", (e) => {
+                    // Read the file and convert it to a Uint8Array
+                    const arrayBuffer = e.target.result;
+                    const uint8Array = new Uint8Array(arrayBuffer);
+
+                    // Remove the file input element from the DOM
+                    fileInput.parentNode.removeChild(fileInput);
+
+                    resolve(uint8Array);
+                });
+
+                reader.addEventListener("error", (e) => {
+                    // Remove the file input element from the DOM and reject
+                    fileInput.parentNode.removeChild(fileInput);
+                    reject(new Error("Error reading file."));
+                });
+
+                // Loads the file as an ArrayBuffer and triggers the `load` event listener above
+                reader.readAsArrayBuffer(file);
+            } else {
+                // If no file selected, remove the file input element from the DOM and reject
+                fileInput.parentNode.removeChild(fileInput);
+                reject(new Error("No file selected."));
+            }
+        });
+
+        // Trigger a click event to open the file dialog
+        document.body.appendChild(fileInput);
+        fileInput.click();
+    });
+}
+
+window.uploadDB = uploadDB;
+
+/**
+ * ADMIN ONLY
+ * Allows the user to upload a DB file from their computer instead of loading from the server.
+ * This needs to be called before initPromise is checked in initDB(), if needed you can put a
+ * breakpoint on the first line of initDB() in your browser's dev tools to do this.
+ */
+async function uploadDB() {
+    if (initPromise) return;
+
+    let binaryData = null;
+    try {
+        binaryData = await uploadFileToUint8Array();
+    } catch (e) {
+        console.log(e);
+        return;
+    }
+
+    initPromise = new Promise(async (resolve) => {
+        const SQL = await initSqlJs({
+            locateFile: () => sqlWasm,
+        });
+
+        db = new SQL.Database(binaryData);
+        resolve(false);
+    });
+}
+
 // converts binary data (a Uint8Array, the data format sql.js exports to) to a UTF-16 string
 // see https://github.com/sql-js/sql.js/wiki/Persisting-a-Modified-Database
 function binaryDataToUTF16String(binaryData) {
@@ -160,12 +241,11 @@ function runMigrations() {
 async function hashString(inputString) {
     const encoder = new TextEncoder();
     const data = encoder.encode(inputString);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const base64String = btoa(String.fromCharCode.apply(null, hashArray));
     return base64String;
 }
-  
 
 // this event will fire whenever the user closes the tab or navigates away from the page
 // see https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event#usage_notes
@@ -217,6 +297,8 @@ async function getDBDataString() {
 
 export async function initDB() {
     console.log("init");
+    await uploadDB();
+
     // return existing promise if it exists
     if (initPromise) {
         return initPromise;
@@ -229,6 +311,7 @@ export async function initDB() {
         const SQL = await initSqlJs({
             locateFile: () => sqlWasm,
         });
+        window.SQL = SQL;
 
         if (window.sharedProgramID) {
             const id = window.sharedProgramID;
