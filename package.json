@@ -3,11 +3,10 @@
   "version": "1.2.0",
   "description": "ScratchJr",
   "scripts": {
-    "lint": "eslint src/**",
     "watch": "webpack --mode=development --progress --hide-modules --watch",
     "dev": "webpack --mode=development --progress --hide-modules",
     "build": "webpack --mode=production --progress --hide-modules",
-    "start": "npm run build && webpack-dev-server --host 0.0.0.0"
+    "start": "npm run dev && webpack-dev-server --host 0.0.0.0"
   },
   "author": "Massachusetts Institute of Technology",
   "license": "BSD-3-Clause",

@@ -4,6 +4,7 @@
 
 import * as db from "./WebDB.js";
 import Record from "../editor/ui/Record";
+import { absoluteURL } from "../utils/lib.js";
 
 // MediaRecorder node which records audio
 let audioRecorder = null;
@@ -237,9 +238,10 @@ export default class Web {
     // Sound functions
 
     static registerSound(dir, name, fcn) {
-        console.log("registerSound", dir, name);
         (async () => {
-            const response = await fetch(dir + name);
+            const url = absoluteURL(dir + name);
+            console.log("registerSound", dir, name);
+            const response = await fetch(url);
             const arrayBuffer = await response.arrayBuffer();
             const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
             audioBuffers[name] = audioBuffer;

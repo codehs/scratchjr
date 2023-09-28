@@ -1,6 +1,6 @@
 import OS from './OS';
 import MediaLib from './MediaLib';
-import {setCanvasSize, drawThumbnail, mTime} from '../utils/lib';
+import {absoluteURL, setCanvasSize, drawThumbnail, mTime} from '../utils/lib';
 import SVG2Canvas from '../utils/SVG2Canvas';
 
 const database = 'projects';
@@ -24,6 +24,7 @@ export default class IO {
      * going to file URLs so this should be okay.
      */
     static requestSynchronous (url) {
+        url = absoluteURL(url);
         var request = new XMLHttpRequest();
         request.open('GET', url, false);
         request.send(null);
@@ -36,6 +37,7 @@ export default class IO {
     }
 
     static requestFromServer (url, whenDone) {
+        url = absoluteURL(url);
         var xmlrequest = new XMLHttpRequest();
         xmlrequest.addEventListener('error', transferFailed, false);
         xmlrequest.onreadystatechange = function () {

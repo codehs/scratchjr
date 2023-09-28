@@ -27,6 +27,7 @@ import {
     CSSTransition3D,
     frame,
     mTime,
+    absoluteURL,
 } from "../utils/lib";
 
 let workingCanvas = document.createElement("canvas");
@@ -203,7 +204,7 @@ export default class ScratchJr {
         ScratchJr.log("starting the app");
         BlockSpecs.initBlocks();
         Project.loadIcon = document.createElement("img");
-        Project.loadIcon.src = "assets/loading.png";
+        Project.loadIcon.src = absoluteURL("assets/loading.png");
         ScratchJr.log(
             "blocks init",
             ScratchJr.getTime(),

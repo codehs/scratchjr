@@ -38,6 +38,58 @@ async function downloadDB() {
     URL.revokeObjectURL(url);
 }
 
+/**
+ * Allows the user to select a file and asynchronously converts it into a Uint8Array.
+ * Creates a hidden file input element and triggers a click event to open the file dialog.
+ * @returns {Promise<Uint8Array>} A Promise that resolves with the Uint8Array containing
+ * the file data or rejects with an error if the file operation fails.
+ */
+async function uploadFileToUint8Array() {
+    return new Promise((resolve, reject) => {
+        // Create a file input element
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        // fileInput.style.display = "none";
+
+        // Add event listener to handle file selection
+        fileInput.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.addEventListener("load", (e) => {
+                    // Read the file and convert it to a Uint8Array
+                    const arrayBuffer = e.target.result;
+                    const uint8Array = new Uint8Array(arrayBuffer);
+
+                    // Remove the file input element from the DOM
+                    fileInput.parentNode.removeChild(fileInput);
+
+                    resolve(uint8Array);
+                });
+
+                reader.addEventListener("error", (e) => {
+                    // Remove the file input element from the DOM and reject
+                    fileInput.parentNode.removeChild(fileInput);
+                    reject(new Error("Error reading file."));
+                });
+
+                // Loads the file as an ArrayBuffer and triggers the `load` event listener above
+                reader.readAsArrayBuffer(file);
+            } else {
+                // If no file selected, remove the file input element from the DOM and reject
+                fileInput.parentNode.removeChild(fileInput);
+                reject(new Error("No file selected."));
+            }
+        });
+
+        // Trigger a click event to open the file dialog
+        document.body.appendChild(fileInput);
+        fileInput.click();
+    });
+}
+
 // converts binary data (a Uint8Array, the data format sql.js exports to) to a UTF-16 string
 // see https://github.com/sql-js/sql.js/wiki/Persisting-a-Modified-Database
 function binaryDataToUTF16String(binaryData) {
@@ -156,6 +208,16 @@ function runMigrations() {
     }
 }
 
+// Hashes a string using SHA-256 and returns it as a base64-encoded string
+async function hashString(inputString) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(inputString);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const base64String = btoa(String.fromCharCode.apply(null, hashArray));
+    return base64String;
+}
+
 // this event will fire whenever the user closes the tab or navigates away from the page
 // see https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event#usage_notes
 window.addEventListener("beforeunload", function () {
@@ -168,8 +230,9 @@ export function saveDB() {
 
     const binaryData = db.export();
     const stringData = binaryDataToUTF16String(binaryData);
+    const dbHash = hashString(stringData);
     // early return if no changes were made to the db string
-    if (stringData === localStorage.getItem(baseKey)) {
+    if (dbHash === localStorage.getItem(baseKey)) {
         console.log("no changes to save, skipping");
         return stringData;
     } else {
@@ -182,24 +245,41 @@ export function saveDB() {
                 UTF16StringToUTF8String(stringData),
                 thumbnail
             );
-            localStorage.setItem(baseKey, stringData);
         });
-        return stringData;
     }
 
-    const timestamp = new Date().getTime();
-    localStorage.setItem(baseKey + "-timestamp", timestamp);
-    localStorage.setItem(baseKey, stringData);
-
+    localStorage.setItem(baseKey, dbHash);
     return stringData;
 }
 
 async function getDBDataString() {
     let dbData = null;
 
-    // try to load from CodeHS DB
+    // Try to load from CodeHS DB
+    // This function is defined in scratchjr.js on the CodeHS side and called on page load
     if (window.loadScratchJrProject) {
-        dbData = await window.loadScratchJrProject();
+        let showUploadDB = false;
+        const result = await window.loadScratchJrProject();
+        // determine whether to show the upload DB button
+        // window.loadScratchJrProject was only returning the DB data before this change,
+        // but now it also returns the showUploadDB boolean as well, so we need to check
+        // if the result is an array or not to keep backwards compatibility
+        if (Array.isArray(result)) {
+            dbData = result[0];
+            showUploadDB = result[1];
+        } else {
+            dbData = result;
+        }
+        if (showUploadDB) {
+            try {
+                const uploadedBinaryData = await uploadFileToUint8Array();
+                return binaryDataToUTF16String(uploadedBinaryData);
+            } catch (e) {
+                // Print out error and continue loading DB from CodeHS
+                console.log(e);
+            }
+        }
+
         if (dbData) {
             dbData = UTF8StringToUTF16String(dbData);
         }
@@ -210,6 +290,7 @@ async function getDBDataString() {
 
 export async function initDB() {
     console.log("init");
+
     // return existing promise if it exists
     if (initPromise) {
         return initPromise;
@@ -222,6 +303,7 @@ export async function initDB() {
         const SQL = await initSqlJs({
             locateFile: () => sqlWasm,
         });
+        window.SQL = SQL;
 
         if (window.sharedProgramID) {
             const id = window.sharedProgramID;

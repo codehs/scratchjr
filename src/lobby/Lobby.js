@@ -2,7 +2,7 @@
 // Home Screen
 //////////////////////////////////////////////////
 
-import { libInit, getUrlVars, gn, isAndroid, newHTML } from "../utils/lib";
+import { libInit, getUrlVars, gn, isAndroid, newHTML, absoluteURL } from "../utils/lib";
 import ScratchAudio from "../utils/ScratchAudio";
 import OS from "../tablet/OS";
 import Localization from "../utils/Localization";
@@ -334,7 +334,7 @@ export default class Lobby {
         var iframe = newHTML("iframe", "htmlcontents", p);
         iframe.setAttribute("id", "htmlcontents");
         gn("htmlcontents").className = css2;
-        gn("htmlcontents").src = url;
+        gn("htmlcontents").src = absoluteURL(url);
         gn("htmlcontents").onload = function () {
             if (errorTimer) {
                 clearTimeout(errorTimer);

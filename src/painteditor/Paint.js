@@ -17,10 +17,10 @@ import Events from "../utils/Events";
 import Transform from "./Transform";
 import Vector from "../geom/Vector";
 import {
+    absoluteURL,
     gn,
     newHTML,
     setCanvasSize,
-    isTablet,
     getIdFor,
     isAndroid,
     setProps,
@@ -1285,6 +1285,7 @@ export default class Paint {
     }
 
     static getBkg(url) {
+        url = absoluteURL(url);
         var xmlrequest = new XMLHttpRequest();
         xmlrequest.onreadystatechange = function () {
             if (xmlrequest.readyState == 4) {
@@ -1386,7 +1387,7 @@ export default class Paint {
     }
 
     static loadChar(url) {
-        // console.log('loadChar');
+        url = absoluteURL(url);
         var xmlrequest = new XMLHttpRequest();
         xmlrequest.onreadystatechange = function () {
             if (xmlrequest.readyState == 4) {

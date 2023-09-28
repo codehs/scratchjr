@@ -8,7 +8,7 @@ import IO from "../tablet/IO";
 import MediaLib from "../tablet/MediaLib";
 import ScratchAudio from "../utils/ScratchAudio";
 import Localization from "../utils/Localization";
-import { gn, newHTML } from "../utils/lib";
+import { absoluteURL, gn, newHTML } from "../utils/lib";
 
 let frame;
 // Should ScratchJr projects be saved when the sample project is changed?
@@ -128,6 +128,7 @@ export default class Samples {
     }
 
     static requestFromServer(pos, url, whenDone) {
+        url = absoluteURL(url);
         var xmlrequest = new XMLHttpRequest();
         xmlrequest.addEventListener("error", transferFailed, false);
         xmlrequest.onreadystatechange = function () {

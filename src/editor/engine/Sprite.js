@@ -28,7 +28,7 @@ import {newHTML, newDiv, newP, gn,
     setCanvasSizeScaledToWindowDocumentHeight,
     DEGTOR, getIdFor, setProps, isTablet, isiOS,
     isAndroid, fitInRect, scaleMultiplier, setCanvasSize,
-    globaly, globalx, rgbToHex, WINDOW_INNER_HEIGHT} from '../../utils/lib';
+    globaly, globalx, rgbToHex, WINDOW_INNER_HEIGHT, absoluteURL} from '../../utils/lib';
 
 export default class Sprite {
     constructor (attr, whenDone) {
@@ -1128,7 +1128,7 @@ export default class Sprite {
     drawCloseButton () {
         var ctx = this.div.getContext('2d');
         var img = document.createElement('img');
-        img.src = 'assets/ui/closeit.svg';
+        img.src = absoluteURL('assets/ui/closeit.svg');
         if (!img.complete) {
             img.onload = function () {
                 ctx.drawImage(0, 0);
