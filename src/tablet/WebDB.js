@@ -90,35 +90,6 @@ async function uploadFileToUint8Array() {
     });
 }
 
-window.uploadDB = uploadDB;
-
-/**
- * ADMIN ONLY
- * Allows the user to upload a DB file from their computer instead of loading from the server.
- * This needs to be called before initPromise is checked in initDB(), if needed you can put a
- * breakpoint on the first line of initDB() in your browser's dev tools to do this.
- */
-async function uploadDB() {
-    if (initPromise) return;
-
-    let binaryData = null;
-    try {
-        binaryData = await uploadFileToUint8Array();
-    } catch (e) {
-        console.log(e);
-        return;
-    }
-
-    initPromise = new Promise(async (resolve) => {
-        const SQL = await initSqlJs({
-            locateFile: () => sqlWasm,
-        });
-
-        db = new SQL.Database(binaryData);
-        resolve(false);
-    });
-}
-
 // converts binary data (a Uint8Array, the data format sql.js exports to) to a UTF-16 string
 // see https://github.com/sql-js/sql.js/wiki/Persisting-a-Modified-Database
 function binaryDataToUTF16String(binaryData) {
@@ -284,9 +255,31 @@ export function saveDB() {
 async function getDBDataString() {
     let dbData = null;
 
-    // try to load from CodeHS DB
+    // Try to load from CodeHS DB
+    // This function is defined in scratchjr.js on the CodeHS side and called on page load
     if (window.loadScratchJrProject) {
-        dbData = await window.loadScratchJrProject();
+        let showUploadDB = false;
+        const result = await window.loadScratchJrProject();
+        // determine whether to show the upload DB button
+        // window.loadScratchJrProject was only returning the DB data before this change,
+        // but now it also returns the showUploadDB boolean as well, so we need to check
+        // if the result is an array or not to keep backwards compatibility
+        if (Array.isArray(result)) {
+            dbData = result[0];
+            showUploadDB = result[1];
+        } else {
+            dbData = result;
+        }
+        if (showUploadDB) {
+            try {
+                const uploadedBinaryData = await uploadFileToUint8Array();
+                return binaryDataToUTF16String(uploadedBinaryData);
+            } catch (e) {
+                // Print out error and continue loading DB from CodeHS
+                console.log(e);
+            }
+        }
+
         if (dbData) {
             dbData = UTF8StringToUTF16String(dbData);
         }
@@ -297,7 +290,6 @@ async function getDBDataString() {
 
 export async function initDB() {
     console.log("init");
-    await uploadDB();
 
     // return existing promise if it exists
     if (initPromise) {
