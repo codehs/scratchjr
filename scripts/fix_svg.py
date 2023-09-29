@@ -5,10 +5,15 @@ from collections import defaultdict
 
 # See https://www.notion.so/codehs/Scratch-ScratchJr-fae5d776041d479c914dc8fddc80517b?pvs=4#b54bef0321664e03b73c9d3e58b5808f
 
-def clean_command_string(command_string):
+def clean_command_string(command_string, scale_x=None, scale_y=None):
     # Run the Node.js script and capture stdout and stderr
+    node_command = ['node', 'scripts/transform-svg.js', command_string]
+    if scale_x is not None:
+        node_command.append(str(scale_x))
+    if scale_y is not None:
+        node_command.append(str(scale_y))
     result = subprocess.run(
-        ['node', 'scripts/clean.js', command_string],
+        node_command,
         capture_output=True,
         text=True,
         check=True
@@ -24,17 +29,32 @@ def clean_command_string(command_string):
         raise Exception(f'Clean script failed with error:\n{result.stderr}')
 
 
-def fix_svg_file(input_file, output_file):
-    # Parse the SVG file
-    tree = ET.parse(input_file)
-    root = tree.getroot()
+def scale_circles(root, scale):
+    if scale is None:
+        return
+    
+    for circle in root.iter('{http://www.w3.org/2000/svg}circle'):
+        if 'cx' in circle.attrib:
+            cx = float(circle.attrib['cx'])
+            circle.attrib['cx'] = str(cx * scale)
 
+        if 'cy' in circle.attrib:
+            cy = float(circle.attrib['cy'])
+            circle.attrib['cy'] = str(cy * scale)
+
+        if 'r' in circle.attrib:
+            r = float(circle.attrib['r'])
+            circle.attrib['r'] = str(r * scale)
+
+
+def inline_styles(root):
     # Check if <defs> exists
     defs_tag = root.find('.//{http://www.w3.org/2000/svg}defs')
     if defs_tag is None:
-        raise RuntimeError('No <defs> tag found in the SVG file.')
-    # Create a dictionary to store CSS properties
+        print('No <defs> tag found in the SVG file.')
+        return
 
+    # Create a dictionary to store CSS properties
     css_properties = defaultdict(list)
 
     # Find and process the <style> tag within <defs>
@@ -61,8 +81,9 @@ def fix_svg_file(input_file, output_file):
                     for selector in selectors:
                         css_properties[selector].append(property)
 
-        # Remove the <style> tag
+        # Remove the <defs> and <style> tags
         defs_tag.remove(style_tag)
+        root.remove(defs_tag)
 
     # Apply CSS properties to matching elements throughout the document
     for element in root.iter():
@@ -76,6 +97,17 @@ def fix_svg_file(input_file, output_file):
                         if prop:
                             prop_name, prop_value = prop.split(':', 1)
                             element.set(prop_name.strip(), prop_value.strip())
+    
+           # Delete the 'class' attribute from the element
+            del element.attrib['class']
+
+
+def fix_svg_file(input_file, output_file, scale=None):
+    # Parse the SVG file
+    tree = ET.parse(input_file)
+    root = tree.getroot()
+
+    inline_styles(root)
 
     # Iterate through all <path> elements
     for path in root.iter('{http://www.w3.org/2000/svg}path'):
@@ -84,18 +116,13 @@ def fix_svg_file(input_file, output_file):
             command_string = path.attrib['d']
 
             # Clean the command string
-            cleaned_command_string = clean_command_string(command_string)
+            cleaned_command_string = clean_command_string(command_string, scale, scale)
 
             # Update the 'd' attribute with the cleaned value
             path.set('d', cleaned_command_string)
-
-    # Delete the <defs> tag
-    root.remove(defs_tag)
-
-    # Delete the 'class' attribute from all elements
-    for element in root.iter():
-        if 'class' in element.attrib:
-            del element.attrib['class']
+    
+    # Scale all circles
+    scale_circles(root, scale)
 
     # Add necessary XML namespaces and attributes to the root <svg> element
     root.attrib['xmlns'] = 'http://www.w3.org/2000/svg'
@@ -114,10 +141,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Fix SVG file by inlining styles and re-formatting path strings.')
     parser.add_argument('input_file', help='Relative path to the input SVG file.')
     parser.add_argument('--output', default='output.svg', help='Relative path to the output SVG file (default: output.svg).')
+    parser.add_argument('--scale', type=float, default=1.0, help='How much to scale the SVG elements by (default: 1.0).')
 
     args = parser.parse_args()
     input_svg_path = args.input_file
     output_svg_path = args.output
+    scale = args.scale
 
-    fix_svg_file(input_svg_path, output_svg_path)
+    fix_svg_file(input_svg_path, output_svg_path, scale)
 
