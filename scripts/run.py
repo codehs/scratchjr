@@ -1,52 +1,46 @@
-from inline_svg_styles import apply_css_to_svg
+from resize_png import resize_png
 
+base_path = 'editions/free/src/pnglibrary/'
+
+import os
+def swap_file_names(file1, file2):
+    try:
+        # Check if both files exist
+        if os.path.exists(file1) and os.path.exists(file2):
+            # Generate temporary file names to avoid conflicts
+            temp_file1 = file1 + "_temp"
+            temp_file2 = file2 + "_temp"
+
+            # Rename file1 to a temporary name
+            os.rename(file1, temp_file1)
+
+            # Rename file2 to file1's original name
+            os.rename(file2, file1)
+
+            # Rename file1 (now temp_file1) to file2's original name
+            os.rename(temp_file1, file2)
+
+            print(f"Swapped names of {file1} and {file2}")
+
+        else:
+            print("Both files must exist to swap their names.")
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+io = [
+    ('Scout-face-left.png', '_Scout-face-left.png'),
+    ('Scout-face-right.png', '_Scout-face-right.png'),
+    ('Scout-point-left.png', '_Scout-point-left.png'),
+    ('Scout-point-right.png', '_Scout-point-right.png'),
+    ('Scout-walk-left-1.png', '_Scout-walk-left-1.png'),
+    ('Scout-walk-right-1.png', '_Scout-walk-right-1.png'),
+    ('Scout-walk-left-2.png', '_Scout-walk-left-2.png'),
+    ('Scout-walk-right-2.png', '_Scout-walk-right-2.png'),
+]
 
 if __name__ == "__main__":
-    file_path_tuples = [
-        ('test/Scout-face-left.svg', 'editions/free/src/svglibrary/Scout-face-left.svg'), 
-        ('test/Scout-face-right.svg', 'editions/free/src/svglibrary/Scout-face-right.svg'), 
-        ('test/Scout-point-left.svg', 'editions/free/src/svglibrary/Scout-point-left.svg'), 
-        ('test/Scout-point-right.svg', 'editions/free/src/svglibrary/Scout-point-right.svg'), 
-        ('test/Scout-walk-left-1.svg', 'editions/free/src/svglibrary/Scout-walk-left-1.svg'), 
-        ('test/Scout-walk-left-2.svg', 'editions/free/src/svglibrary/Scout-walk-left-2.svg'), 
-        ('test/Scout-walk-right-1.svg', 'editions/free/src/svglibrary/Scout-walk-right-1.svg'), 
-        ('test/Scout-walk-right-2.svg', 'editions/free/src/svglibrary/Scout-walk-right-2.svg'), 
-    ]
-
-    for input_file, output_file in file_path_tuples:
-        apply_css_to_svg(input_file, output_file)
-
-    # file_paths = [
-    #     'editions/free/src/svglibrary/_Scout-face-left.svg',  
-    #     'editions/free/src/svglibrary/_Scout-face-right.svg',  
-    #     'editions/free/src/svglibrary/_Scout-point-left.svg',  
-    #     'editions/free/src/svglibrary/_Scout-point-right.svg',  
-    #     'editions/free/src/svglibrary/_Scout-walk-left-1.svg',
-    #     'editions/free/src/svglibrary/_Scout-walk-left-2.svg',
-    #     'editions/free/src/svglibrary/_Scout-walk-right-1.svg',
-    #     'editions/free/src/svglibrary/_Scout-walk-right-2.svg',
-    # ]
-    # import os
-
-    # def rename_files_with_prefix(file_paths, prefix):
-    #     for file_path in file_paths:
-    #         # Split the file path into directory and filename
-    #         directory, filename = os.path.split(file_path)
-
-    #         # Check if the filename starts with the prefix
-    #         if filename.startswith(prefix):
-    #             # Remove the prefix
-    #             new_filename = filename[len(prefix):]
-    #         else:
-    #             # Add the prefix
-    #             new_filename = prefix + filename
-
-    #         # Create the new file path
-    #         new_file_path = os.path.join(directory, new_filename)
-
-    #         # Rename the file
-    #         os.rename(file_path, new_file_path)
-
-    # # Example usage:
-    # rename_files_with_prefix(file_paths, "_")
-
+    for i, o in io:
+        input_png_path = base_path + i
+        output_png_path = base_path + o
+        swap_file_names(input_png_path, output_png_path)

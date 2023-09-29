@@ -3,6 +3,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
+# See https://www.notion.so/codehs/Scratch-ScratchJr-fae5d776041d479c914dc8fddc80517b?pvs=4#b54bef0321664e03b73c9d3e58b5808f
 
 def clean_command_string(command_string):
     # Run the Node.js script and capture stdout and stderr
@@ -23,7 +24,7 @@ def clean_command_string(command_string):
         raise Exception(f'Clean script failed with error:\n{result.stderr}')
 
 
-def apply_css_to_svg(input_file, output_file):
+def fix_svg_file(input_file, output_file):
     # Parse the SVG file
     tree = ET.parse(input_file)
     root = tree.getroot()
@@ -110,13 +111,13 @@ def apply_css_to_svg(input_file, output_file):
     tree.write(output_file, encoding='utf-8', xml_declaration=True)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Extract CSS styles from the defs section of an SVG file and inline them.')
+    parser = argparse.ArgumentParser(description='Fix SVG file by inlining styles and re-formatting path strings.')
     parser.add_argument('input_file', help='Relative path to the input SVG file.')
-    parser.add_argument('--output', help='Relative path to the output SVG file (optional).')
+    parser.add_argument('--output', default='output.svg', help='Relative path to the output SVG file (default: output.svg).')
 
     args = parser.parse_args()
-    input_svg_file = args.input_file
-    output_svg_file = args.output if args.output else 'output.svg'
+    input_svg_path = args.input_file
+    output_svg_path = args.output
 
-    apply_css_to_svg(input_svg_file, output_svg_file)
+    fix_svg_file(input_svg_path, output_svg_path)
 
