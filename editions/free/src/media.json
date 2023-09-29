@@ -39,14 +39,8 @@
     	{"md5":"MoonBkg.svg","width":480,"height":360,"ext":"svg","name":"Moon"}
     ],
     "sprites": [
-      {"md5":"Scout-face-right.svg","width":432,"height":432,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
-      {"md5":"Scout-face-left.svg","width":432,"height":432,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
-      {"md5":"Scout-point-right.svg","width":432,"height":432,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
-      {"md5":"Scout-point-left.svg","width":432,"height":432,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
-      {"md5":"Scout-walk-right-1.svg","width":432,"height":432,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
-      {"md5":"Scout-walk-right-2.svg","width":432,"height":432,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
-      {"md5":"Scout-walk-left-1.svg","width":432,"height":432,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
-      {"md5":"Scout-walk-left-2.svg","width":432,"height":432,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
+      {"md5":"Scout.svg","width":216,"height":216,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
+      {"md5":"Scout-point.svg","width":216,"height":216,"ext":"svg","name":"Scout","order":"characters,00 codehs","tags":["characters","00 codehs"]},
 
     	{"md5":"Blue.svg","width":151,"height":253,"ext":"svg","name":"Tic","order":"characters,02 funky","tags":["characters","02 funky"]},
     	{"md5":"Purple.svg","width":161,"height":185,"ext":"svg","name":"Tac","order":"characters,02 funky","tags":["characters","02 funky"]},
