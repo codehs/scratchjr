@@ -358,20 +358,21 @@ export async function executeStatementFromJSON(json) {
     return lastRowId;
 }
 
-// https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L842
+/**
+ * Saves the current state of the stage as a screenshot to the database.
+ * 
+ * It's confusing because they refer to this table as the projectfiles table, but
+ * its just screenshots. There are just 2 columns, 1 for filename (fileMD5), and
+ * one for the content (which is just a data URI string). We delete all the previous
+ * screenshots every time we update it because we don't need to keep them around.
+ * 
+ * Reference: https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L842
+ * 
+ * @param {string} fileMD5
+ * @param {string} content
+ */
 export async function saveToProjectFiles(fileMD5, content) {
-    /**
-     * Function to save project content to local storage
-     * Local storage format-
-     * [
-     *      {
-     *          'columns': ['MD5', 'CONTENTS']
-     *          'values': [ ..., [fileMD5, content] ]
-     *      }
-     * ]
-     * @param {string} fileMD5
-     * @param {string} content
-     */
+    
     // query for the current file contents to see if they actually changed
     let currentContents = "";
     const queryResult = JSON.parse(
@@ -391,7 +392,7 @@ export async function saveToProjectFiles(fileMD5, content) {
     // if the contents changed, update the db and save
     if (content !== currentContents) {
         await executeStatementFromJSON({
-            stmt: `insert or replace into projectfiles (md5, contents) values (?, ?)`,
+            stmt: `delete from projectfiles; insert into projectfiles (md5, contents) values (?, ?)`,
             values: [fileMD5, content],
         });
 
