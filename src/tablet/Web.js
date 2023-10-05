@@ -64,7 +64,11 @@ export async function setupMediaRecording() {
             Record.setButtonsEnabled(false);
 
             try {
-                latestAudioURL = await window.uploadAudio(audioBlob);
+                if (window.canSave) {
+                    latestAudioURL = await window.uploadAudio(audioBlob);
+                } else {
+                    latestAudioURL = URL.createObjectURL(audioBlob);
+                }
             } catch (err) {
                 console.log("Audio upload error!", err);
                 return;
@@ -239,6 +243,12 @@ export default class Web {
 
     static registerSound(dir, name, fcn) {
         (async () => {
+            // In this case, the user can not save the project, so we don't upload
+            // the audio to the server and instead just use a blob URL
+            if (name.startsWith('blob:')) {
+                dir = '';
+            }
+
             const url = absoluteURL(dir + name);
             console.log("registerSound", dir, name);
             const response = await fetch(url);

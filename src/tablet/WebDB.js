@@ -49,7 +49,6 @@ async function uploadFileToUint8Array() {
         // Create a file input element
         const fileInput = document.createElement("input");
         fileInput.type = "file";
-        // fileInput.style.display = "none";
 
         // Add event listener to handle file selection
         fileInput.addEventListener("change", (e) => {
@@ -332,10 +331,51 @@ export async function initDB() {
         }
         window.db = db;
         console.log("shouldCreateNewProject: ", shouldCreateNewProject);
+        if (
+            new URLSearchParams(window.location.search).get(
+                "show-project-files"
+            ) === "true"
+        ) {
+            await displayProjectFiles();
+        }
         resolve(shouldCreateNewProject);
     });
 
     return initPromise;
+}
+
+async function displayProjectFiles() {
+    return new Promise(async (resolve) => {
+        const rows = JSON.parse(
+            await executeQueryFromJSON({
+                stmt: `select * from projectfiles`,
+            })
+        )[0].values;
+        const container = document.createElement("div");
+
+        for (const row of rows) {
+            const md5 = row[0];
+            const contents = row[1];
+
+            // Determine the image type based on the md5 filename
+            const imageType = md5.endsWith(".png")
+                ? "image/png"
+                : "image/svg+xml";
+
+            // Create an img element
+            const img = document.createElement("img");
+
+            // Set the src attribute to the data URI
+            img.src = `data:${imageType};base64,${contents}`;
+            img.title = md5;
+
+            // Append the img element to the container
+            container.appendChild(img);
+        }
+
+        // Append the container to the DOM
+        document.body.appendChild(container);
+    });
 }
 
 export async function executeQueryFromJSON(json) {
@@ -358,21 +398,58 @@ export async function executeStatementFromJSON(json) {
     return lastRowId;
 }
 
+function isThumbnail(md5) {
+    return md5.endsWith(".png") && md5.includes("_");
+}
+
 /**
- * Saves the current state of the stage as a screenshot to the database.
- * 
- * It's confusing because they refer to this table as the projectfiles table, but
- * its just screenshots. There are just 2 columns, 1 for filename (fileMD5), and
- * one for the content (which is just a data URI string). We delete all the previous
- * screenshots every time we update it because we don't need to keep them around.
- * 
+ * Clears all thumbnails from the PROJECTFILES table in the database.
+ *
+ * See saveToProjectFiles() for more context.
+ */
+async function clearThumbnails() {
+    const rows = JSON.parse(
+        await executeQueryFromJSON({
+            stmt: `select * from projectfiles`,
+        })
+    )[0].values;
+
+    const md5sToDelete = [];
+    for (const row of rows) {
+        const md5 = row[0];
+        if (isThumbnail(md5)) {
+            md5sToDelete.push(md5);
+        }
+    }
+
+    const placeholders = md5sToDelete.map(() => "?").join(", ");
+    await executeStatementFromJSON({
+        stmt: `delete from projectfiles where md5 in (${placeholders});`,
+        values: md5sToDelete,
+    });
+}
+
+/**
+ * Saves a "project file" to the PROJECTFILES table in the database.
+ *
+ * There are 2 columns in the table, 1 for filename (fileMD5), and one for the contents
+ * (a base64-encoded string representing image data that can be used in a data URI).
+ * Additionally, there are 2 categories of project files. One category is thumbnails
+ * (or screenshots) that are taken every time the user saves a project. We clear all
+ * of the previous thumbnails whenever a new one is saved, otherwise they would
+ * accumulate and take up a lot of space. The other category is custom assets, like
+ * user-created/-edited sprites or backgrounds. For each custom asset, we save a PNG
+ * and SVG representation of the asset. For thumbnails, we save the PNG representation.
+ * We can differentiate between the thumbnails and custom asset types by checking the
+ * fileMD5; thumbnails have their project ID plus an underscore prefixed to the fileMD5,
+ * so we can just check if a PNG file has a "_" in its filename.
+ *
  * Reference: https://github.com/jfo8000/ScratchJr-Desktop/blob/master/src/main.js#L842
- * 
+ *
  * @param {string} fileMD5
  * @param {string} content
  */
 export async function saveToProjectFiles(fileMD5, content) {
-    
     // query for the current file contents to see if they actually changed
     let currentContents = "";
     const queryResult = JSON.parse(
@@ -391,8 +468,11 @@ export async function saveToProjectFiles(fileMD5, content) {
 
     // if the contents changed, update the db and save
     if (content !== currentContents) {
+        if (isThumbnail(fileMD5)) {
+            await clearThumbnails();
+        }
         await executeStatementFromJSON({
-            stmt: `delete from projectfiles; insert into projectfiles (md5, contents) values (?, ?)`,
+            stmt: `insert or replace into projectfiles (md5, contents) values (?, ?);`,
             values: [fileMD5, content],
         });
 

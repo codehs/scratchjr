@@ -14,7 +14,7 @@ export function editorMain() {
     async function doNext(str) {
         var list = str.split(",");
         OS.path = list[1] == "0" ? list[0] + "/" : undefined;
-        if (window.canSave) await setupMediaRecording();
+        await setupMediaRecording();
         Record.available = audioRecorderAvailable();
         Camera.available = videoRecorderAvailable();
         ScratchJr.appinit(window.Settings.scratchJrVersion);
