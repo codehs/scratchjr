@@ -476,6 +476,10 @@ export async function saveToProjectFiles(fileMD5, content) {
             values: [fileMD5, content],
         });
 
+        await executeStatementFromJSON({
+            stmt: `vacuum;`,
+        });
+
         saveDB();
     }
 }
