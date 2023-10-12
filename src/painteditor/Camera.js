@@ -38,21 +38,21 @@ export default class Camera {
         viewbox.crop(box);
         var mask = Camera.getLayerMask(target);
         var data = new Object();
-        var x = Math.floor((viewbox.x + (viewbox.width / 2)) * Paint.currentZoom - (viewbox.width / 2));
-        var y = Math.floor((viewbox.y + (viewbox.height / 2)) * Paint.currentZoom - (viewbox.height / 2));
-        data.x = globalx(gn('workspacebkg')) + x + gn('maincanvas').dx +
-            gn('maincanvas').cx - gn('maincanvas').cx * Paint.currentZoom;
-        data.y = globaly(gn('workspacebkg')) + y + gn('maincanvas').dy +
-            gn('maincanvas').cy - gn('maincanvas').cy * Paint.currentZoom;
         data.width = viewbox.width;
         data.height = viewbox.height;
         data.scale = Paint.currentZoom;
         data.devicePixelRatio = devicePixelRatio;
+
+        // workspace position and size
         data.mx = globalx(gn('workspacebkg')) + gn('maincanvas').dx;
         data.my = globaly(gn('workspacebkg')) + gn('maincanvas').dy;
         data.mw = Paint.workspaceWidth;
         data.mh = Paint.workspaceHeight;
         data.image = mask.toDataURL('image/png');
+
+        // set target position based on its original viewbox offset added to workspace position
+        data.x = data.mx + viewbox.x;
+        data.y = data.my + viewbox.y;
         OS.startfeed(data, OS.trace);
         Paint.cameraToolsOn();
     }
