@@ -18,15 +18,19 @@ export const isAndroid = typeof AndroidInterface != "undefined";
 
 export function absoluteURL(url) {
     // if it's already an absolute URL, just return it
-    if (url.startsWith('http://') || url.startsWith('https://')) {
+    if (
+        url.startsWith("http://") ||
+        url.startsWith("https://") ||
+        url.startsWith("blob:")
+    ) {
         return url;
     }
     // remove leading dot slash
-    if (url.startsWith('./')) {
+    if (url.startsWith("./")) {
         url = url.substring(2);
     }
     // remove leading slash
-    if (url.startsWith('/')) {
+    if (url.startsWith("/")) {
         url = url.substring(1);
     }
     return ASSET_BASE_URL + url;
