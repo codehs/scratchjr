@@ -1,12 +1,12 @@
 // Required to let webpack 4 know it needs to copy the wasm file to our assets
 import sqlWasm from "!!file-loader?name=sql-wasm-[contenthash].wasm!sql.js/dist/sql-wasm.wasm";
 import initSqlJs from "sql.js";
-import { getFirstProjectThumbnail } from "../editor/ui/Project.js";
 
 // see https://github.com/sql-js/sql.js/#usage
 
 let db = null;
 let initPromise;
+let latestThumbnail = null;
 
 // data store locations
 let baseKey = null;
@@ -15,11 +15,7 @@ window.getStringDBAndThumbnail = getStringDBAndThumbnail;
 
 // function to get the database as a string and the thumbnail
 async function getStringDBAndThumbnail() {
-    return new Promise(function (resolve) {
-        getFirstProjectThumbnail(function (thumbnail) {
-            resolve([UTF16StringToUTF8String(saveDB()), thumbnail]);
-        });
-    });
+    return [UTF16StringToUTF8String(saveDB()), latestThumbnail];
 }
 
 window.downloadDB = downloadDB;
@@ -239,12 +235,10 @@ export function saveDB() {
     }
 
     if (window.saveScratchJrProject) {
-        getFirstProjectThumbnail(function (thumbnail) {
-            window.saveScratchJrProject(
-                UTF16StringToUTF8String(stringData),
-                thumbnail
-            );
-        });
+        window.saveScratchJrProject(
+            UTF16StringToUTF8String(stringData),
+            latestThumbnail
+        );
     }
 
     localStorage.setItem(baseKey, dbHash);
@@ -408,12 +402,16 @@ function isThumbnail(md5) {
  * See saveToProjectFiles() for more context.
  */
 async function clearThumbnails() {
-    const rows = JSON.parse(
+    const result = JSON.parse(
         await executeQueryFromJSON({
             stmt: `select * from projectfiles`,
         })
-    )[0].values;
+    );
 
+    // early return if there are no rows in the table
+    if (!result.length) return;
+
+    const rows = result[0].values;
     const md5sToDelete = [];
     for (const row of rows) {
         const md5 = row[0];
@@ -470,6 +468,7 @@ export async function saveToProjectFiles(fileMD5, content) {
     if (content !== currentContents) {
         if (isThumbnail(fileMD5)) {
             await clearThumbnails();
+            latestThumbnail = 'data:image/png;base64,' + content;
         }
         await executeStatementFromJSON({
             stmt: `insert or replace into projectfiles (md5, contents) values (?, ?);`,
