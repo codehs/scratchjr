@@ -469,7 +469,6 @@ export async function saveToProjectFiles(fileMD5, content) {
         if (isThumbnail(fileMD5)) {
             await clearThumbnails();
             latestThumbnail = 'data:image/png;base64,' + content;
-            console.log("latestThumbnail: ", latestThumbnail);
         }
         await executeStatementFromJSON({
             stmt: `insert or replace into projectfiles (md5, contents) values (?, ?);`,
