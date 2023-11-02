@@ -564,6 +564,15 @@ export default class UI {
             var ns = newHTML("div", "addsprite", sprites);
             ns.onclick = UI.addSprite;
         }
+
+        // setup mouse scrolling
+        function scrollSpritesWheel(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            UI.scrollSpritesPanel(e.deltaY);
+        }
+
+        window.setEventHandler("wheel", scrollSpritesWheel, sprites);
     }
 
     static mascotData(page) {
@@ -762,11 +771,15 @@ export default class UI {
 
     static spriteScolling(e) {
         var pt = Events.getTargetPoint(e);
-        var deltay = Events.dragmousey - pt.y;
+        var deltaY = Events.dragmousey - pt.y;
         Events.dragmousey = pt.y;
+        UI.scrollSpritesPanel(deltaY);
+    }
+
+    static scrollSpritesPanel(deltaY) {
         var sc = gn("spritecc");
         var dy = sc.offsetTop;
-        dy -= deltay;
+        dy -= deltaY;
         var p = sc.parentNode;
         if (dy > 0) {
             dy = 0;
