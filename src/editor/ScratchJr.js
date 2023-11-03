@@ -593,9 +593,11 @@ export default class ScratchJr {
         if (onHold) {
             return;
         }
-        e.preventDefault();
-        e.stopPropagation();
-        ScratchJr.unfocus(e);
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            ScratchJr.unfocus(e);
+        }
         ScratchJr.displayStatus("none");
         inFullscreen = true;
         UI.enterFullScreen();
