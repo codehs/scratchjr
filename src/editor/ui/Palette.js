@@ -509,6 +509,9 @@ export default class Palette {
         if (pt && box2.hitRect(pt)) {
             return 'palette';
         }
+        if (Palette.overlapsWith(gn("blockspalette"), box)) {
+            return "palette";
+        }
         if (Palette.overlapsWith(gn('scripts'), box)) {
             return 'scripts';
         }
