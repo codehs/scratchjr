@@ -1,10 +1,12 @@
 import OS from './OS';
 import MediaLib from './MediaLib';
+import {hashString} from './WebDB';
 import {absoluteURL, setCanvasSize, drawThumbnail, mTime} from '../utils/lib';
 import SVG2Canvas from '../utils/SVG2Canvas';
 
 const database = 'projects';
 const collectLibraryAssets = true;
+let lastSavedProjectHash = null;
 
 // Sharing state
 let zipFileName = '';
@@ -257,14 +259,20 @@ export default class IO {
         }
     }
 
-    static saveProject (obj, fcn) {
+    static async saveProject (obj, fcn) {
         console.log('saveProject');
         var json = {};
         var keylist = ['version = ?', 'deleted = ?', 'name = ?', 'json = ?', 'thumbnail = ?', 'mtime = ?'];
         json.values = [obj.version, obj.deleted, obj.name, JSON.stringify(obj.json),
             JSON.stringify(obj.thumbnail), mTime().toString()];
-        json.stmt = 'update ' + database + ' set ' + keylist.toString() + ' where id = ' + obj.id;
-        OS.stmt(json, fcn);
+        const projectHash = await hashString(JSON.stringify(json.values));
+        if (lastSavedProjectHash === projectHash) {
+            if (fcn) fcn();
+        } else {
+            json.stmt = 'update ' + database + ' set ' + keylist.toString() + ' where id = ' + obj.id;
+            OS.stmt(json, fcn);
+        }
+        lastSavedProjectHash = projectHash;
     }
 
     // Since saveProject is changing the modified time of the project,

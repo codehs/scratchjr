@@ -15,7 +15,7 @@ window.getStringDBAndThumbnail = getStringDBAndThumbnail;
 
 // function to get the database as a string and the thumbnail
 async function getStringDBAndThumbnail() {
-    return [UTF16StringToUTF8String(saveDB()), latestThumbnail];
+    return [getDBString(), latestThumbnail];
 }
 
 window.downloadDB = downloadDB;
@@ -204,7 +204,7 @@ function runMigrations() {
 }
 
 // Hashes a string using SHA-256 and returns it as a base64-encoded string
-async function hashString(inputString) {
+export async function hashString(inputString) {
     const encoder = new TextEncoder();
     const data = encoder.encode(inputString);
     const hashBuffer = await crypto.subtle.digest("SHA-256", data);
@@ -219,33 +219,49 @@ window.addEventListener("beforeunload", function () {
     if (document.visibilityState === "hidden") saveDB();
 });
 
+let saveTimeout = null;
 export function saveDB() {
-    console.log("savedb");
+    if (db === null) return null;
+
+    if (saveTimeout !== null) {
+        clearTimeout(saveTimeout);
+    }
+
+    saveTimeout = setTimeout(() => {
+        console.log("savedb");
+
+        const binaryData = db.export();
+        const stringData = binaryDataToUTF16String(binaryData);
+        const dbHash = hashString(stringData);
+        // early return if no changes were made to the db string
+        if (dbHash === localStorage.getItem(baseKey)) {
+            console.log("no changes to save, skipping");
+            return stringData;
+        } else {
+            console.log("changes detected, saving");
+        }
+
+        if (window.saveScratchJrProject) {
+            window.saveScratchJrProject(
+                UTF16StringToUTF8String(stringData),
+                latestThumbnail
+            );
+        }
+
+        localStorage.setItem(baseKey, dbHash);
+    }, 1000);
+}
+
+// Returns the current database as a UTF-8 string.
+// Make sure the database is saved BEFORE calling this function.
+export function getDBString() {
     if (db === null) return null;
 
     const binaryData = db.export();
-    const stringData = binaryDataToUTF16String(binaryData);
-    const dbHash = hashString(stringData);
-    // early return if no changes were made to the db string
-    if (dbHash === localStorage.getItem(baseKey)) {
-        console.log("no changes to save, skipping");
-        return stringData;
-    } else {
-        console.log("changes detected, saving");
-    }
-
-    if (window.saveScratchJrProject) {
-        window.saveScratchJrProject(
-            UTF16StringToUTF8String(stringData),
-            latestThumbnail
-        );
-    }
-
-    localStorage.setItem(baseKey, dbHash);
-    return stringData;
+    return UTF16StringToUTF8String(binaryDataToUTF16String(binaryData));
 }
 
-async function getDBDataString() {
+async function getInitialDBString() {
     let dbData = null;
 
     // Try to load from CodeHS DB
@@ -313,7 +329,7 @@ export async function initDB() {
 
         // get saved data from codehs, then initialize the database with it if it
         // exists. otherwise, create a new database and initialize the tables and run migrations.
-        const dbDataString = await getDBDataString();
+        const dbDataString = await getInitialDBString();
         if (dbDataString) {
             const binaryData = UTF16StringToBinaryData(dbDataString);
             db = new SQL.Database(binaryData);
@@ -468,7 +484,7 @@ export async function saveToProjectFiles(fileMD5, content) {
     if (content !== currentContents) {
         if (isThumbnail(fileMD5)) {
             await clearThumbnails();
-            latestThumbnail = 'data:image/png;base64,' + content;
+            latestThumbnail = "data:image/png;base64," + content;
         }
         await executeStatementFromJSON({
             stmt: `insert or replace into projectfiles (md5, contents) values (?, ?);`,
