@@ -356,8 +356,6 @@ export default class Web {
             webVideo.show();
         }
 
-        console.log("test");
-
         if (fcn) fcn();
     }
 
