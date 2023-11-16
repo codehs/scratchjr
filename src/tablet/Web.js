@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////
 
 import * as db from "./WebDB.js";
+import { WebVideo } from "./WebVideo.js";
 import Record from "../editor/ui/Record";
 import { absoluteURL } from "../utils/lib.js";
 
@@ -17,7 +18,7 @@ const latestAudioChunks = [];
 // buffers audio data to calculate volume
 let audioVolumeBuffer = null;
 
-let videoRecorder = null;
+let webVideo = null;
 
 const audioContext = new AudioContext();
 const audioBuffers = {};
@@ -98,17 +99,6 @@ export async function setupMediaRecording() {
     } catch (err) {
         console.log("Audio recording error!", err);
     }
-
-    // TODO: Maybe implement video recorder?
-    //      Seems like the camera is used somehow in ScratchJr, but not sure where
-    // try {
-    //     const videoStream = await navigator.mediaDevices.getUserMedia({
-    //         video: true,
-    //     });
-    //     videoRecorder = new MediaRecorder(videoStream);
-    // } catch (err) {
-    //     console.log("Video recording error!", err);
-    // }
 }
 
 export function audioRecorderAvailable() {
@@ -116,7 +106,7 @@ export function audioRecorderAvailable() {
 }
 
 export function videoRecorderAvailable() {
-    return videoRecorder !== null;
+    return true;
 }
 
 function stopRecording() {
@@ -245,8 +235,8 @@ export default class Web {
         (async () => {
             // In this case, the user can not save the project, so we don't upload
             // the audio to the server and instead just use a blob URL
-            if (name.startsWith('blob:')) {
-                dir = '';
+            if (name.startsWith("blob:")) {
+                dir = "";
             }
 
             const url = absoluteURL(dir + name);
@@ -360,21 +350,45 @@ export default class Web {
 
     static startfeed(data, fcn) {
         console.log("startfeed");
+
+        if (webVideo === null) {
+            webVideo = new WebVideo(data);
+            webVideo.show();
+        }
+
         if (fcn) fcn();
     }
 
     static stopfeed(fcn) {
         console.log("stopfeed");
+
+        if (webVideo !== null) {
+            webVideo.hide();
+            webVideo = null;
+        }
+
         if (fcn) fcn();
     }
 
     static choosecamera(mode, fcn) {
+        // This is not needed for the web version
         console.log("choosecamera");
         if (fcn) fcn();
     }
 
     static captureimage(fcn) {
         console.log("captureimage");
+
+        if (webVideo !== null) {
+            // The image is returned as a data URL
+            const imgDataURL = webVideo.snapshot();
+            if (imgDataURL) {
+                // we just want the base64 encoded image data without the header
+                let rawImgData = imgDataURL.split(",")[1];
+                Camera.processimage(rawImgData);
+            }
+        }
+
         if (fcn) fcn();
     }
 

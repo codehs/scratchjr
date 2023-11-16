@@ -1727,7 +1727,6 @@ export default class Paint {
         }
         Paint.setUpCanvasArea();
         str = str.replace(/>\s*</g, "><");
-        console.log(str);
         var xmlDoc = new DOMParser().parseFromString(str, "text/xml");
         var extxml = document.importNode(xmlDoc.documentElement, true);
         var flat = Paint.skipUnwantedElements(extxml, []);
