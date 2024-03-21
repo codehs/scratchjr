@@ -1,13 +1,14 @@
 import argparse
 import subprocess
 import xml.etree.ElementTree as ET
+import os
 from collections import defaultdict
 
 # See https://www.notion.so/codehs/Scratch-ScratchJr-fae5d776041d479c914dc8fddc80517b?pvs=4#b54bef0321664e03b73c9d3e58b5808f
 
 def clean_command_string(command_string, scale_x=None, scale_y=None):
     # Run the Node.js script and capture stdout and stderr
-    node_command = ['node', 'scripts/transform-svg.js', command_string]
+    node_command = ['node', './transform-svg.js', command_string]
     if scale_x is not None:
         node_command.append(str(scale_x))
     if scale_y is not None:
@@ -137,16 +138,25 @@ def fix_svg_file(input_file, output_file, scale=None):
     # Save the modified SVG
     tree.write(output_file, encoding='utf-8', xml_declaration=True)
 
+def fix_svg_files(input_dir, output_dir, scale=None):
+    input_files = os.listdir(input_dir)
+    input_files = [f for f in input_files if f.endswith('.svg')]
+    for input_file in input_files:
+        # Generate output file path
+        input_file_path = os.path.join(input_dir, input_file)
+        output_file = os.path.join(output_dir, os.path.basename(input_file))
+        fix_svg_file(input_file_path, output_file, scale)
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Fix SVG file by inlining styles and re-formatting path strings.')
-    parser.add_argument('input_file', help='Relative path to the input SVG file.')
-    parser.add_argument('--output', default='output.svg', help='Relative path to the output SVG file (default: output.svg).')
+    parser = argparse.ArgumentParser(description='Fix SVG files by inlining styles and re-formatting path strings.')
+    parser.add_argument('input_dir', nargs='+', help='Directory containing the input SVG files.')
+    parser.add_argument('--output', default='.', help='Directory to save the output SVG files (default: current directory).')
     parser.add_argument('--scale', type=float, default=1.0, help='How much to scale the SVG elements by (default: 1.0).')
 
     args = parser.parse_args()
-    input_svg_path = args.input_file
-    output_svg_path = args.output
+    input_svg_paths = args.input_files
+    output_dir = args.output
     scale = args.scale
 
-    fix_svg_file(input_svg_path, output_svg_path, scale)
+    fix_svg_files(input_svg_paths, output_dir, scale)
 
