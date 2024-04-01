@@ -8,8 +8,8 @@ async function transformSvg(commandString, scaleX = 1, scaleY = 1) {
 
 async function main() {
     const commandString = process.argv[2];
-    const scaleX = parseFloat(process.argv[3]) ?? 1;
-    const scaleY = parseFloat(process.argv[4]) ?? 1;
+    const scaleX = process.argv[3] == null ? 1 : parseFloat(process.argv[3]);
+    const scaleY = process.argv[4] == null ? 1 : parseFloat(process.argv[4]);
 
     if (typeof commandString === "undefined") {
         console.error("No command string provided.");
