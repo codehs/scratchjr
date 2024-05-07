@@ -17,6 +17,7 @@ import {
     inappPaintEditorGuide,
     inappPrivacyPolicy,
 } from "./inapp";
+import setupRealtime from './setupRealtime';
 
 /* This function replicates the behavior of the `.on<event>` properties but is
  * implemented using `addEventListener` and `removeEventListener`. This allows
@@ -205,4 +206,6 @@ window.onload = async () => {
         // Initialize currentUsage data
         InitialOptions.initWithSettings(window.Settings.initialOptions);
     });
+
+    setupRealtime();
 };
