@@ -24,8 +24,7 @@ function getFirebaseRef ( userID ) {
 }
 
 function navigateToUrl (snapshot) {
-    var val = snapshot.val();
-    var url = val.url;
+    var url = snapshot.val();
     if (url && window.location.pathname != url) {
         window.location.href = url;
     }

@@ -74815,17 +74815,14 @@ var _app = __webpack_require__(/*! firebase/app */ "./node_modules/firebase/app/
  * This is used to get nudging/focus to work for students in Scratch JR.
  */
 
-function getFirebaseRef(sectionID, isNav) {
+function getFirebaseRef(userID) {
     // Returns reference to a node on Realtime Database"
     var isLocal = window.isLocal;
 
     var FIREBASE_URL = 'https://live-dashboard-d4d0e-default-rtdb.firebaseio.com/';
-    var refPath;
-    if (isNav) {
-        refPath = isLocal ? 'LOCAL_NAV/' : 'LIVE_NAV/';
-    } else {
-        refPath = (isLocal ? 'LOCAL/' : 'LIVE') + sectionID;
-    }
+    var refPath = isLocal ? 'LOCAL_NAV/' : 'LIVE_NAV/';
+    refPath += userID;
+    console.log('REF PATH IS ', refPath);
     var firebaseApp = (0, _app.initializeApp)({
         databaseURL: FIREBASE_URL
     });
@@ -74836,15 +74833,16 @@ function getFirebaseRef(sectionID, isNav) {
 }
 
 function navigateToUrl(snapshot) {
-    var val = snapshot.val();
-    var url = val.url;
+    console.log('navigating to url', url);
+    var url = snapshot.val();
     if (url && window.location.pathname != url) {
         window.location.href = url;
     }
 }
 
 function setupRealtime() {
-    var nodeRef = getFirebaseRef(window.userData.id, null, true);
+    console.log('setting up realtime');
+    var nodeRef = getFirebaseRef(window.userData.id);
     (0, _database.onChildChanged)(nodeRef, navigateToUrl);
 }
 
