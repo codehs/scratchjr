@@ -74831,8 +74831,8 @@ function getFirebaseRef(sectionID, isNav) {
     });
 
     var db = (0, _database.getDatabase)(firebaseApp);
-    var $ref = (0, _database.ref)(db, refPath);
-    return $ref;
+    var nodeRef = (0, _database.ref)(db, refPath);
+    return nodeRef;
 }
 
 function navigateToUrl(snapshot) {
@@ -74844,8 +74844,8 @@ function navigateToUrl(snapshot) {
 }
 
 function setupRealtime() {
-    var $ref = getFirebaseRef(window.userData.id, null, true);
-    (0, _database.onChildChanged)($ref, navigateToUrl);
+    var nodeRef = getFirebaseRef(window.userData.id, null, true);
+    (0, _database.onChildChanged)(nodeRef, navigateToUrl);
 }
 
 /***/ }),
