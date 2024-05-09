@@ -7,13 +7,13 @@ import { initializeApp } from 'firebase/app';
 import { ref } from 'firebase/database';
 import { onChildChanged } from 'firebase/database';
 
-function getFirebaseRef () {
+function getFirebaseRef ( userID ) {
     // Returns reference to a node on Realtime Database"
     var isLocal = window.isLocal;
 
     var FIREBASE_URL = 'https://live-dashboard-d4d0e-default-rtdb.firebaseio.com/';
     var refPath = isLocal ? 'LOCAL_NAV/' : 'LIVE_NAV/';
-
+    refPath += userID;
     var firebaseApp = initializeApp({
         databaseURL: FIREBASE_URL
     });
