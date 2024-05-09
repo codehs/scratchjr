@@ -23,8 +23,8 @@ function getFirebaseRef (sectionID, isNav) {
     });
 
     const db = getDatabase(firebaseApp);
-    var $ref = ref(db, refPath);
-    return $ref;
+    var nodeRef = ref(db, refPath);
+    return nodeRef;
 }
 
 function navigateToUrl (snapshot) {
@@ -36,6 +36,6 @@ function navigateToUrl (snapshot) {
 }
 
 export default function setupRealtime () {
-    var $ref = getFirebaseRef(window.userData.id, null, true);
-    onChildChanged($ref, navigateToUrl);
+    var nodeRef = getFirebaseRef(window.userData.id, null, true);
+    onChildChanged(nodeRef, navigateToUrl);
 }
