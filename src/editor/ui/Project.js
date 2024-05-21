@@ -125,7 +125,7 @@ export default class Project {
             ScratchJr.log('all thumbnails updated', ScratchJr.getTime(), 'sec');
 
             // Set to fullscreen mode once project has loaded if parameter is passed in
-            if (new URLSearchParams(window.location.search).get('fullscreen') === 'true') {
+            if (window.fullscreenMode) {
                 ScratchJr.enterFullScreen();
                 gn('full').remove();
             }
