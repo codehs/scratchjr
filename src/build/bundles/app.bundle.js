@@ -74822,7 +74822,6 @@ function getFirebaseRef(userID) {
     var FIREBASE_URL = 'https://live-dashboard-d4d0e-default-rtdb.firebaseio.com/';
     var refPath = isLocal ? 'LOCAL_NAV/' : 'LIVE_NAV/';
     refPath += userID;
-    console.log('REF PATH IS ', refPath);
     var firebaseApp = (0, _app.initializeApp)({
         databaseURL: FIREBASE_URL
     });
@@ -74833,7 +74832,6 @@ function getFirebaseRef(userID) {
 }
 
 function navigateToUrl(snapshot) {
-    console.log('navigating to url', url);
     var url = snapshot.val();
     if (url && window.location.pathname != url) {
         window.location.href = url;
@@ -74841,7 +74839,6 @@ function navigateToUrl(snapshot) {
 }
 
 function setupRealtime() {
-    console.log('setting up realtime');
     var nodeRef = getFirebaseRef(window.userData.id);
     (0, _database.onChildChanged)(nodeRef, navigateToUrl);
 }
