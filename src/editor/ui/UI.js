@@ -441,7 +441,7 @@ export default class UI {
         // wait for the save to complete
         setTimeout(() => {
             ScratchJr.flippage();
-        }, 2000);
+        }, 1500);
         if (!dontHide) {
             ScratchAudio.sndFX("exittap.wav");
             gn("infobox").className = "infobox fade";
