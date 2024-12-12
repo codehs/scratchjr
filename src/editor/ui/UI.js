@@ -38,6 +38,7 @@ import {
     setProps,
     mTime,
 } from "../../utils/lib";
+import { saveDB } from "../../tablet/WebDB";
 
 let projectNameTextInput = null;
 let info = null;
@@ -435,8 +436,12 @@ export default class UI {
         Project.metadata.name = pname;
         window.projectTitle = pname;
         OS.setfield(OS.database, Project.metadata.id, "name", pname);
-        ScratchJr.changed = true;
-        Project.prepareToSave(ScratchJr.currentProject, ScratchJr.flippage);
+        // save the project
+        saveDB();
+        // wait for the save to complete
+        setTimeout(() => {
+            ScratchJr.flippage();
+        }, 2000);
         if (!dontHide) {
             ScratchAudio.sndFX("exittap.wav");
             gn("infobox").className = "infobox fade";

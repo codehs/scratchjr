@@ -448,7 +448,7 @@ export default class ScratchJr {
     }
 
     static switchPage() {
-        window.location = ScratchJr.getGotoLink();
+        window.location.pathname = ScratchJr.getGotoLink();
     }
 
     static getGotoLink() {
