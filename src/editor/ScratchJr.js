@@ -398,10 +398,10 @@ export default class ScratchJr {
         OS.analyticsEvent(
             "samples",
             "story_starter_edited",
-            Project.metadata.name
+            window.projectTitle
         );
         // Localize sample project names
-        var sampleName = Localization.localizeSampleName(Project.metadata.name);
+        var sampleName = Localization.localizeSampleName(window.projectTitle);
         // Get the new project name
         IO.uniqueProjectName(
             {
@@ -410,6 +410,7 @@ export default class ScratchJr {
             function (jsonData) {
                 var newName = jsonData.name;
                 Project.metadata.name = newName;
+                window.projectTitle = newName;
                 // Create the new project
                 IO.createProject(
                     {

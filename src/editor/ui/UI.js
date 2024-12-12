@@ -342,7 +342,6 @@ export default class UI {
         };
         var ti = newHTML("input", "pnamefield", pname);
         projectNameTextInput = ti;
-        // ti.name = window.projectTitle;
         ti.name = "myproject";
         ti.maxLength = 30;
         ti.onkeypress = undefined;
@@ -388,11 +387,11 @@ export default class UI {
             OS.analyticsEvent(
                 "samples",
                 "story_starter_edited",
-                Project.metadata.name
+                window.projectTitle
             );
             // Get the new project name
             var sampleName = Localization.localizeSampleName(
-                Project.metadata.name
+                window.projectTitle
             );
             IO.uniqueProjectName(
                 {
@@ -401,6 +400,7 @@ export default class UI {
                 function (jsonData) {
                     var newName = jsonData.name;
                     Project.metadata.name = newName;
+                    window.projectTitle = newName;
                     // Create the new project
                     IO.createProject(
                         {
@@ -429,10 +429,11 @@ export default class UI {
             ti.value.length == 0
                 ? ti.oldvalue
                 : ti.value.substring(0, ti.maxLength);
-        if (Project.metadata.name != pname) {
+        if (window.projectTitle != pname) {
             ScratchJr.storyStart("UI.handleTextFieldSave");
         }
         Project.metadata.name = pname;
+        window.projectTitle = pname;
         OS.setfield(OS.database, Project.metadata.id, "name", pname);
         if (!dontHide) {
             ScratchAudio.sndFX("exittap.wav");
@@ -451,11 +452,11 @@ export default class UI {
             return;
         }
 
-        var canShare =
-            ScratchJr.editmode != "storyStarter" || ScratchJr.changed;
-        gn("infoboxParentsSectionButton").style.display = canShare
-            ? "block"
-            : "none";
+        // var canShare =
+        //     ScratchJr.editmode != "storyStarter" || ScratchJr.changed;
+        // gn("infoboxParentsSectionButton").style.display = canShare
+        //     ? "block"
+        //     : "none";
 
         // Prevent button from thrashing
         setTimeout(function () {
@@ -489,13 +490,13 @@ export default class UI {
         }
 
         if (ScratchJr.isEditable()) {
-            var name = Project.metadata.name;
+            var name = window.projectTitle;
             if (ScratchJr.editmode == "storyStarter") {
                 name = Localization.localizeSampleName(name);
             }
             document.forms.projectname.myproject.value = name;
         } else {
-            gn("pname").textContent = Project.metadata.name;
+            gn("pname").textContent = window.projectTitle;
         }
         gn("infobox").className = "infobox fade in";
         if (ScratchJr.isEditable()) {
@@ -536,8 +537,8 @@ export default class UI {
             ScratchAudio.sndFX("exittap.wav");
             gn("infobox").className = "infobox fade";
         }
-        gn("sharebuttons").style.visibility = "hidden";
-        gn("parentsection").style.visibility = "visible";
+        // gn("sharebuttons").style.visibility = "hidden";
+        // gn("parentsection").style.visibility = "visible";
         infoBoxOpen = false;
     }
 
