@@ -94,7 +94,7 @@ export default class UI {
     static topSection() {
         var div = newHTML("div", "topsection", frame);
         div.setAttribute("id", "topsection");
-        if (ScratchJr.isEditable()) {
+        if (ScratchJr.isEditable() && window.isSandbox) {
             UI.addProjectInfo();
         }
         UI.leftPanel(div);
@@ -341,7 +341,7 @@ export default class UI {
         };
         var ti = newHTML("input", "pnamefield", pname);
         projectNameTextInput = ti;
-        ti.name = "myproject";
+        ti.name = window.projectTitle;
         ti.maxLength = 30;
         ti.onkeypress = undefined;
         ti.autocomplete = "off";
