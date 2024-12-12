@@ -435,6 +435,8 @@ export default class UI {
         Project.metadata.name = pname;
         window.projectTitle = pname;
         OS.setfield(OS.database, Project.metadata.id, "name", pname);
+        ScratchJr.changed = true;
+        Project.prepareToSave(ScratchJr.currentProject, ScratchJr.flippage);
         if (!dontHide) {
             ScratchAudio.sndFX("exittap.wav");
             gn("infobox").className = "infobox fade";

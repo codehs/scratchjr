@@ -448,39 +448,44 @@ export default class ScratchJr {
     }
 
     static switchPage() {
-        window.location.href = ScratchJr.getGotoLink();
+        window.location = ScratchJr.getGotoLink();
     }
 
     static getGotoLink() {
-        const params = new URLSearchParams();
-        if (window.studentAssignmentID) {
-            params.append(
-                "student_assignment_id",
-                window.studentAssignmentID
-            );
-        }
         if (window.itemID) {
-            params.append("item_id", window.itemID);
-        }
-
-        if (editmode == "storyStarter") {
-            if (!storyStarted) {
-                return "home.html?place=help&" + params.toString();
-            } else {
-                return "home.html?place=home&" + params.toString();
-            }
-        }
-
-        if (!currentProject) {
-            return "home.html?place=home&" + params.toString();
-        }
-
-        if (Project.metadata.gallery == "samples") {
-            return "home.html?place=help&" + params.toString();
+            return 'editor/' + window.itemID;
         } else {
-            params.append("timestamp", new Date().getTime());
-            return "home.html?place=home&" + params.toString();
+            return '/';
         }
+        // const params = new URLSearchParams();
+        // if (window.studentAssignmentID) {
+        //     params.append(
+        //         "student_assignment_id",
+        //         window.studentAssignmentID
+        //     );
+        // }
+        // if (window.itemID) {
+        //     params.append("item_id", window.itemID);
+        // }
+
+        // if (editmode == "storyStarter") {
+        //     if (!storyStarted) {
+        //         return "home.html?place=help&" + params.toString();
+        //     } else {
+        //         return "home.html?place=home&" + params.toString();
+        //     }
+        // }
+
+        // if (!currentProject) {
+        //     return "home.html?place=home&" + params.toString();
+        // }
+
+        // if (Project.metadata.gallery == "samples") {
+        //     return "home.html?place=help&" + params.toString();
+        // } else {
+        //     params.append("timestamp", new Date().getTime());
+        //     return "home.html?place=home&" + params.toString();
+        // }
     }
 
     static updateRunStopButtons() {
