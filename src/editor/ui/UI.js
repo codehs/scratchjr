@@ -132,76 +132,77 @@ export default class UI {
         okclicky = newHTML("div", "paintdone", infobox);
         newHTML("div", "infoboxlogo", infobox);
         var nameField = UI.addEditableName(infobox);
-        var staticinfo = newHTML("div", "fixedinfo", infobox);
-        var author = newHTML("div", "infolabel", staticinfo);
-        author.setAttribute("id", "deviceName");
+        // var staticinfo = newHTML("div", "fixedinfo", infobox);
+        // var author = newHTML("div", "infolabel", staticinfo);
+        // author.setAttribute("id", "deviceName");
 
-        if (window.Settings.shareEnabled) {
-            // For Parents button
-            var parentsSection = newHTML(
-                "div",
-                "infoboxParentsSection",
-                infobox
-            );
-            parentsSection.setAttribute("id", "parentsection");
+        // We dont need this block of code as sharing is from the sandbox page
+        // if (window.Settings.shareEnabled) {
+        //     // For Parents button
+        //     var parentsSection = newHTML(
+        //         "div",
+        //         "infoboxParentsSection",
+        //         infobox
+        //     );
+        //     parentsSection.setAttribute("id", "parentsection");
 
-            var parentsButton = newHTML(
-                "div",
-                "infoboxParentsButton",
-                parentsSection
-            );
-            parentsButton.id = "infoboxParentsSectionButton";
-            parentsButton.textContent = Localization.localize("FOR_PARENTS");
+        //     var parentsButton = newHTML(
+        //         "div",
+        //         "infoboxParentsButton",
+        //         parentsSection
+        //     );
+        //     parentsButton.id = "infoboxParentsSectionButton";
+        //     parentsButton.textContent = Localization.localize("FOR_PARENTS");
 
-            // Sharing
-            var shareButtons = newHTML("div", "infoboxShareButtons", infobox);
-            shareButtons.setAttribute("id", "sharebuttons");
+        //     // Sharing
+        //     var shareButtons = newHTML("div", "infoboxShareButtons", infobox);
+        //     shareButtons.setAttribute("id", "sharebuttons");
 
-            var shareEmail = newHTML("div", "infoboxShareButton", shareButtons);
-            shareEmail.id = "infoboxShareButtonEmail";
-            shareEmail.textContent = Localization.localize("SHARING_BY_EMAIL");
-            shareEmail.onclick = function (e) {
-                UI.infoDoShare(e, nameField, shareLoadingGif, EMAILSHARE);
-            };
+        //     var shareEmail = newHTML("div", "infoboxShareButton", shareButtons);
+        //     shareEmail.id = "infoboxShareButtonEmail";
+        //     shareEmail.textContent = Localization.localize("SHARING_BY_EMAIL");
+        //     shareEmail.onclick = function (e) {
+        //         UI.infoDoShare(e, nameField, shareLoadingGif, EMAILSHARE);
+        //     };
 
-            if (isAndroid) {
-                shareEmail.style.margin = "auto";
-            } else {
-                shareEmail.style.float = "left";
-            }
+        //     if (isAndroid) {
+        //         shareEmail.style.margin = "auto";
+        //     } else {
+        //         shareEmail.style.float = "left";
+        //     }
 
-            if (!isAndroid) {
-                var shareAirdrop = newHTML(
-                    "div",
-                    "infoboxShareButton",
-                    shareButtons
-                );
-                shareAirdrop.id = "infoboxShareButtonAirdrop";
-                shareAirdrop.textContent =
-                    Localization.localize("SHARING_BY_AIRDROP");
-                shareAirdrop.style.float = "right";
-                shareAirdrop.onclick = function (e) {
-                    UI.infoDoShare(e, nameField, shareLoadingGif, AIRDROPSHARE);
-                };
-            }
+        //     if (!isAndroid) {
+        //         var shareAirdrop = newHTML(
+        //             "div",
+        //             "infoboxShareButton",
+        //             shareButtons
+        //         );
+        //         shareAirdrop.id = "infoboxShareButtonAirdrop";
+        //         shareAirdrop.textContent =
+        //             Localization.localize("SHARING_BY_AIRDROP");
+        //         shareAirdrop.style.float = "right";
+        //         shareAirdrop.onclick = function (e) {
+        //             UI.infoDoShare(e, nameField, shareLoadingGif, AIRDROPSHARE);
+        //         };
+        //     }
 
-            OS.deviceName(function (name) {
-                gn("deviceName").textContent = name;
-            });
+        //     OS.deviceName(function (name) {
+        //         gn("deviceName").textContent = name;
+        //     });
 
-            var shareLoadingGif = newHTML(
-                "img",
-                "infoboxShareLoading",
-                shareButtons
-            );
-            shareLoadingGif.src = absoluteURL("./assets/ui/loader.png");
+        //     var shareLoadingGif = newHTML(
+        //         "img",
+        //         "infoboxShareLoading",
+        //         shareButtons
+        //     );
+        //     shareLoadingGif.src = absoluteURL("./assets/ui/loader.png");
 
-            parentsButton.onclick = function (e) {
-                UI.parentalGate(e, function (e) {
-                    UI.showSharing(e, shareButtons, parentsSection);
-                });
-            };
-        }
+        //     parentsButton.onclick = function (e) {
+        //         UI.parentalGate(e, function (e) {
+        //             UI.showSharing(e, shareButtons, parentsSection);
+        //         });
+        //     };
+        // }
 
         info.onclick = UI.showInfoBox;
         okclicky.onclick = function (evt) {
@@ -341,7 +342,8 @@ export default class UI {
         };
         var ti = newHTML("input", "pnamefield", pname);
         projectNameTextInput = ti;
-        ti.name = window.projectTitle;
+        // ti.name = window.projectTitle;
+        ti.name = "myproject";
         ti.maxLength = 30;
         ti.onkeypress = undefined;
         ti.autocomplete = "off";
