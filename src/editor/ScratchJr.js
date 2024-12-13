@@ -452,40 +452,35 @@ export default class ScratchJr {
     }
 
     static getGotoLink() {
-        if (window.itemID) {
-            return 'editor/' + window.itemID;
-        } else {
-            return '/';
+        const params = new URLSearchParams();
+        if (window.studentAssignmentID) {
+            params.append(
+                "student_assignment_id",
+                window.studentAssignmentID
+            );
         }
-        // const params = new URLSearchParams();
-        // if (window.studentAssignmentID) {
-        //     params.append(
-        //         "student_assignment_id",
-        //         window.studentAssignmentID
-        //     );
-        // }
-        // if (window.itemID) {
-        //     params.append("item_id", window.itemID);
-        // }
+        if (window.itemID) {
+            params.append("item_id", window.itemID);
+        }
 
-        // if (editmode == "storyStarter") {
-        //     if (!storyStarted) {
-        //         return "home.html?place=help&" + params.toString();
-        //     } else {
-        //         return "home.html?place=home&" + params.toString();
-        //     }
-        // }
+        if (editmode == "storyStarter") {
+            if (!storyStarted) {
+                return "home.html?place=help&" + params.toString();
+            } else {
+                return "home.html?place=home&" + params.toString();
+            }
+        }
 
-        // if (!currentProject) {
-        //     return "home.html?place=home&" + params.toString();
-        // }
+        if (!currentProject) {
+            return "home.html?place=home&" + params.toString();
+        }
 
-        // if (Project.metadata.gallery == "samples") {
-        //     return "home.html?place=help&" + params.toString();
-        // } else {
-        //     params.append("timestamp", new Date().getTime());
-        //     return "home.html?place=home&" + params.toString();
-        // }
+        if (Project.metadata.gallery == "samples") {
+            return "home.html?place=help&" + params.toString();
+        } else {
+            params.append("timestamp", new Date().getTime());
+            return "home.html?place=home&" + params.toString();
+        }
     }
 
     static updateRunStopButtons() {
