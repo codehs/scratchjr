@@ -437,14 +437,12 @@ export default class UI {
         window.projectTitle = pname;
         OS.setfield(OS.database, Project.metadata.id, "name", pname);
         // save the project
+        window.reloadPage = true;
         saveDB();
-        // wait for the save to complete
-        setTimeout(() => {
-            ScratchJr.flippage();
-        }, 1500);
         if (!dontHide) {
             ScratchAudio.sndFX("exittap.wav");
-            gn("infobox").className = "infobox fade";
+            // saving the DB will trigger a reload, so we don't need to hide the infobox here
+            // gn("infobox").className = "infobox fade";
         }
     }
 
