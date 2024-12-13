@@ -148,8 +148,8 @@ export default class Ghost {
         var rpos = Paint.root.createSVGRect();
         rpos.x = pt.x;
         rpos.y = pt.y;
-        rpos.width = 1;
-        rpos.height = 1;
+        rpos.width = 100;
+        rpos.height = 100;
 
         var matches = Paint.root.getIntersectionList(rpos, null);
         if (matches !== null) {
