@@ -95,7 +95,7 @@ export default class UI {
     static topSection() {
         var div = newHTML("div", "topsection", frame);
         div.setAttribute("id", "topsection");
-        if (ScratchJr.isEditable() && window.isSandbox) {
+        if (ScratchJr.isEditable() && window.isSandbox && window.canSave) {
             UI.addProjectInfo();
         }
         UI.leftPanel(div);
