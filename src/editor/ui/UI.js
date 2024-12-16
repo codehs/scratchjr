@@ -38,6 +38,7 @@ import {
     setProps,
     mTime,
 } from "../../utils/lib";
+import { saveDB } from "../../tablet/WebDB";
 
 let projectNameTextInput = null;
 let info = null;
@@ -94,7 +95,7 @@ export default class UI {
     static topSection() {
         var div = newHTML("div", "topsection", frame);
         div.setAttribute("id", "topsection");
-        if (ScratchJr.isEditable()) {
+        if (ScratchJr.isEditable() && window.isSandbox && window.canSave) {
             UI.addProjectInfo();
         }
         UI.leftPanel(div);
@@ -132,76 +133,77 @@ export default class UI {
         okclicky = newHTML("div", "paintdone", infobox);
         newHTML("div", "infoboxlogo", infobox);
         var nameField = UI.addEditableName(infobox);
-        var staticinfo = newHTML("div", "fixedinfo", infobox);
-        var author = newHTML("div", "infolabel", staticinfo);
-        author.setAttribute("id", "deviceName");
+        // var staticinfo = newHTML("div", "fixedinfo", infobox);
+        // var author = newHTML("div", "infolabel", staticinfo);
+        // author.setAttribute("id", "deviceName");
 
-        if (window.Settings.shareEnabled) {
-            // For Parents button
-            var parentsSection = newHTML(
-                "div",
-                "infoboxParentsSection",
-                infobox
-            );
-            parentsSection.setAttribute("id", "parentsection");
+        // We dont need this block of code as sharing is from the sandbox page
+        // if (window.Settings.shareEnabled) {
+        //     // For Parents button
+        //     var parentsSection = newHTML(
+        //         "div",
+        //         "infoboxParentsSection",
+        //         infobox
+        //     );
+        //     parentsSection.setAttribute("id", "parentsection");
 
-            var parentsButton = newHTML(
-                "div",
-                "infoboxParentsButton",
-                parentsSection
-            );
-            parentsButton.id = "infoboxParentsSectionButton";
-            parentsButton.textContent = Localization.localize("FOR_PARENTS");
+        //     var parentsButton = newHTML(
+        //         "div",
+        //         "infoboxParentsButton",
+        //         parentsSection
+        //     );
+        //     parentsButton.id = "infoboxParentsSectionButton";
+        //     parentsButton.textContent = Localization.localize("FOR_PARENTS");
 
-            // Sharing
-            var shareButtons = newHTML("div", "infoboxShareButtons", infobox);
-            shareButtons.setAttribute("id", "sharebuttons");
+        //     // Sharing
+        //     var shareButtons = newHTML("div", "infoboxShareButtons", infobox);
+        //     shareButtons.setAttribute("id", "sharebuttons");
 
-            var shareEmail = newHTML("div", "infoboxShareButton", shareButtons);
-            shareEmail.id = "infoboxShareButtonEmail";
-            shareEmail.textContent = Localization.localize("SHARING_BY_EMAIL");
-            shareEmail.onclick = function (e) {
-                UI.infoDoShare(e, nameField, shareLoadingGif, EMAILSHARE);
-            };
+        //     var shareEmail = newHTML("div", "infoboxShareButton", shareButtons);
+        //     shareEmail.id = "infoboxShareButtonEmail";
+        //     shareEmail.textContent = Localization.localize("SHARING_BY_EMAIL");
+        //     shareEmail.onclick = function (e) {
+        //         UI.infoDoShare(e, nameField, shareLoadingGif, EMAILSHARE);
+        //     };
 
-            if (isAndroid) {
-                shareEmail.style.margin = "auto";
-            } else {
-                shareEmail.style.float = "left";
-            }
+        //     if (isAndroid) {
+        //         shareEmail.style.margin = "auto";
+        //     } else {
+        //         shareEmail.style.float = "left";
+        //     }
 
-            if (!isAndroid) {
-                var shareAirdrop = newHTML(
-                    "div",
-                    "infoboxShareButton",
-                    shareButtons
-                );
-                shareAirdrop.id = "infoboxShareButtonAirdrop";
-                shareAirdrop.textContent =
-                    Localization.localize("SHARING_BY_AIRDROP");
-                shareAirdrop.style.float = "right";
-                shareAirdrop.onclick = function (e) {
-                    UI.infoDoShare(e, nameField, shareLoadingGif, AIRDROPSHARE);
-                };
-            }
+        //     if (!isAndroid) {
+        //         var shareAirdrop = newHTML(
+        //             "div",
+        //             "infoboxShareButton",
+        //             shareButtons
+        //         );
+        //         shareAirdrop.id = "infoboxShareButtonAirdrop";
+        //         shareAirdrop.textContent =
+        //             Localization.localize("SHARING_BY_AIRDROP");
+        //         shareAirdrop.style.float = "right";
+        //         shareAirdrop.onclick = function (e) {
+        //             UI.infoDoShare(e, nameField, shareLoadingGif, AIRDROPSHARE);
+        //         };
+        //     }
 
-            OS.deviceName(function (name) {
-                gn("deviceName").textContent = name;
-            });
+        //     OS.deviceName(function (name) {
+        //         gn("deviceName").textContent = name;
+        //     });
 
-            var shareLoadingGif = newHTML(
-                "img",
-                "infoboxShareLoading",
-                shareButtons
-            );
-            shareLoadingGif.src = absoluteURL("./assets/ui/loader.png");
+        //     var shareLoadingGif = newHTML(
+        //         "img",
+        //         "infoboxShareLoading",
+        //         shareButtons
+        //     );
+        //     shareLoadingGif.src = absoluteURL("./assets/ui/loader.png");
 
-            parentsButton.onclick = function (e) {
-                UI.parentalGate(e, function (e) {
-                    UI.showSharing(e, shareButtons, parentsSection);
-                });
-            };
-        }
+        //     parentsButton.onclick = function (e) {
+        //         UI.parentalGate(e, function (e) {
+        //             UI.showSharing(e, shareButtons, parentsSection);
+        //         });
+        //     };
+        // }
 
         info.onclick = UI.showInfoBox;
         okclicky.onclick = function (evt) {
@@ -386,11 +388,11 @@ export default class UI {
             OS.analyticsEvent(
                 "samples",
                 "story_starter_edited",
-                Project.metadata.name
+                window.projectTitle
             );
             // Get the new project name
             var sampleName = Localization.localizeSampleName(
-                Project.metadata.name
+                window.projectTitle
             );
             IO.uniqueProjectName(
                 {
@@ -399,6 +401,7 @@ export default class UI {
                 function (jsonData) {
                     var newName = jsonData.name;
                     Project.metadata.name = newName;
+                    window.projectTitle = newName;
                     // Create the new project
                     IO.createProject(
                         {
@@ -427,14 +430,19 @@ export default class UI {
             ti.value.length == 0
                 ? ti.oldvalue
                 : ti.value.substring(0, ti.maxLength);
-        if (Project.metadata.name != pname) {
+        if (window.projectTitle != pname) {
             ScratchJr.storyStart("UI.handleTextFieldSave");
         }
         Project.metadata.name = pname;
+        window.projectTitle = pname;
         OS.setfield(OS.database, Project.metadata.id, "name", pname);
+        // save the project
+        window.reloadPage = true;
+        saveDB();
         if (!dontHide) {
             ScratchAudio.sndFX("exittap.wav");
-            gn("infobox").className = "infobox fade";
+            // saving the DB will trigger a reload, so we don't need to hide the infobox here
+            // gn("infobox").className = "infobox fade";
         }
     }
 
@@ -449,11 +457,11 @@ export default class UI {
             return;
         }
 
-        var canShare =
-            ScratchJr.editmode != "storyStarter" || ScratchJr.changed;
-        gn("infoboxParentsSectionButton").style.display = canShare
-            ? "block"
-            : "none";
+        // var canShare =
+        //     ScratchJr.editmode != "storyStarter" || ScratchJr.changed;
+        // gn("infoboxParentsSectionButton").style.display = canShare
+        //     ? "block"
+        //     : "none";
 
         // Prevent button from thrashing
         setTimeout(function () {
@@ -487,13 +495,13 @@ export default class UI {
         }
 
         if (ScratchJr.isEditable()) {
-            var name = Project.metadata.name;
+            var name = window.projectTitle;
             if (ScratchJr.editmode == "storyStarter") {
                 name = Localization.localizeSampleName(name);
             }
             document.forms.projectname.myproject.value = name;
         } else {
-            gn("pname").textContent = Project.metadata.name;
+            gn("pname").textContent = window.projectTitle;
         }
         gn("infobox").className = "infobox fade in";
         if (ScratchJr.isEditable()) {
@@ -534,8 +542,8 @@ export default class UI {
             ScratchAudio.sndFX("exittap.wav");
             gn("infobox").className = "infobox fade";
         }
-        gn("sharebuttons").style.visibility = "hidden";
-        gn("parentsection").style.visibility = "visible";
+        // gn("sharebuttons").style.visibility = "hidden";
+        // gn("parentsection").style.visibility = "visible";
         infoBoxOpen = false;
     }
 
