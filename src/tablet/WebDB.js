@@ -277,6 +277,8 @@ async function getInitialDBString() {
             dbData = result[0];
             showUploadDB = result[1];
         } else {
+            console.log("result is not an array");
+            console.log(result);
             dbData = result;
         }
         if (showUploadDB) {
