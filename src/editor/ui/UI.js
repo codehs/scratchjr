@@ -95,7 +95,7 @@ export default class UI {
     static topSection() {
         var div = newHTML("div", "topsection", frame);
         div.setAttribute("id", "topsection");
-        if (ScratchJr.isEditable() && window.isSandbox && window.canSave) {
+        if (ScratchJr.isEditable()) {
             UI.addProjectInfo();
         }
         UI.leftPanel(div);
@@ -132,10 +132,13 @@ export default class UI {
         infobox.setAttribute("id", "infobox");
         okclicky = newHTML("div", "paintdone", infobox);
         newHTML("div", "infoboxlogo", infobox);
-        var nameField = UI.addEditableName(infobox);
-        // var staticinfo = newHTML("div", "fixedinfo", infobox);
-        // var author = newHTML("div", "infolabel", staticinfo);
-        // author.setAttribute("id", "deviceName");
+        if (window.isSandbox && window.canSave) {
+            var nameField = UI.addEditableName(infobox);
+        } else {
+            var staticinfo = newHTML("div", "fixedinfo", infobox);
+            var title = newHTML("div", "infolabel", staticinfo);
+            title.setAttribute("id", "projectTitleLabel");
+        }
 
         // We dont need this block of code as sharing is from the sandbox page
         // if (window.Settings.shareEnabled) {
@@ -466,17 +469,21 @@ export default class UI {
         // Prevent button from thrashing
         setTimeout(function () {
             okclicky.onclick = UI.hideInfoBox;
+            if (window.isSandbox && window.canSave) {
+                projectNameTextInput.onblur = function () {
+                    if (isAndroid) {
+                        AndroidInterface.scratchjr_forceHideKeyboard();
+                    }
+                };
+            }
+        }, 500);
+        if (window.isSandbox && window.canSave) {
             projectNameTextInput.onblur = function () {
-                if (isAndroid) {
-                    AndroidInterface.scratchjr_forceHideKeyboard();
+                if (ScratchJr.isEditable()) {
+                    document.forms.projectname.myproject.focus();
                 }
             };
-        }, 500);
-        projectNameTextInput.onblur = function () {
-            if (ScratchJr.isEditable()) {
-                document.forms.projectname.myproject.focus();
-            }
-        };
+        }
         info.onclick = null;
 
         ScratchJr.onBackButtonCallback.push(function () {
@@ -494,17 +501,19 @@ export default class UI {
             Project.metadata.ctime = UI.formatTime(new Date().getTime());
         }
 
-        if (ScratchJr.isEditable()) {
+        if (ScratchJr.isEditable() && window.isSandbox && window.canSave) {
             var name = window.projectTitle;
             if (ScratchJr.editmode == "storyStarter") {
                 name = Localization.localizeSampleName(name);
             }
             document.forms.projectname.myproject.value = name;
-        } else {
+        } else if (window.isSandbox && window.canSave) {
             gn("pname").textContent = window.projectTitle;
+        } else {
+            gn("projectTitleLabel").textContent = window.projectTitle;
         }
         gn("infobox").className = "infobox fade in";
-        if (ScratchJr.isEditable()) {
+        if (ScratchJr.isEditable() && window.isSandbox && window.canSave) {
             setTimeout(function () {
                 //(document.forms["projectname"]["myproject"]).focus();
             }, 500);
@@ -535,7 +544,7 @@ export default class UI {
             info.onclick = UI.showInfoBox;
         }, 500);
 
-        if (ScratchJr.isEditable()) {
+        if (ScratchJr.isEditable() && window.isSandbox && window.canSave) {
             document.forms.projectname.myproject.blur();
             UI.handleTextFieldSave();
         } else {
