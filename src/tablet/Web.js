@@ -59,7 +59,7 @@ export async function setupMediaRecording() {
         );
         audioRecorder.addEventListener("stop", async () => {
             const audioBlob = new File(latestAudioChunks, "recording.webm", {
-                type: "video/webm",
+                type: "audio/webm",
             });
 
             Record.setButtonsEnabled(false);
