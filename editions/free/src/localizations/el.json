@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "Σχολείο",
     "USAGE_HOME": "Σπίτι",
     "USAGE_OTHER": "Άλλο",
-    "USAGE_NONE": "Να μην ερωτηθώ ξανά"
+    "USAGE_NONE": "Να μην ερωτηθώ ξανά",
+    "SUBMIT_ASSIGNMENT": "Υποβολή"
 }

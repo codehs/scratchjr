@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "がっこう",
     "USAGE_HOME": "おうち",
     "USAGE_OTHER": "そのほか",
-    "USAGE_NONE": "つぎからひょうじしない"
+    "USAGE_NONE": "つぎからひょうじしない",
+    "SUBMIT_ASSIGNMENT": "ていしゅつ"
 }

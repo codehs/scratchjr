@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "學校",
     "USAGE_HOME": "家裡",
     "USAGE_OTHER": "其他",
-    "USAGE_NONE": "不要再問我"
+    "USAGE_NONE": "不要再問我",
+    "SUBMIT_ASSIGNMENT": "繳交"
 }

@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "학교",
     "USAGE_HOME": "집",
     "USAGE_OTHER": "타의",
-    "USAGE_NONE": "다시 물어보지 말기"
+    "USAGE_NONE": "다시 물어보지 말기",
+    "SUBMIT_ASSIGNMENT": "제출"
 }

@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "У навчальному закладі",
     "USAGE_HOME": "Вдома",
     "USAGE_OTHER": "Інше",
-    "USAGE_NONE": "Не запитувати знову"
+    "USAGE_NONE": "Не запитувати знову",
+    "SUBMIT_ASSIGNMENT": "Здати"
 }
