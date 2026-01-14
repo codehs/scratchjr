@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "Skole",
     "USAGE_HOME": "Hjem",
     "USAGE_OTHER": "Annet",
-    "USAGE_NONE": "Ikke spør igjen"
+    "USAGE_NONE": "Ikke spør igjen",
+    "SUBMIT_ASSIGNMENT": "Lever inn"
 }

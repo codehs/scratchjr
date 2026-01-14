@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "I skolan",
     "USAGE_HOME": "Hemma",
     "USAGE_OTHER": "Annat",
-    "USAGE_NONE": "Fråga inte igen"
+    "USAGE_NONE": "Fråga inte igen",
+    "SUBMIT_ASSIGNMENT": "Lämna in"
 }

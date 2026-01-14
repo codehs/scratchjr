@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "Skole",
     "USAGE_HOME": "Hjem",
     "USAGE_OTHER": "Andet",
-    "USAGE_NONE": "Spørg ikke igen"
+    "USAGE_NONE": "Spørg ikke igen",
+    "SUBMIT_ASSIGNMENT": "Aflever"
 }

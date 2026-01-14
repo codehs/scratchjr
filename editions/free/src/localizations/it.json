@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "Scuola",
     "USAGE_HOME": "Casa",
     "USAGE_OTHER": "Altro",
-    "USAGE_NONE": "Non chiederlo di nuovo"
+    "USAGE_NONE": "Non chiederlo di nuovo",
+    "SUBMIT_ASSIGNMENT": "Consegna"
 }

@@ -1,20 +1,58 @@
 /* sprite library panel */
 
-.flipme {
+.left-menu {
     position: absolute;
+    display: flex;
+    align-items: center;
+    gap: ${css_vh(0.8)};
     margin: 0px;
     padding: 0px;
     top: ${css_vh(0.13)};
     left: ${css_vh(1.69)};
-    background:  url('../assets/ui/fliplogo.svg');
+}
+
+.flipme {
+    background:  url('../assets/ui/homeButton.svg');
     background-size: 100.5%; /* webview pixelates the image unless we do this */
-    width: ${css_vh(29.95)};
+    width: ${css_vh(8.20)};
     height: ${css_vh(8.20)};
+    cursor: pointer;
 }
 
 .flipme:active {
-    background:  url('../assets/ui/fliplogoPressed.svg');
+    background:  url('../assets/ui/homeButtonPressed.svg');
     background-size: 100.5%;  /* webview pixelates the image unless we do this */
+}
+
+.submit-assignment-btn {
+    border: none;
+    background: #5DB27E;
+    border: 3px solid white;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: ${css_vh(0.8)};
+    width: max-content;
+    height: max-content;
+    cursor: pointer;
+    padding: ${css_vh(0.6)} ${css_vh(1.8)};
+    border-radius: 100vh;
+    box-shadow: #0000004d 3px 3px 1px;
+    font-family: Verdana;
+    font-size: ${css_vh(2.8)};
+}
+
+.submit-assignment-btn:active {
+    box-shadow: none;
+    transform: translate(3px, 3px);
+}
+
+.submit-assignment-icon {
+    width: ${css_vh(4.8)};
+    height: ${css_vh(4.8)};
+    background: url('../assets/ui/submitFlag.svg');
+    background-size: 100%;
 }
 
 .scrollbar {

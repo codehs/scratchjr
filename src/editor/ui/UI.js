@@ -106,11 +106,26 @@ export default class UI {
     static leftPanel(div) {
         // sprite library
         var sl = newHTML("div", "leftpanel", div);
-        var flip = newHTML("div", "flipme", sl);
+
+        var menu = newHTML("div", "left-menu", sl);
+        var flip = newHTML("div", "flipme", menu);
         flip.setAttribute("id", "flip");
         flip.onclick = function (evt) {
             window.location.href = "https://codehs.com/";
         }; // move to project
+
+        if (window.canSubmit) {
+            // Submit assignment button
+            var submitButton = newHTML("button", "submit-assignment-btn", menu);
+            submitButton.setAttribute("id", "submitAssignment");
+            submitButton.onclick = function() {
+                window.submitAssignment()
+            };
+
+            newHTML('div', 'submit-assignment-icon', submitButton);
+            var text = newHTML('span', 'submit-assignment-text', submitButton);
+            text.textContent = Localization.localize('SUBMIT_ASSIGNMENT');
+        }
         UI.layoutLibrary(sl);
     }
 

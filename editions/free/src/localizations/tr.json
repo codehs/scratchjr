@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "Okul",
     "USAGE_HOME": "Ev",
     "USAGE_OTHER": "Diğer",
-    "USAGE_NONE": "Tekrar sorma"
+    "USAGE_NONE": "Tekrar sorma",
+    "SUBMIT_ASSIGNMENT": "Teslim et"
 }

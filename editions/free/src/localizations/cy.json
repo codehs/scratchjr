@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "Ysgol",
     "USAGE_HOME": "Adref",
     "USAGE_OTHER": "Arall",
-    "USAGE_NONE": "Peidiwch gofyn eto"
+    "USAGE_NONE": "Peidiwch gofyn eto",
+    "SUBMIT_ASSIGNMENT": "Cyflwyno"
 }

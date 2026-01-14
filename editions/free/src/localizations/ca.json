@@ -410,5 +410,6 @@
     "USAGE_SCHOOL": "Escola",
     "USAGE_HOME": "Casa",
     "USAGE_OTHER": "Altres",
-    "USAGE_NONE": "No preguntar-ho més"
+    "USAGE_NONE": "No preguntar-ho més",
+    "SUBMIT_ASSIGNMENT": "Lliura"
 }
