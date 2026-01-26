@@ -411,5 +411,6 @@
     "USAGE_HOME": "おうち",
     "USAGE_OTHER": "そのほか",
     "USAGE_NONE": "つぎからひょうじしない",
-    "SUBMIT_ASSIGNMENT": "ていしゅつ"
+    "SUBMIT_ASSIGNMENT": "ていしゅつ",
+    "SUBMIT_ASSIGNMENT_AGAIN": "もういちどていしゅつ"
 }

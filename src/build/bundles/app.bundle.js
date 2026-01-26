@@ -72096,11 +72096,13 @@ var UI = function () {
                 submitButton.setAttribute("id", "submitAssignment");
                 submitButton.onclick = function () {
                     window.submitAssignment();
+                    text.textContent = _Localization2.default.localize('SUBMIT_ASSIGNMENT_AGAIN');
                 };
 
                 (0, _lib.newHTML)('div', 'submit-assignment-icon', submitButton);
                 var text = (0, _lib.newHTML)('span', 'submit-assignment-text', submitButton);
-                text.textContent = _Localization2.default.localize('SUBMIT_ASSIGNMENT');
+                var locKey = window.isSubmitted ? 'SUBMIT_ASSIGNMENT_AGAIN' : 'SUBMIT_ASSIGNMENT';
+                text.textContent = _Localization2.default.localize(locKey);
             }
             UI.layoutLibrary(sl);
         }

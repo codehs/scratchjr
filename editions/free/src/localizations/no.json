@@ -411,5 +411,6 @@
     "USAGE_HOME": "Hjem",
     "USAGE_OTHER": "Annet",
     "USAGE_NONE": "Ikke spør igjen",
-    "SUBMIT_ASSIGNMENT": "Lever inn"
+    "SUBMIT_ASSIGNMENT": "Lever inn",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Lever inn igjen"
 }

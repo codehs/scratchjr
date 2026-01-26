@@ -411,5 +411,6 @@
     "USAGE_HOME": "Casa",
     "USAGE_OTHER": "Outro",
     "USAGE_NONE": "Não voltar a perguntar.",
-    "SUBMIT_ASSIGNMENT": "Entregar"
+    "SUBMIT_ASSIGNMENT": "Entregar",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Entregar novamente"
 }

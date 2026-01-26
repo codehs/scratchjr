@@ -411,5 +411,6 @@
     "USAGE_HOME": "Home",
     "USAGE_OTHER": "Other",
     "USAGE_NONE": "Don't ask again",
-    "SUBMIT_ASSIGNMENT": "ส่งงาน"
+    "SUBMIT_ASSIGNMENT": "ส่งงาน",
+    "SUBMIT_ASSIGNMENT_AGAIN": "ส่งงานอีกครั้ง"
 }

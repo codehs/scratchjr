@@ -411,5 +411,6 @@
     "USAGE_HOME": "Hemma",
     "USAGE_OTHER": "Annat",
     "USAGE_NONE": "Fråga inte igen",
-    "SUBMIT_ASSIGNMENT": "Lämna in"
+    "SUBMIT_ASSIGNMENT": "Lämna in",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Lämna in igen"
 }

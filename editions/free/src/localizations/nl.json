@@ -411,5 +411,6 @@
     "USAGE_HOME": "Thuis",
     "USAGE_OTHER": "Anders",
     "USAGE_NONE": "Niet opnieuw vragen",
-    "SUBMIT_ASSIGNMENT": "Inleveren"
+    "SUBMIT_ASSIGNMENT": "Inleveren",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Opnieuw inleveren"
 }

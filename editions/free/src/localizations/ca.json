@@ -411,5 +411,6 @@
     "USAGE_HOME": "Casa",
     "USAGE_OTHER": "Altres",
     "USAGE_NONE": "No preguntar-ho més",
-    "SUBMIT_ASSIGNMENT": "Lliura"
+    "SUBMIT_ASSIGNMENT": "Lliura",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Lliura de nou"
 }

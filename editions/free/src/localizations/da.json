@@ -411,5 +411,6 @@
     "USAGE_HOME": "Hjem",
     "USAGE_OTHER": "Andet",
     "USAGE_NONE": "Spørg ikke igen",
-    "SUBMIT_ASSIGNMENT": "Aflever"
+    "SUBMIT_ASSIGNMENT": "Aflever",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Aflever igen"
 }

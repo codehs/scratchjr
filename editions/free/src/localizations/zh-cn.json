@@ -411,5 +411,6 @@
     "USAGE_HOME": "家",
     "USAGE_OTHER": "其他",
     "USAGE_NONE": "不要再问了",
-    "SUBMIT_ASSIGNMENT": "提交"
+    "SUBMIT_ASSIGNMENT": "提交",
+    "SUBMIT_ASSIGNMENT_AGAIN": "再次提交"
 }

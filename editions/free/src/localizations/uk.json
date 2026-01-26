@@ -411,5 +411,6 @@
     "USAGE_HOME": "Вдома",
     "USAGE_OTHER": "Інше",
     "USAGE_NONE": "Не запитувати знову",
-    "SUBMIT_ASSIGNMENT": "Здати"
+    "SUBMIT_ASSIGNMENT": "Здати",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Здати знову"
 }
