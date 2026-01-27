@@ -119,12 +119,14 @@ export default class UI {
             var submitButton = newHTML("button", "submit-assignment-btn", menu);
             submitButton.setAttribute("id", "submitAssignment");
             submitButton.onclick = function() {
-                window.submitAssignment()
+                window.submitAssignment();
+                text.textContent = Localization.localize('SUBMIT_ASSIGNMENT_AGAIN');
             };
 
             newHTML('div', 'submit-assignment-icon', submitButton);
             var text = newHTML('span', 'submit-assignment-text', submitButton);
-            text.textContent = Localization.localize('SUBMIT_ASSIGNMENT');
+            var locKey = window.isSubmitted ? 'SUBMIT_ASSIGNMENT_AGAIN' : 'SUBMIT_ASSIGNMENT';
+            text.textContent = Localization.localize(locKey);
         }
         UI.layoutLibrary(sl);
     }

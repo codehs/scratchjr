@@ -507,5 +507,6 @@
     "USAGE_HOME": "Home",
     "USAGE_OTHER": "Other",
     "USAGE_NONE": "Don't ask again",
-    "SUBMIT_ASSIGNMENT": "Turn in"
+    "SUBMIT_ASSIGNMENT": "Turn in",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Turn in again"
 }

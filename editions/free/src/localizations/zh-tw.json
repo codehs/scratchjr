@@ -411,5 +411,6 @@
     "USAGE_HOME": "家裡",
     "USAGE_OTHER": "其他",
     "USAGE_NONE": "不要再問我",
-    "SUBMIT_ASSIGNMENT": "繳交"
+    "SUBMIT_ASSIGNMENT": "繳交",
+    "SUBMIT_ASSIGNMENT_AGAIN": "再次繳交"
 }

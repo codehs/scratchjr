@@ -411,5 +411,6 @@
     "USAGE_HOME": "Adref",
     "USAGE_OTHER": "Arall",
     "USAGE_NONE": "Peidiwch gofyn eto",
-    "SUBMIT_ASSIGNMENT": "Cyflwyno"
+    "SUBMIT_ASSIGNMENT": "Cyflwyno",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Cyflwyno eto"
 }

@@ -411,5 +411,6 @@
     "USAGE_HOME": "Casa",
     "USAGE_OTHER": "Altro",
     "USAGE_NONE": "Non chiederlo di nuovo",
-    "SUBMIT_ASSIGNMENT": "Consegna"
+    "SUBMIT_ASSIGNMENT": "Consegna",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Consegna di nuovo"
 }

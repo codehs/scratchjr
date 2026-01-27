@@ -411,5 +411,6 @@
     "USAGE_HOME": "Ev",
     "USAGE_OTHER": "Diğer",
     "USAGE_NONE": "Tekrar sorma",
-    "SUBMIT_ASSIGNMENT": "Teslim et"
+    "SUBMIT_ASSIGNMENT": "Teslim et",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Tekrar teslim et"
 }

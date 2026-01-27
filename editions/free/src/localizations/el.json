@@ -411,5 +411,6 @@
     "USAGE_HOME": "Σπίτι",
     "USAGE_OTHER": "Άλλο",
     "USAGE_NONE": "Να μην ερωτηθώ ξανά",
-    "SUBMIT_ASSIGNMENT": "Υποβολή"
+    "SUBMIT_ASSIGNMENT": "Υποβολή",
+    "SUBMIT_ASSIGNMENT_AGAIN": "Υποβολή ξανά"
 }
