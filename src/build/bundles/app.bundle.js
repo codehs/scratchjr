@@ -72091,18 +72091,29 @@ var UI = function () {
             }; // move to project
 
             if (window.canSubmit) {
-                // Submit assignment button
-                var submitButton = (0, _lib.newHTML)("button", "submit-assignment-btn", menu);
-                submitButton.setAttribute("id", "submitAssignment");
-                submitButton.onclick = function () {
-                    window.submitAssignment();
-                    text.textContent = _Localization2.default.localize('SUBMIT_ASSIGNMENT_AGAIN');
-                };
+                if (window.isSubmitted) {
+                    // Submitted label
+                    var submittedLabel = (0, _lib.newHTML)("span", "submit-assignment-label", menu);
+                    submittedLabel.setAttribute("id", "submitAssignment");
+                    submittedLabel.textContent = "Submitted";
+                } else {
+                    // Submit assignment button
+                    var submitButton = (0, _lib.newHTML)("button", "submit-assignment-btn", menu);
+                    submitButton.setAttribute("id", "submitAssignment");
+                    submitButton.onclick = function () {
+                        window.submitAssignment();
+                        // Replace button with label
+                        var submittedLabel = document.createElement("span");
+                        submittedLabel.className = "submit-assignment-label";
+                        submittedLabel.setAttribute("id", "submitAssignment");
+                        submittedLabel.textContent = "Submitted";
+                        submitButton.parentNode.replaceChild(submittedLabel, submitButton);
+                    };
 
-                (0, _lib.newHTML)('div', 'submit-assignment-icon', submitButton);
-                var text = (0, _lib.newHTML)('span', 'submit-assignment-text', submitButton);
-                var locKey = window.isSubmitted ? 'SUBMIT_ASSIGNMENT_AGAIN' : 'SUBMIT_ASSIGNMENT';
-                text.textContent = _Localization2.default.localize(locKey);
+                    (0, _lib.newHTML)('div', 'submit-assignment-icon', submitButton);
+                    var text = (0, _lib.newHTML)('span', 'submit-assignment-text', submitButton);
+                    text.textContent = "Turn in";
+                }
             }
             UI.layoutLibrary(sl);
         }

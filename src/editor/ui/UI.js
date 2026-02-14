@@ -115,18 +115,29 @@ export default class UI {
         }; // move to project
 
         if (window.canSubmit) {
-            // Submit assignment button
-            var submitButton = newHTML("button", "submit-assignment-btn", menu);
-            submitButton.setAttribute("id", "submitAssignment");
-            submitButton.onclick = function() {
-                window.submitAssignment();
-                text.textContent = Localization.localize('SUBMIT_ASSIGNMENT_AGAIN');
-            };
+            if (window.isSubmitted) {
+                // Submitted label
+                var submittedLabel = newHTML("span", "submit-assignment-label", menu);
+                submittedLabel.setAttribute("id", "submitAssignment");
+                submittedLabel.textContent = "Submitted";
+            } else {
+                // Submit assignment button
+                var submitButton = newHTML("button", "submit-assignment-btn", menu);
+                submitButton.setAttribute("id", "submitAssignment");
+                submitButton.onclick = function() {
+                    window.submitAssignment();
+                    // Replace button with label
+                    var submittedLabel = document.createElement("span");
+                    submittedLabel.className = "submit-assignment-label";
+                    submittedLabel.setAttribute("id", "submitAssignment");
+                    submittedLabel.textContent = "Submitted";
+                    submitButton.parentNode.replaceChild(submittedLabel, submitButton);
+                };
 
-            newHTML('div', 'submit-assignment-icon', submitButton);
-            var text = newHTML('span', 'submit-assignment-text', submitButton);
-            var locKey = window.isSubmitted ? 'SUBMIT_ASSIGNMENT_AGAIN' : 'SUBMIT_ASSIGNMENT';
-            text.textContent = Localization.localize(locKey);
+                newHTML('div', 'submit-assignment-icon', submitButton);
+                var text = newHTML('span', 'submit-assignment-text', submitButton);
+                text.textContent = "Turn in";
+            }
         }
         UI.layoutLibrary(sl);
     }
