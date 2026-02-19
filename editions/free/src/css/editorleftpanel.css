@@ -55,6 +55,23 @@
     background-size: 100%;
 }
 
+.submit-assignment-label {
+    border: none;
+    background: #5DB27E;
+    border: 3px solid white;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: max-content;
+    height: max-content;
+    padding: ${css_vh(0.6)} ${css_vh(1.8)};
+    border-radius: 100vh;
+    box-shadow: #0000004d 3px 3px 1px;
+    font-family: Verdana;
+    font-size: ${css_vh(2.8)};
+}
+
 .scrollbar {
     position: absolute;
     display: inline-block;
