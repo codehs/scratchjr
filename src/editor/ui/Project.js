@@ -17,7 +17,6 @@ let mediaCount = -1;
 let saving = false;
 let interval = undefined;
 let pageid;
-let loadIcon = undefined;
 let error = false;
 let projectbarsize = 66;
 let mediaCountBase = 1;
@@ -39,13 +38,6 @@ export default class Project {
         mediaCount = newMediaCount;
     }
 
-    static set loadIcon (newLoadIcon) {
-        loadIcon = newLoadIcon;
-    }
-
-    static get loadIcon () {
-        return loadIcon;
-    }
 
     static get error () {
         return error;
@@ -154,13 +146,7 @@ export default class Project {
         setProps(body.style, {
             zoom: scaleMultiplier
         });
-        if (loadIcon.complete) {
-            Project.addFeedback();
-        } else {
-            loadIcon.onload = function () {
-                Project.addFeedback();
-            };
-        }
+        Project.addFeedback();
         Project.drawBlind();
     }
 
@@ -174,8 +160,6 @@ export default class Project {
         topcover.setAttribute('id', 'topcover');
         var cover2 = newHTML('div', 'progressbar2', body);
         cover2.setAttribute('id', 'progressbar2');
-        var li = newHTML('div', 'loadicon', body);
-        li.appendChild(loadIcon);
     }
 
     static setProgress (perc) {
