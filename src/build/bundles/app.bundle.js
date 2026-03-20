@@ -63983,6 +63983,7 @@ exports.default = Runtime;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.isTablet = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); ////////////////////////////////////////////////////////////
 // Sprites
@@ -64066,6 +64067,10 @@ var _lib = __webpack_require__(/*! ../../utils/lib */ "./src/utils/lib.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// HACK - We want to use isTablet here to make sure the keyboard appears when opening the text field.
+// The old "isTablet" from lib.js is deprecated. We might want to return to this eventually.
+var isTablet = exports.isTablet = "ontouchstart" in document.documentElement;
 
 var Sprite = function () {
     function Sprite(attr, whenDone) {
@@ -65028,7 +65033,7 @@ var Sprite = function () {
                     // to show the color menu and font size menu.
                     window.scroll(0, (0, _lib.gn)('textbox').offsetHeight * 1.2);
                 }
-                if (_lib.isTablet) {
+                if (isTablet) {
                     ti.focus();
                 } else {
                     setTimeout(function () {

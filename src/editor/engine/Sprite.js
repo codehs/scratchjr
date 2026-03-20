@@ -26,9 +26,13 @@ import ScratchAudio from '../../utils/ScratchAudio';
 import Scripts from '../ui/Scripts';
 import {newHTML, newDiv, newP, gn,
     setCanvasSizeScaledToWindowDocumentHeight,
-    DEGTOR, getIdFor, setProps, isTablet, isiOS,
+    DEGTOR, getIdFor, setProps, isiOS,
     isAndroid, fitInRect, scaleMultiplier, setCanvasSize,
     globaly, globalx, rgbToHex, WINDOW_INNER_HEIGHT, absoluteURL} from '../../utils/lib';
+
+// HACK - We want to use isTablet here to make sure the keyboard appears when opening the text field.
+// The old "isTablet" from lib.js is deprecated. We might want to return to this eventually.
+export const isTablet = "ontouchstart" in document.documentElement;
 
 export default class Sprite {
     constructor (attr, whenDone) {
