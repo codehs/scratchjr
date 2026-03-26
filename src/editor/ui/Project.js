@@ -140,14 +140,20 @@ export default class Project {
         var modalMiddle = newHTML('div', 'modal-middle', modalOuter);
         var modal = newHTML('div', 'modal hide fade', modalMiddle);
         modal.setAttribute('id', 'modaldialog');
-        setProps(gn('modaldialog').style, {});
+        // Can't use Scratch logo anymore so we're setting this as None
+        // for now
+        setProps(gn('modaldialog').style, {
+            display: 'none'
+        });
+        // setProps(gn('modaldialog').style, {
+        //     display: 'none'
+        // });
         var body = newHTML('div', 'modal-body', modal);
         body.setAttribute('id', 'modalbody');
         setProps(body.style, {
             zoom: scaleMultiplier
         });
         Project.addFeedback();
-        Project.drawBlind();
     }
 
     static addFeedback () {
@@ -174,17 +180,6 @@ export default class Project {
             gn('topcover').style.background = '#F9A737';
         }
 
-    }
-
-    static drawBlind () {
-        gn('backdrop').setAttribute('class', 'modal-backdrop fade in');
-        setProps(gn('backdrop').style, {
-            display: 'block'
-        });
-        setProps(gn('modaldialog').style, {
-            display: 'block'
-        });
-        gn('modaldialog').setAttribute('class', 'modal fade in');
     }
 
     static loadwait (whenDone) {
