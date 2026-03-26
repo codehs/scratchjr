@@ -314,99 +314,12 @@ export default class ScratchJr {
         return gn(stage.currentPage.currentSpriteName).owner;
     }
 
-    // HACK: window.triggerDesync() reproduces the missing-watermark / disappearing-blocks bug.
-    // window.fixDesync() re-syncs using the visible script layer when possible (console).
-    // Requires 2+ sprites on the page. Swaps currentSpriteName to the OTHER
-    // sprite without toggling script-div visibility, so the user sees sprite A's
-    // scripts but drops land on sprite B's hidden div and vanish.
-    //
-    // window.triggerDesync2() reproduces the "zero-width scripts pane" bug: it sets #scripts
-    // and #scriptscontainer width to 0 the same way a bad resize can (see Page.js resize).
-    // window.fixDesync2() restores a non-zero width from layout for console recovery.
     static _initDebugHooks() {
         window.triggerDesync = function () {
-            var page = stage.currentPage;
-            var sprites = page.getSprites();
-            if (sprites.length < 2) {
-                console.error('Need at least 2 sprites on the page');
-                return;
-            }
-            var current = page.currentSpriteName;
-            var other = sprites.find(function (s) { return s !== current; });
-            // Swap active sprite to the other one (keeps getActiveScript() valid)
-            page.currentSpriteName = other;
-            // Clear watermark
-            var wm = ScriptsPane.watermark;
-            while (wm.childElementCount > 0) { wm.removeChild(wm.childNodes[0]); }
-            // Make switching sprites not fix it: remove the VISIBLE sprite's
-            // _scripts div so setActiveScript bails when you click its thumbnail
-            var visibleSc = gn(current + '_scripts');
-            if (visibleSc && visibleSc.parentNode) {
-                visibleSc.parentNode.removeChild(visibleSc);
-            }
-            console.warn('Active sprite is now', other, '(hidden scripts div).',
-                'Visible scripts from', current, 'are orphaned.',
-                'Clicking', current, 'thumbnail will not recover. Try dragging a block.');
-        };
-        // Prefer the script canvas that is actually visible (fixes model vs UI mismatch).
-        // Call from the console: fixDesync()
-        window.fixDesync = function () {
-            if (!stage || !stage.currentPage) {
-                console.warn('fixDesync: no active page');
-                return;
-            }
-            var dc = gn('scriptscontainer');
-            var spr = null;
-            var fromVisible = false;
-            var visibleCount = 0;
-            if (dc) {
-                for (var i = 0; i < dc.childElementCount; i++) {
-                    var node = dc.childNodes[i];
-                    if (!node.id || !/_scripts$/.test(node.id)) {
-                        continue;
-                    }
-                    if (window.getComputedStyle(node).visibility !== 'visible') {
-                        continue;
-                    }
-                    visibleCount++;
-                    if (!spr) {
-                        var sid = node.id.replace(/_scripts$/, '');
-                        var el = gn(sid);
-                        if (el && el.owner) {
-                            spr = el.owner;
-                            fromVisible = true;
-                        }
-                    }
-                }
-            }
-            if (visibleCount > 1) {
-                console.warn(
-                    'fixDesync: multiple visible script layers; using first:',
-                    spr && spr.id
-                );
-            }
-            if (!spr) {
-                spr = ScratchJr.getSprite();
-            }
-            if (spr) {
-                Thumbs.selectThisSprite(spr);
-                if (ScriptsPane.scroll) {
-                    ScriptsPane.scroll.update();
-                }
-                console.warn(
-                    'fixDesync: re-synced to',
-                    spr.id,
-                    fromVisible ? '(visible script layer)' : '(currentSpriteName / fallback)'
-                );
-            } else {
-                console.warn('fixDesync: could not resolve a sprite');
-            }
-        };
-        window.triggerDesync2 = function () {
             var scriptsElem = gn('scripts');
             var dc = gn('scriptscontainer');
             if (!scriptsElem) {
-                console.error('triggerDesync2: #scripts not found');
+                console.error('triggerDesync: #scripts not found');
                 return;
             }
             var h = Math.max(getDocumentHeight(), frame.offsetHeight);
@@ -416,16 +329,12 @@ export default class ScratchJr {
             if (dc) {
                 setCanvasSize(dc, 0, height);
             }
-            console.warn(
-                'triggerDesync2: scripts pane width forced to 0 (watermark clipped, drops may not land).',
-                'Call fixDesync2() to recover.'
-            );
         };
-        window.fixDesync2 = function () {
+        window.fixDesync = function () {
             var scriptsElem = gn('scripts');
             var dc = gn('scriptscontainer');
             if (!scriptsElem) {
-                console.warn('fixDesync2: #scripts not found');
+                console.warn('fixDesync: #scripts not found');
                 return;
             }
             var h = Math.max(getDocumentHeight(), frame.offsetHeight);
@@ -442,7 +351,6 @@ export default class ScratchJr {
             if (ScriptsPane.scroll) {
                 ScriptsPane.scroll.update();
             }
-            console.warn('fixDesync2: restored #scripts width to', w);
         };
     }
 

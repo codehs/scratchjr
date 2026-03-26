@@ -80,6 +80,19 @@ export default class ScriptsPane {
         ScratchJr.userStart = true;
     }
 
+    // Restore #scripts width if 0 (bad resize); must run on mousedown, not in pickBlock
+    // (pickBlock runs only after Events.mouseMove passes the drag threshold).
+    static ensureScriptsPaneWidth() {
+        var scriptsEl = gn('scripts');
+        if (
+            scriptsEl &&
+            scriptsEl.offsetWidth === 0 &&
+            typeof window.fixDesync === 'function'
+        ) {
+            window.fixDesync();
+        }
+    }
+
     static prepareToDrag(e) {
         e.preventDefault();
         var pt = Events.getTargetPoint(e);

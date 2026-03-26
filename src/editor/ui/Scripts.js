@@ -94,6 +94,7 @@ export default class Scripts {
             // It's not clear to me why we would want this, and seems functional without it. -- TM
             //if ((ths.owner.blocktype == "repeat") && !hitTest(ths.childNodes[1], pixel)) continue;
             e.preventDefault();
+            ScriptsPane.ensureScriptsPaneWidth();
             Events.startDrag(e, ths, ScriptsPane.prepareToDrag,
                 ScriptsPane.dropBlock, ScriptsPane.draggingBlock, ScriptsPane.runBlock);
             return;

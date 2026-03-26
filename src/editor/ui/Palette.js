@@ -93,6 +93,7 @@ export default class Palette {
             if (ScratchJr.shaking && (ScratchJr.shaking == ths)) {
                 Palette.removeSound(ths);
             } else {
+                ScriptsPane.ensureScriptsPaneWidth();
                 Events.startDrag(e, ths, Palette.prepareForDrag,
                     Palette.dropBlockFromPalette, ScriptsPane.draggingBlock, Palette.showHelp, Palette.startShaking);
             }
