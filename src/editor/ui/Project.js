@@ -145,9 +145,6 @@ export default class Project {
         setProps(gn('modaldialog').style, {
             display: 'none'
         });
-        // setProps(gn('modaldialog').style, {
-        //     display: 'none'
-        // });
         var body = newHTML('div', 'modal-body', modal);
         body.setAttribute('id', 'modalbody');
         setProps(body.style, {
