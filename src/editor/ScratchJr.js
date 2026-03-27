@@ -203,8 +203,6 @@ export default class ScratchJr {
         OS.hascamera();
         ScratchJr.log("starting the app");
         BlockSpecs.initBlocks();
-        Project.loadIcon = document.createElement("img");
-        Project.loadIcon.src = absoluteURL("assets/loading.png");
         ScratchJr.log(
             "blocks init",
             ScratchJr.getTime(),

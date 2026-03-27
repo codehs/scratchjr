@@ -149,12 +149,10 @@ function indexAskRemainingQuestions() {
 
 function hideLogo() {
     gn("catface").className = "catface hide";
-    gn("jrlogo").className = "jrlogo hide";
 }
 
 function showLogo() {
     gn("catface").className = "catface show";
-    gn("jrlogo").className = "jrlogo show";
 }
 
 function hideGear() {
@@ -217,7 +215,6 @@ function indexSetPlace(e) {
 
 function indexHidePlaceQuestion() {
     gn("catface").className = "catface show";
-    gn("jrlogo").className = "jrlogo show";
     gn("usageQuestion").className = "usageQuestion hide";
     gn("usageSchool").className = "usageSchool hide";
     gn("usageHome").className = "usageHome hide";

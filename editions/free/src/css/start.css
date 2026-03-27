@@ -59,20 +59,6 @@ div.frame {
 .credits.show, .creditsText.show {display: block;}
 
 
-
-*.jrlogo {
-    position: absolute;
-    top: 26%;
-    width: 100%;
-    margin: 0px;
-    height: 16%;
-    z-index: 10;
-    background: url('../assets/start/ScratchJrLogo.svg');
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: auto 100%;
-}
-
 *.purple {
     position: absolute;
     top: 7%;

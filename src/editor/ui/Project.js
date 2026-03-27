@@ -154,28 +154,7 @@ export default class Project {
         setProps(body.style, {
             zoom: scaleMultiplier
         });
-        if (loadIcon.complete) {
-            Project.addFeedback();
-        } else {
-            loadIcon.onload = function () {
-                Project.addFeedback();
-            };
-        }
         Project.drawBlind();
-    }
-
-    static addFeedback () {
-        var body = gn('modalbody');
-        newHTML('div', 'loadscreenfill', body);
-        newHTML('div', 'topfill', body);
-        var cover = newHTML('div', 'loadscreencover', body);
-        cover.setAttribute('id', 'progressbar');
-        var topcover = newHTML('div', 'topcover', body);
-        topcover.setAttribute('id', 'topcover');
-        var cover2 = newHTML('div', 'progressbar2', body);
-        cover2.setAttribute('id', 'progressbar2');
-        var li = newHTML('div', 'loadicon', body);
-        li.appendChild(loadIcon);
     }
 
     static setProgress (perc) {
@@ -247,13 +226,15 @@ export default class Project {
 
     static liftCurtain () {
         gn('backdrop').setAttribute('class', 'modal-backdrop fade');
-        setProps(gn('backdrop').style, {
-            display: 'none'
-        });
         gn('modaldialog').setAttribute('class', 'modal fade');
-        setProps(gn('modaldialog').style, {
-            display: 'none'
-        });
+        setTimeout(function () {
+            setProps(gn('modaldialog').style, {
+                display: 'none'
+            });
+            setProps(gn('backdrop').style, {
+                display: 'none'
+            });
+        }, 500);
     }
 
     static setLoadPage (pageid, whenDone) {
