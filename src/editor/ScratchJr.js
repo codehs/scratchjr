@@ -13,6 +13,7 @@ import Menu from "./blocks/Menu";
 import Library from "./ui/Library";
 import Grid from "./ui/Grid";
 import ScriptsPane from "./ui/ScriptsPane";
+import Thumbs from "./ui/Thumbs";
 import Events from "../utils/Events";
 import BlockSpecs from "./blocks/BlockSpecs";
 import Runtime from "./engine/Runtime";
@@ -28,6 +29,8 @@ import {
     frame,
     mTime,
     absoluteURL,
+    setCanvasSize,
+    getDocumentHeight
 } from "../utils/lib";
 
 let workingCanvas = document.createElement("canvas");
@@ -225,6 +228,7 @@ export default class ScratchJr {
         ScratchJr.editorEvents();
         Project.load(currentProject);
         Events.init();
+        ScratchJr._initDebugHooks();
         if (window.Settings.autoSaveInterval > 0) {
             autoSaveSetInterval = window.setInterval(function () {
                 if (
@@ -306,6 +310,46 @@ export default class ScratchJr {
             return undefined;
         }
         return gn(stage.currentPage.currentSpriteName).owner;
+    }
+
+    static _initDebugHooks() {
+        window.triggerDesync = function () {
+            var scriptsElem = gn('scripts');
+            var dc = gn('scriptscontainer');
+            if (!scriptsElem) {
+                console.error('triggerDesync: #scripts not found');
+                return;
+            }
+            var h = Math.max(getDocumentHeight(), frame.offsetHeight);
+            var top = scriptsElem.offsetTop;
+            var height = h - top;
+            setCanvasSize(scriptsElem, 0, height);
+            if (dc) {
+                setCanvasSize(dc, 0, height);
+            }
+        };
+        window.fixDesync = function () {
+            var scriptsElem = gn('scripts');
+            var dc = gn('scriptscontainer');
+            if (!scriptsElem) {
+                console.warn('fixDesync: #scripts not found');
+                return;
+            }
+            var h = Math.max(getDocumentHeight(), frame.offsetHeight);
+            var top = scriptsElem.offsetTop;
+            var height = h - top;
+            var w = scriptsElem.offsetWidth;
+            if (!w) {
+                w = Math.max(1, frame.offsetWidth - scriptsElem.offsetLeft);
+            }
+            setCanvasSize(scriptsElem, w, height);
+            if (dc) {
+                setCanvasSize(dc, w, height);
+            }
+            if (ScriptsPane.scroll) {
+                ScriptsPane.scroll.update();
+            }
+        };
     }
 
     static gestureStart(e) {

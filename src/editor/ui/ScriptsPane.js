@@ -80,6 +80,18 @@ export default class ScriptsPane {
         ScratchJr.userStart = true;
     }
 
+    // Restore #scripts width if 0 (possibly bc bad resize)
+    static ensureScriptsPaneWidth() {
+        var scriptsEl = gn('scripts');
+        if (
+            scriptsEl &&
+            scriptsEl.offsetWidth === 0 &&
+            typeof window.fixDesync === 'function'
+        ) {
+            window.fixDesync();
+        }
+    }
+
     static prepareToDrag(e) {
         e.preventDefault();
         var pt = Events.getTargetPoint(e);
