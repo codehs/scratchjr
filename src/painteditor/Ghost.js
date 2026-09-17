@@ -148,42 +148,56 @@ export default class Ghost {
         var rpos = Paint.root.createSVGRect();
         rpos.x = pt.x;
         rpos.y = pt.y;
-        rpos.width = 100;
-        rpos.height = 100;
+        rpos.width = 1;
+        rpos.height = 1;
 
         var matches = Paint.root.getIntersectionList(rpos, null);
-        if (matches !== null) {
-            return matches;
-        } else {
-            // getIntersectionList() isn't implemented below API Level 19
-            // and will return null.  Call the helper method to manually detect
-            // the intersection lists.
-            return Ghost.svgHitHelper(gn('layer1'), pt);
-        }
+        return Ghost.svgHitHelper(gn('layer1'), pt, matches);
     }
 
     /**
-     * Iterates all the path elements of the root and checks if 'pt'
-     * is inside the path.
-     * This method uses the SnapSVG library (Apache 2 license) to perform the hit test.
+     * Adds elements whose geometry contains 'pt' to the browser's intersection
+     * list. getIntersectionList only includes the stroke of unfilled shapes,
+     * but the paint bucket must also hit their interior.
      */
-    static svgHitHelper (root, pt) {
+    static svgHitHelper (root, pt, intersections) {
         var matches = [];
         if (!root) {
             return matches;
         }
 
-        var paths = root.getElementsByTagName('path');
-        for (var i = 0; i < paths.length; ++i) {
-            var pathData = paths[i].getAttribute('d');
-            if (pathData && Snap.path.isPointInside(pathData, pt.x, pt.y)) {
-                matches.push(paths[i]);
+        var elements = root.getElementsByTagName('*');
+        for (var i = 0; i < elements.length; ++i) {
+            var elem = elements[i];
+            if (elem.parentNode && elem.parentNode.tagName == 'clipPath') {
+                continue;
+            }
+            var isIntersection = intersections && Array.prototype.indexOf.call(intersections, elem) > -1;
+            if (isIntersection || Ghost.isPointInFill(elem, pt)) {
+                matches.push(elem);
             }
         }
 
         return matches;
     }
 
+    static isPointInFill (elem, pt) {
+        var pathData = elem.tagName == 'path' ? elem.getAttribute('d') : null;
+        if (!elem.isPointInFill && !pathData) {
+            return false;
+        }
+        var localPoint = Paint.root.createSVGPoint();
+        localPoint.x = pt.x;
+        localPoint.y = pt.y;
+        var matrix = elem.getCTM ? elem.getCTM() : null;
+        if (matrix) {
+            localPoint = localPoint.matrixTransform(matrix.inverse());
+        }
+        if (elem.isPointInFill) {
+            return elem.isPointInFill(localPoint);
+        }
+        return Snap.path.isPointInside(pathData, localPoint.x, localPoint.y);
+    }
 
     static setGhostTo (mt) {
         var g = SVGTools.createGroup(gn('draglayer'), 'ghostlayer');
