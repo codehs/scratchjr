@@ -31,3 +31,6 @@
 ios/Pods
 google-services.json
 GoogleService-Info.plist
+
+# Amp orb runtime files
+.amp/portals/*
