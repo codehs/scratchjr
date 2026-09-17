@@ -54,6 +54,7 @@ export default class Prims {
         Prims.table.same = Prims.Same;
         Prims.table.say = Prims.Say;
         Prims.table.changecolor = Prims.ChangeColor;
+        Prims.table.resetcolor = Prims.ResetColor;
     }
 
     static Done (strip) {
@@ -213,6 +214,12 @@ export default class Prims {
 
     static ChangeColor (strip) {
         strip.spr.changeColor();
+        strip.waitTimer = tinterval;
+        strip.thisblock = strip.thisblock.next;
+    }
+
+    static ResetColor (strip) {
+        strip.spr.resetColorEffect();
         strip.waitTimer = tinterval;
         strip.thisblock = strip.thisblock.next;
     }

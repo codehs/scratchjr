@@ -62095,7 +62095,7 @@ var BlockSpecs = function () {
     }, {
         key: 'setupPalettesDef',
         value: function setupPalettesDef() {
-            return [['onflag', 'onclick', 'ontouch', 'onmessage', 'message'], ['forward', 'back', 'up', 'down', 'right', 'left', 'hop', 'home'], ['say', 'space', 'grow', 'shrink', 'same', 'space', 'hide', 'show', 'space', 'changecolor'], [], ['wait', 'stopmine', 'setspeed', 'repeat'], ['endstack', 'forever']];
+            return [['onflag', 'onclick', 'ontouch', 'onmessage', 'message'], ['forward', 'back', 'up', 'down', 'right', 'left', 'hop', 'home'], ['say', 'space', 'grow', 'shrink', 'same', 'space', 'hide', 'show', 'space', 'changecolor', 'resetcolor'], [], ['wait', 'stopmine', 'setspeed', 'repeat'], ['endstack', 'forever']];
         }
 
         ///////////////////////////////
@@ -62142,6 +62142,7 @@ var BlockSpecs = function () {
 
                 'say': ['say', BlockSpecs.getImageFrom('assets/blockicons/Say', 'svg'), BlockSpecs.pinkCmd, 't', _Localization2.default.localize('SAY_BLOCK_DEFAULT_ARGUMENT'), BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'changecolor': ['changecolor', BlockSpecs.getImageFrom('assets/blockicons/ChangeColor', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
+                'resetcolor': ['resetcolor', BlockSpecs.getImageFrom('assets/blockicons/ResetColor', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'show': ['show', BlockSpecs.getImageFrom('assets/blockicons/Appear', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'hide': ['hide', BlockSpecs.getImageFrom('assets/blockicons/Disappear', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'grow': ['grow', BlockSpecs.getImageFrom('assets/blockicons/Grow', 'svg'), BlockSpecs.pinkCmd, 'n', 2, BlockSpecs.pinkCmdH, -10, 10, BlockSpecs.cmdS],
@@ -62192,6 +62193,7 @@ var BlockSpecs = function () {
                 }),
                 'say': _Localization2.default.localize('BLOCK_DESC_SAY'),
                 'changecolor': _Localization2.default.localizeOptional('Change color'),
+                'resetcolor': _Localization2.default.localizeOptional('Reset color'),
                 'show': _Localization2.default.localize('BLOCK_DESC_SHOW'),
                 'hide': _Localization2.default.localize('BLOCK_DESC_HIDE'),
                 'grow': _Localization2.default.localize('BLOCK_DESC_GROW'),
@@ -63144,6 +63146,7 @@ var Prims = function () {
             Prims.table.same = Prims.Same;
             Prims.table.say = Prims.Say;
             Prims.table.changecolor = Prims.ChangeColor;
+            Prims.table.resetcolor = Prims.ResetColor;
         }
     }, {
         key: 'Done',
@@ -63318,6 +63321,13 @@ var Prims = function () {
         key: 'ChangeColor',
         value: function ChangeColor(strip) {
             strip.spr.changeColor();
+            strip.waitTimer = tinterval;
+            strip.thisblock = strip.thisblock.next;
+        }
+    }, {
+        key: 'ResetColor',
+        value: function ResetColor(strip) {
+            strip.spr.resetColorEffect();
             strip.waitTimer = tinterval;
             strip.thisblock = strip.thisblock.next;
         }
