@@ -179,7 +179,7 @@ export default class BlockSpecs {
     static setupPalettesDef () {
         return [['onflag', 'onclick', 'ontouch', 'onmessage', 'message'],
             ['forward', 'back', 'up', 'down', 'right', 'left', 'hop', 'home'],
-            ['say', 'space', 'grow', 'shrink', 'same', 'space', 'hide', 'show'],
+            ['say', 'space', 'grow', 'shrink', 'same', 'space', 'hide', 'show', 'space', 'changecolor'],
             [],
             ['wait', 'stopmine', 'setspeed', 'repeat'],
             ['endstack', 'forever']];
@@ -246,6 +246,8 @@ export default class BlockSpecs {
             'say': ['say', BlockSpecs.getImageFrom('assets/blockicons/Say', 'svg'),
                 BlockSpecs.pinkCmd, 't',
                 Localization.localize('SAY_BLOCK_DEFAULT_ARGUMENT'), BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
+            'changecolor': ['changecolor', BlockSpecs.getImageFrom('assets/blockicons/ChangeColor', 'svg'),
+                BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
             'show': ['show', BlockSpecs.getImageFrom('assets/blockicons/Appear', 'svg'),
                 BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
             'hide': ['hide', BlockSpecs.getImageFrom('assets/blockicons/Disappear', 'svg'),
@@ -308,6 +310,7 @@ export default class BlockSpecs {
                 CHARACTER_NAME: spr.name ? spr.name : spr.str
             }),
             'say': Localization.localize('BLOCK_DESC_SAY'),
+            'changecolor': Localization.localizeOptional('Change color'),
             'show': Localization.localize('BLOCK_DESC_SHOW'),
             'hide': Localization.localize('BLOCK_DESC_HIDE'),
             'grow': Localization.localize('BLOCK_DESC_GROW'),

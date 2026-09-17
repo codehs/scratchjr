@@ -53,6 +53,7 @@ export default class Prims {
         Prims.table.shrink = Prims.Shrink;
         Prims.table.same = Prims.Same;
         Prims.table.say = Prims.Say;
+        Prims.table.changecolor = Prims.ChangeColor;
     }
 
     static Done (strip) {
@@ -206,6 +207,12 @@ export default class Prims {
         var s = strip.spr;
         var num = Number(strip.thisblock.getArgValue()); // 0 - 1 - 2
         s.speed = Math.pow(2, num);
+        strip.waitTimer = tinterval;
+        strip.thisblock = strip.thisblock.next;
+    }
+
+    static ChangeColor (strip) {
+        strip.spr.changeColor();
         strip.waitTimer = tinterval;
         strip.thisblock = strip.thisblock.next;
     }

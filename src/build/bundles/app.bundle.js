@@ -59720,6 +59720,10 @@ var _ScriptsPane = __webpack_require__(/*! ./ui/ScriptsPane */ "./src/editor/ui/
 
 var _ScriptsPane2 = _interopRequireDefault(_ScriptsPane);
 
+var _Thumbs = __webpack_require__(/*! ./ui/Thumbs */ "./src/editor/ui/Thumbs.js");
+
+var _Thumbs2 = _interopRequireDefault(_Thumbs);
+
 var _Events = __webpack_require__(/*! ../utils/Events */ "./src/utils/Events.js");
 
 var _Events2 = _interopRequireDefault(_Events);
@@ -59801,8 +59805,6 @@ var ScratchJr = function () {
             _OS2.default.hascamera();
             ScratchJr.log("starting the app");
             _BlockSpecs2.default.initBlocks();
-            _Project2.default.loadIcon = document.createElement("img");
-            _Project2.default.loadIcon.src = (0, _lib.absoluteURL)("assets/loading.png");
             ScratchJr.log("blocks init", ScratchJr.getTime(), "sec", _BlockSpecs2.default.loadCount);
             currentProject = "1";
             editmode = urlvars.mode;
@@ -59820,6 +59822,7 @@ var ScratchJr = function () {
             ScratchJr.editorEvents();
             _Project2.default.load(currentProject);
             _Events2.default.init();
+            ScratchJr._initDebugHooks();
             if (window.Settings.autoSaveInterval > 0) {
                 autoSaveSetInterval = window.setInterval(function () {
                     if (autoSaveEnabled && !onHold && !_Project2.default.saving && !_UI2.default.infoBoxOpen) {
@@ -59904,6 +59907,47 @@ var ScratchJr = function () {
                 return undefined;
             }
             return (0, _lib.gn)(stage.currentPage.currentSpriteName).owner;
+        }
+    }, {
+        key: "_initDebugHooks",
+        value: function _initDebugHooks() {
+            window.triggerDesync = function () {
+                var scriptsElem = (0, _lib.gn)('scripts');
+                var dc = (0, _lib.gn)('scriptscontainer');
+                if (!scriptsElem) {
+                    console.error('triggerDesync: #scripts not found');
+                    return;
+                }
+                var h = Math.max((0, _lib.getDocumentHeight)(), _lib.frame.offsetHeight);
+                var top = scriptsElem.offsetTop;
+                var height = h - top;
+                (0, _lib.setCanvasSize)(scriptsElem, 0, height);
+                if (dc) {
+                    (0, _lib.setCanvasSize)(dc, 0, height);
+                }
+            };
+            window.fixDesync = function () {
+                var scriptsElem = (0, _lib.gn)('scripts');
+                var dc = (0, _lib.gn)('scriptscontainer');
+                if (!scriptsElem) {
+                    console.warn('fixDesync: #scripts not found');
+                    return;
+                }
+                var h = Math.max((0, _lib.getDocumentHeight)(), _lib.frame.offsetHeight);
+                var top = scriptsElem.offsetTop;
+                var height = h - top;
+                var w = scriptsElem.offsetWidth;
+                if (!w) {
+                    w = Math.max(1, _lib.frame.offsetWidth - scriptsElem.offsetLeft);
+                }
+                (0, _lib.setCanvasSize)(scriptsElem, w, height);
+                if (dc) {
+                    (0, _lib.setCanvasSize)(dc, w, height);
+                }
+                if (_ScriptsPane2.default.scroll) {
+                    _ScriptsPane2.default.scroll.update();
+                }
+            };
         }
     }, {
         key: "gestureStart",
@@ -62051,7 +62095,7 @@ var BlockSpecs = function () {
     }, {
         key: 'setupPalettesDef',
         value: function setupPalettesDef() {
-            return [['onflag', 'onclick', 'ontouch', 'onmessage', 'message'], ['forward', 'back', 'up', 'down', 'right', 'left', 'hop', 'home'], ['say', 'space', 'grow', 'shrink', 'same', 'space', 'hide', 'show'], [], ['wait', 'stopmine', 'setspeed', 'repeat'], ['endstack', 'forever']];
+            return [['onflag', 'onclick', 'ontouch', 'onmessage', 'message'], ['forward', 'back', 'up', 'down', 'right', 'left', 'hop', 'home'], ['say', 'space', 'grow', 'shrink', 'same', 'space', 'hide', 'show', 'space', 'changecolor'], [], ['wait', 'stopmine', 'setspeed', 'repeat'], ['endstack', 'forever']];
         }
 
         ///////////////////////////////
@@ -62097,6 +62141,7 @@ var BlockSpecs = function () {
                 'stopmine': ['stopmine', BlockSpecs.getImageFrom('assets/blockicons/Stop', 'svg'), BlockSpecs.orangeCmd, null, null, BlockSpecs.orangeCmdH, null, null, BlockSpecs.cmdS],
 
                 'say': ['say', BlockSpecs.getImageFrom('assets/blockicons/Say', 'svg'), BlockSpecs.pinkCmd, 't', _Localization2.default.localize('SAY_BLOCK_DEFAULT_ARGUMENT'), BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
+                'changecolor': ['changecolor', BlockSpecs.getImageFrom('assets/blockicons/ChangeColor', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'show': ['show', BlockSpecs.getImageFrom('assets/blockicons/Appear', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'hide': ['hide', BlockSpecs.getImageFrom('assets/blockicons/Disappear', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'grow': ['grow', BlockSpecs.getImageFrom('assets/blockicons/Grow', 'svg'), BlockSpecs.pinkCmd, 'n', 2, BlockSpecs.pinkCmdH, -10, 10, BlockSpecs.cmdS],
@@ -62146,6 +62191,7 @@ var BlockSpecs = function () {
                     CHARACTER_NAME: spr.name ? spr.name : spr.str
                 }),
                 'say': _Localization2.default.localize('BLOCK_DESC_SAY'),
+                'changecolor': _Localization2.default.localizeOptional('Change color'),
                 'show': _Localization2.default.localize('BLOCK_DESC_SHOW'),
                 'hide': _Localization2.default.localize('BLOCK_DESC_HIDE'),
                 'grow': _Localization2.default.localize('BLOCK_DESC_GROW'),
@@ -63097,6 +63143,7 @@ var Prims = function () {
             Prims.table.shrink = Prims.Shrink;
             Prims.table.same = Prims.Same;
             Prims.table.say = Prims.Say;
+            Prims.table.changecolor = Prims.ChangeColor;
         }
     }, {
         key: 'Done',
@@ -63264,6 +63311,13 @@ var Prims = function () {
             var s = strip.spr;
             var num = Number(strip.thisblock.getArgValue()); // 0 - 1 - 2
             s.speed = Math.pow(2, num);
+            strip.waitTimer = tinterval;
+            strip.thisblock = strip.thisblock.next;
+        }
+    }, {
+        key: 'ChangeColor',
+        value: function ChangeColor(strip) {
+            strip.spr.changeColor();
             strip.waitTimer = tinterval;
             strip.thisblock = strip.thisblock.next;
         }
@@ -64068,9 +64122,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var colorEffects = ['sepia(1) saturate(8) hue-rotate(300deg)', 'sepia(1) saturate(8) hue-rotate(330deg)', 'sepia(1) saturate(8) hue-rotate(10deg)', 'sepia(1) saturate(8) hue-rotate(75deg)', 'sepia(1) saturate(8) hue-rotate(165deg)', 'sepia(1) saturate(8) hue-rotate(235deg)'];
+
 // HACK - We want to use isTablet here to make sure the keyboard appears when opening the text field.
 // The old "isTablet" from lib.js is deprecated. We might want to return to this eventually.
-var isTablet = exports.isTablet = "ontouchstart" in document.documentElement;
+var isTablet = exports.isTablet = 'ontouchstart' in document.documentElement;
 
 var Sprite = function () {
     function Sprite(attr, whenDone) {
@@ -64103,6 +64159,7 @@ var Sprite = function () {
             this.outline = document.createElement('canvas');
             this.code = new _Scripts2.default(this);
             (0, _lib.setProps)(this, attr);
+            this.colorEffect = -1;
             if (_Localization2.default.isSampleLocalizedKey(this.name) && _ScratchJr2.default.isSampleOrStarter()) {
                 this.name = _Localization2.default.localize('SAMPLE_TEXT_' + this.name);
             }
@@ -64330,10 +64387,31 @@ var Sprite = function () {
             this.setPos(this.homex, this.homey);
             this.scale = this.homescale;
             this.shown = this.homeshown;
+            this.resetColorEffect();
             //	this.flip = this.homeflip;  // kept here just in case we want it
             this.div.style.opacity = this.shown ? 1 : 0;
             this.setHeading(0);
             this.render();
+        }
+    }, {
+        key: 'changeColor',
+        value: function changeColor() {
+            if (!this.img) {
+                return;
+            }
+            this.colorEffect = (this.colorEffect + 1) % colorEffects.length;
+            this.img.style.webkitFilter = colorEffects[this.colorEffect];
+            this.img.style.filter = colorEffects[this.colorEffect];
+        }
+    }, {
+        key: 'resetColorEffect',
+        value: function resetColorEffect() {
+            this.colorEffect = -1;
+            if (!this.img) {
+                return;
+            }
+            this.img.style.webkitFilter = '';
+            this.img.style.filter = '';
         }
     }, {
         key: 'touchingAny',
@@ -64787,6 +64865,9 @@ var Sprite = function () {
             var dx = deltax ? deltax : 0;
             var dy = deltay ? deltay : 0;
             ctx.save();
+            if (this.colorEffect > -1) {
+                ctx.filter = colorEffects[this.colorEffect];
+            }
             ctx.translate(this.xcoor + dx, this.ycoor + dy);
             ctx.rotate(this.angle * _lib.DEGTOR);
             if (this.flip) {
@@ -67634,6 +67715,7 @@ var Palette = function () {
                 if (_ScratchJr2.default.shaking && _ScratchJr2.default.shaking == ths) {
                     Palette.removeSound(ths);
                 } else {
+                    _ScriptsPane2.default.ensureScriptsPaneWidth();
                     _Events2.default.startDrag(e, ths, Palette.prepareForDrag, Palette.dropBlockFromPalette, _ScriptsPane2.default.draggingBlock, Palette.showHelp, Palette.startShaking);
                 }
             }
@@ -68375,29 +68457,7 @@ var Project = function () {
             (0, _lib.setProps)(body.style, {
                 zoom: _lib.scaleMultiplier
             });
-            if (loadIcon.complete) {
-                Project.addFeedback();
-            } else {
-                loadIcon.onload = function () {
-                    Project.addFeedback();
-                };
-            }
             Project.drawBlind();
-        }
-    }, {
-        key: 'addFeedback',
-        value: function addFeedback() {
-            var body = (0, _lib.gn)('modalbody');
-            (0, _lib.newHTML)('div', 'loadscreenfill', body);
-            (0, _lib.newHTML)('div', 'topfill', body);
-            var cover = (0, _lib.newHTML)('div', 'loadscreencover', body);
-            cover.setAttribute('id', 'progressbar');
-            var topcover = (0, _lib.newHTML)('div', 'topcover', body);
-            topcover.setAttribute('id', 'topcover');
-            var cover2 = (0, _lib.newHTML)('div', 'progressbar2', body);
-            cover2.setAttribute('id', 'progressbar2');
-            var li = (0, _lib.newHTML)('div', 'loadicon', body);
-            li.appendChild(loadIcon);
         }
     }, {
         key: 'setProgress',
@@ -68475,13 +68535,15 @@ var Project = function () {
         key: 'liftCurtain',
         value: function liftCurtain() {
             (0, _lib.gn)('backdrop').setAttribute('class', 'modal-backdrop fade');
-            (0, _lib.setProps)((0, _lib.gn)('backdrop').style, {
-                display: 'none'
-            });
             (0, _lib.gn)('modaldialog').setAttribute('class', 'modal fade');
-            (0, _lib.setProps)((0, _lib.gn)('modaldialog').style, {
-                display: 'none'
-            });
+            setTimeout(function () {
+                (0, _lib.setProps)((0, _lib.gn)('modaldialog').style, {
+                    display: 'none'
+                });
+                (0, _lib.setProps)((0, _lib.gn)('backdrop').style, {
+                    display: 'none'
+                });
+            }, 500);
         }
     }, {
         key: 'setLoadPage',
@@ -69539,6 +69601,7 @@ var Scripts = function () {
                 // It's not clear to me why we would want this, and seems functional without it. -- TM
                 //if ((ths.owner.blocktype == "repeat") && !hitTest(ths.childNodes[1], pixel)) continue;
                 e.preventDefault();
+                _ScriptsPane2.default.ensureScriptsPaneWidth();
                 _Events2.default.startDrag(e, ths, _ScriptsPane2.default.prepareToDrag, _ScriptsPane2.default.dropBlock, _ScriptsPane2.default.draggingBlock, _ScriptsPane2.default.runBlock);
                 return;
             }
@@ -70306,6 +70369,17 @@ var ScriptsPane = function () {
             _ScratchJr2.default.runtime.addRunScript(_ScratchJr2.default.getSprite(), b);
             _ScratchJr2.default.startCurrentPageStrips(["ontouch"]);
             _ScratchJr2.default.userStart = true;
+        }
+
+        // Restore #scripts width if 0 (possibly bc bad resize)
+
+    }, {
+        key: "ensureScriptsPaneWidth",
+        value: function ensureScriptsPaneWidth() {
+            var scriptsEl = (0, _lib.gn)('scripts');
+            if (scriptsEl && scriptsEl.offsetWidth === 0 && typeof window.fixDesync === 'function') {
+                window.fixDesync();
+            }
         }
     }, {
         key: "prepareToDrag",
@@ -74608,12 +74682,10 @@ function indexAskRemainingQuestions() {
 
 function hideLogo() {
     (0, _lib.gn)("catface").className = "catface hide";
-    (0, _lib.gn)("jrlogo").className = "jrlogo hide";
 }
 
 function showLogo() {
     (0, _lib.gn)("catface").className = "catface show";
-    (0, _lib.gn)("jrlogo").className = "jrlogo show";
 }
 
 function hideGear() {
@@ -74676,7 +74748,6 @@ function indexSetPlace(e) {
 
 function indexHidePlaceQuestion() {
     (0, _lib.gn)("catface").className = "catface show";
-    (0, _lib.gn)("jrlogo").className = "jrlogo show";
     (0, _lib.gn)("usageQuestion").className = "usageQuestion hide";
     (0, _lib.gn)("usageSchool").className = "usageSchool hide";
     (0, _lib.gn)("usageHome").className = "usageHome hide";
