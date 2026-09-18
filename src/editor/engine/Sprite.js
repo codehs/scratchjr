@@ -41,7 +41,7 @@ let colorEffects = [
 
 // HACK - We want to use isTablet here to make sure the keyboard appears when opening the text field.
 // The old "isTablet" from lib.js is deprecated. We might want to return to this eventually.
-export const isTablet = 'ontouchstart' in document.documentElement;
+export const isTablet = "ontouchstart" in document.documentElement;
 
 export default class Sprite {
     constructor (attr, whenDone) {

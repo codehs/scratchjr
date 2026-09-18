@@ -59720,10 +59720,6 @@ var _ScriptsPane = __webpack_require__(/*! ./ui/ScriptsPane */ "./src/editor/ui/
 
 var _ScriptsPane2 = _interopRequireDefault(_ScriptsPane);
 
-var _Thumbs = __webpack_require__(/*! ./ui/Thumbs */ "./src/editor/ui/Thumbs.js");
-
-var _Thumbs2 = _interopRequireDefault(_Thumbs);
-
 var _Events = __webpack_require__(/*! ../utils/Events */ "./src/utils/Events.js");
 
 var _Events2 = _interopRequireDefault(_Events);
@@ -59805,6 +59801,8 @@ var ScratchJr = function () {
             _OS2.default.hascamera();
             ScratchJr.log("starting the app");
             _BlockSpecs2.default.initBlocks();
+            _Project2.default.loadIcon = document.createElement("img");
+            _Project2.default.loadIcon.src = (0, _lib.absoluteURL)("assets/loading.png");
             ScratchJr.log("blocks init", ScratchJr.getTime(), "sec", _BlockSpecs2.default.loadCount);
             currentProject = "1";
             editmode = urlvars.mode;
@@ -59822,7 +59820,6 @@ var ScratchJr = function () {
             ScratchJr.editorEvents();
             _Project2.default.load(currentProject);
             _Events2.default.init();
-            ScratchJr._initDebugHooks();
             if (window.Settings.autoSaveInterval > 0) {
                 autoSaveSetInterval = window.setInterval(function () {
                     if (autoSaveEnabled && !onHold && !_Project2.default.saving && !_UI2.default.infoBoxOpen) {
@@ -59907,47 +59904,6 @@ var ScratchJr = function () {
                 return undefined;
             }
             return (0, _lib.gn)(stage.currentPage.currentSpriteName).owner;
-        }
-    }, {
-        key: "_initDebugHooks",
-        value: function _initDebugHooks() {
-            window.triggerDesync = function () {
-                var scriptsElem = (0, _lib.gn)('scripts');
-                var dc = (0, _lib.gn)('scriptscontainer');
-                if (!scriptsElem) {
-                    console.error('triggerDesync: #scripts not found');
-                    return;
-                }
-                var h = Math.max((0, _lib.getDocumentHeight)(), _lib.frame.offsetHeight);
-                var top = scriptsElem.offsetTop;
-                var height = h - top;
-                (0, _lib.setCanvasSize)(scriptsElem, 0, height);
-                if (dc) {
-                    (0, _lib.setCanvasSize)(dc, 0, height);
-                }
-            };
-            window.fixDesync = function () {
-                var scriptsElem = (0, _lib.gn)('scripts');
-                var dc = (0, _lib.gn)('scriptscontainer');
-                if (!scriptsElem) {
-                    console.warn('fixDesync: #scripts not found');
-                    return;
-                }
-                var h = Math.max((0, _lib.getDocumentHeight)(), _lib.frame.offsetHeight);
-                var top = scriptsElem.offsetTop;
-                var height = h - top;
-                var w = scriptsElem.offsetWidth;
-                if (!w) {
-                    w = Math.max(1, _lib.frame.offsetWidth - scriptsElem.offsetLeft);
-                }
-                (0, _lib.setCanvasSize)(scriptsElem, w, height);
-                if (dc) {
-                    (0, _lib.setCanvasSize)(dc, w, height);
-                }
-                if (_ScriptsPane2.default.scroll) {
-                    _ScriptsPane2.default.scroll.update();
-                }
-            };
         }
     }, {
         key: "gestureStart",
@@ -64136,7 +64092,7 @@ var colorEffects = ['sepia(1) saturate(8) hue-rotate(300deg)', 'sepia(1) saturat
 
 // HACK - We want to use isTablet here to make sure the keyboard appears when opening the text field.
 // The old "isTablet" from lib.js is deprecated. We might want to return to this eventually.
-var isTablet = exports.isTablet = 'ontouchstart' in document.documentElement;
+var isTablet = exports.isTablet = "ontouchstart" in document.documentElement;
 
 var Sprite = function () {
     function Sprite(attr, whenDone) {
@@ -67725,7 +67681,6 @@ var Palette = function () {
                 if (_ScratchJr2.default.shaking && _ScratchJr2.default.shaking == ths) {
                     Palette.removeSound(ths);
                 } else {
-                    _ScriptsPane2.default.ensureScriptsPaneWidth();
                     _Events2.default.startDrag(e, ths, Palette.prepareForDrag, Palette.dropBlockFromPalette, _ScriptsPane2.default.draggingBlock, Palette.showHelp, Palette.startShaking);
                 }
             }
@@ -68467,7 +68422,29 @@ var Project = function () {
             (0, _lib.setProps)(body.style, {
                 zoom: _lib.scaleMultiplier
             });
+            if (loadIcon.complete) {
+                Project.addFeedback();
+            } else {
+                loadIcon.onload = function () {
+                    Project.addFeedback();
+                };
+            }
             Project.drawBlind();
+        }
+    }, {
+        key: 'addFeedback',
+        value: function addFeedback() {
+            var body = (0, _lib.gn)('modalbody');
+            (0, _lib.newHTML)('div', 'loadscreenfill', body);
+            (0, _lib.newHTML)('div', 'topfill', body);
+            var cover = (0, _lib.newHTML)('div', 'loadscreencover', body);
+            cover.setAttribute('id', 'progressbar');
+            var topcover = (0, _lib.newHTML)('div', 'topcover', body);
+            topcover.setAttribute('id', 'topcover');
+            var cover2 = (0, _lib.newHTML)('div', 'progressbar2', body);
+            cover2.setAttribute('id', 'progressbar2');
+            var li = (0, _lib.newHTML)('div', 'loadicon', body);
+            li.appendChild(loadIcon);
         }
     }, {
         key: 'setProgress',
@@ -68545,15 +68522,13 @@ var Project = function () {
         key: 'liftCurtain',
         value: function liftCurtain() {
             (0, _lib.gn)('backdrop').setAttribute('class', 'modal-backdrop fade');
+            (0, _lib.setProps)((0, _lib.gn)('backdrop').style, {
+                display: 'none'
+            });
             (0, _lib.gn)('modaldialog').setAttribute('class', 'modal fade');
-            setTimeout(function () {
-                (0, _lib.setProps)((0, _lib.gn)('modaldialog').style, {
-                    display: 'none'
-                });
-                (0, _lib.setProps)((0, _lib.gn)('backdrop').style, {
-                    display: 'none'
-                });
-            }, 500);
+            (0, _lib.setProps)((0, _lib.gn)('modaldialog').style, {
+                display: 'none'
+            });
         }
     }, {
         key: 'setLoadPage',
@@ -69611,7 +69586,6 @@ var Scripts = function () {
                 // It's not clear to me why we would want this, and seems functional without it. -- TM
                 //if ((ths.owner.blocktype == "repeat") && !hitTest(ths.childNodes[1], pixel)) continue;
                 e.preventDefault();
-                _ScriptsPane2.default.ensureScriptsPaneWidth();
                 _Events2.default.startDrag(e, ths, _ScriptsPane2.default.prepareToDrag, _ScriptsPane2.default.dropBlock, _ScriptsPane2.default.draggingBlock, _ScriptsPane2.default.runBlock);
                 return;
             }
@@ -70379,17 +70353,6 @@ var ScriptsPane = function () {
             _ScratchJr2.default.runtime.addRunScript(_ScratchJr2.default.getSprite(), b);
             _ScratchJr2.default.startCurrentPageStrips(["ontouch"]);
             _ScratchJr2.default.userStart = true;
-        }
-
-        // Restore #scripts width if 0 (possibly bc bad resize)
-
-    }, {
-        key: "ensureScriptsPaneWidth",
-        value: function ensureScriptsPaneWidth() {
-            var scriptsEl = (0, _lib.gn)('scripts');
-            if (scriptsEl && scriptsEl.offsetWidth === 0 && typeof window.fixDesync === 'function') {
-                window.fixDesync();
-            }
         }
     }, {
         key: "prepareToDrag",
@@ -74692,10 +74655,12 @@ function indexAskRemainingQuestions() {
 
 function hideLogo() {
     (0, _lib.gn)("catface").className = "catface hide";
+    (0, _lib.gn)("jrlogo").className = "jrlogo hide";
 }
 
 function showLogo() {
     (0, _lib.gn)("catface").className = "catface show";
+    (0, _lib.gn)("jrlogo").className = "jrlogo show";
 }
 
 function hideGear() {
@@ -74758,6 +74723,7 @@ function indexSetPlace(e) {
 
 function indexHidePlaceQuestion() {
     (0, _lib.gn)("catface").className = "catface show";
+    (0, _lib.gn)("jrlogo").className = "jrlogo show";
     (0, _lib.gn)("usageQuestion").className = "usageQuestion hide";
     (0, _lib.gn)("usageSchool").className = "usageSchool hide";
     (0, _lib.gn)("usageHome").className = "usageHome hide";
