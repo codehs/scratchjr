@@ -62051,7 +62051,7 @@ var BlockSpecs = function () {
     }, {
         key: 'setupPalettesDef',
         value: function setupPalettesDef() {
-            return [['onflag', 'onclick', 'ontouch', 'onmessage', 'message'], ['forward', 'back', 'up', 'down', 'right', 'left', 'hop', 'home'], ['say', 'space', 'grow', 'shrink', 'same', 'space', 'hide', 'show'], [], ['wait', 'stopmine', 'setspeed', 'repeat'], ['endstack', 'forever']];
+            return [['onflag', 'onclick', 'ontouch', 'onmessage', 'message'], ['forward', 'back', 'up', 'down', 'right', 'left', 'hop', 'home'], ['say', 'space', 'grow', 'shrink', 'same', 'space', 'hide', 'show', 'space', 'changecolor', 'resetcolor'], [], ['wait', 'stopmine', 'setspeed', 'repeat'], ['endstack', 'forever']];
         }
 
         ///////////////////////////////
@@ -62097,6 +62097,8 @@ var BlockSpecs = function () {
                 'stopmine': ['stopmine', BlockSpecs.getImageFrom('assets/blockicons/Stop', 'svg'), BlockSpecs.orangeCmd, null, null, BlockSpecs.orangeCmdH, null, null, BlockSpecs.cmdS],
 
                 'say': ['say', BlockSpecs.getImageFrom('assets/blockicons/Say', 'svg'), BlockSpecs.pinkCmd, 't', _Localization2.default.localize('SAY_BLOCK_DEFAULT_ARGUMENT'), BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
+                'changecolor': ['changecolor', BlockSpecs.getImageFrom('assets/blockicons/ChangeColor', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
+                'resetcolor': ['resetcolor', BlockSpecs.getImageFrom('assets/blockicons/ResetColor', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'show': ['show', BlockSpecs.getImageFrom('assets/blockicons/Appear', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'hide': ['hide', BlockSpecs.getImageFrom('assets/blockicons/Disappear', 'svg'), BlockSpecs.pinkCmd, null, null, BlockSpecs.pinkCmdH, null, null, BlockSpecs.cmdS],
                 'grow': ['grow', BlockSpecs.getImageFrom('assets/blockicons/Grow', 'svg'), BlockSpecs.pinkCmd, 'n', 2, BlockSpecs.pinkCmdH, -10, 10, BlockSpecs.cmdS],
@@ -62146,6 +62148,8 @@ var BlockSpecs = function () {
                     CHARACTER_NAME: spr.name ? spr.name : spr.str
                 }),
                 'say': _Localization2.default.localize('BLOCK_DESC_SAY'),
+                'changecolor': _Localization2.default.localizeOptional('Change color'),
+                'resetcolor': _Localization2.default.localizeOptional('Reset color'),
                 'show': _Localization2.default.localize('BLOCK_DESC_SHOW'),
                 'hide': _Localization2.default.localize('BLOCK_DESC_HIDE'),
                 'grow': _Localization2.default.localize('BLOCK_DESC_GROW'),
@@ -63097,6 +63101,8 @@ var Prims = function () {
             Prims.table.shrink = Prims.Shrink;
             Prims.table.same = Prims.Same;
             Prims.table.say = Prims.Say;
+            Prims.table.changecolor = Prims.ChangeColor;
+            Prims.table.resetcolor = Prims.ResetColor;
         }
     }, {
         key: 'Done',
@@ -63264,6 +63270,20 @@ var Prims = function () {
             var s = strip.spr;
             var num = Number(strip.thisblock.getArgValue()); // 0 - 1 - 2
             s.speed = Math.pow(2, num);
+            strip.waitTimer = tinterval;
+            strip.thisblock = strip.thisblock.next;
+        }
+    }, {
+        key: 'ChangeColor',
+        value: function ChangeColor(strip) {
+            strip.spr.changeColor();
+            strip.waitTimer = tinterval;
+            strip.thisblock = strip.thisblock.next;
+        }
+    }, {
+        key: 'ResetColor',
+        value: function ResetColor(strip) {
+            strip.spr.resetColorEffect();
             strip.waitTimer = tinterval;
             strip.thisblock = strip.thisblock.next;
         }
@@ -64068,6 +64088,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var colorEffects = ['sepia(1) saturate(8) hue-rotate(300deg)', 'sepia(1) saturate(8) hue-rotate(330deg)', 'sepia(1) saturate(8) hue-rotate(10deg)', 'sepia(1) saturate(8) hue-rotate(75deg)', 'sepia(1) saturate(8) hue-rotate(165deg)', 'sepia(1) saturate(8) hue-rotate(235deg)'];
+
 // HACK - We want to use isTablet here to make sure the keyboard appears when opening the text field.
 // The old "isTablet" from lib.js is deprecated. We might want to return to this eventually.
 var isTablet = exports.isTablet = "ontouchstart" in document.documentElement;
@@ -64103,6 +64125,7 @@ var Sprite = function () {
             this.outline = document.createElement('canvas');
             this.code = new _Scripts2.default(this);
             (0, _lib.setProps)(this, attr);
+            this.colorEffect = -1;
             if (_Localization2.default.isSampleLocalizedKey(this.name) && _ScratchJr2.default.isSampleOrStarter()) {
                 this.name = _Localization2.default.localize('SAMPLE_TEXT_' + this.name);
             }
@@ -64330,10 +64353,31 @@ var Sprite = function () {
             this.setPos(this.homex, this.homey);
             this.scale = this.homescale;
             this.shown = this.homeshown;
+            this.resetColorEffect();
             //	this.flip = this.homeflip;  // kept here just in case we want it
             this.div.style.opacity = this.shown ? 1 : 0;
             this.setHeading(0);
             this.render();
+        }
+    }, {
+        key: 'changeColor',
+        value: function changeColor() {
+            if (!this.img) {
+                return;
+            }
+            this.colorEffect = (this.colorEffect + 1) % colorEffects.length;
+            this.img.style.webkitFilter = colorEffects[this.colorEffect];
+            this.img.style.filter = colorEffects[this.colorEffect];
+        }
+    }, {
+        key: 'resetColorEffect',
+        value: function resetColorEffect() {
+            this.colorEffect = -1;
+            if (!this.img) {
+                return;
+            }
+            this.img.style.webkitFilter = '';
+            this.img.style.filter = '';
         }
     }, {
         key: 'touchingAny',
@@ -64787,6 +64831,9 @@ var Sprite = function () {
             var dx = deltax ? deltax : 0;
             var dy = deltay ? deltay : 0;
             ctx.save();
+            if (this.colorEffect > -1) {
+                ctx.filter = colorEffects[this.colorEffect];
+            }
             ctx.translate(this.xcoor + dx, this.ycoor + dy);
             ctx.rotate(this.angle * _lib.DEGTOR);
             if (this.flip) {

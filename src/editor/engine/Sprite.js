@@ -30,6 +30,15 @@ import {newHTML, newDiv, newP, gn,
     isAndroid, fitInRect, scaleMultiplier, setCanvasSize,
     globaly, globalx, rgbToHex, WINDOW_INNER_HEIGHT, absoluteURL} from '../../utils/lib';
 
+let colorEffects = [
+    'sepia(1) saturate(8) hue-rotate(300deg)',
+    'sepia(1) saturate(8) hue-rotate(330deg)',
+    'sepia(1) saturate(8) hue-rotate(10deg)',
+    'sepia(1) saturate(8) hue-rotate(75deg)',
+    'sepia(1) saturate(8) hue-rotate(165deg)',
+    'sepia(1) saturate(8) hue-rotate(235deg)'
+];
+
 // HACK - We want to use isTablet here to make sure the keyboard appears when opening the text field.
 // The old "isTablet" from lib.js is deprecated. We might want to return to this eventually.
 export const isTablet = "ontouchstart" in document.documentElement;
@@ -61,6 +70,7 @@ export default class Sprite {
         this.outline = document.createElement('canvas');
         this.code = new Scripts(this);
         setProps(this, attr);
+        this.colorEffect = -1;
         if (Localization.isSampleLocalizedKey(this.name) && ScratchJr.isSampleOrStarter()) {
             this.name = Localization.localize('SAMPLE_TEXT_' + this.name);
         }
@@ -276,10 +286,29 @@ export default class Sprite {
         this.setPos(this.homex, this.homey);
         this.scale = this.homescale;
         this.shown = this.homeshown;
+        this.resetColorEffect();
         //	this.flip = this.homeflip;  // kept here just in case we want it
         this.div.style.opacity = this.shown ? 1 : 0;
         this.setHeading(0);
         this.render();
+    }
+
+    changeColor () {
+        if (!this.img) {
+            return;
+        }
+        this.colorEffect = (this.colorEffect + 1) % colorEffects.length;
+        this.img.style.webkitFilter = colorEffects[this.colorEffect];
+        this.img.style.filter = colorEffects[this.colorEffect];
+    }
+
+    resetColorEffect () {
+        this.colorEffect = -1;
+        if (!this.img) {
+            return;
+        }
+        this.img.style.webkitFilter = '';
+        this.img.style.filter = '';
     }
 
     touchingAny () {
@@ -707,6 +736,9 @@ export default class Sprite {
         var dx = deltax ? deltax : 0;
         var dy = deltay ? deltay : 0;
         ctx.save();
+        if (this.colorEffect > -1) {
+            ctx.filter = colorEffects[this.colorEffect];
+        }
         ctx.translate(this.xcoor + dx, this.ycoor + dy);
         ctx.rotate(this.angle * DEGTOR);
         if (this.flip) {
